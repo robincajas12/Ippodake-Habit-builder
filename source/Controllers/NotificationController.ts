@@ -43,7 +43,7 @@ export default class NotificationController
     }    
     public async lauchChronometer(taskType  : TaskType) : Promise<String>{
         if(taskType.type !== ETaskType.TIME) throw new Error('It can not launch a chronometer notification because task type is not ' + ETaskType.TIME)
-        if(!(notifee.isChannelCreated(taskType.type))) NotificationController.get().createChannelForTask(taskType.type)
+        if(!(await NotificationController.get().channelExist(taskType.type))) await NotificationController.get().createChannelForTask(taskType.type)
         let timeInMinutes = 0
         if(taskType.time != undefined)
         {
@@ -61,10 +61,10 @@ export default class NotificationController
                 color : colors.primaryColor,
                 chronometerDirection: "down",
                 style: {type: AndroidStyle.BIGTEXT, text: body + ' current level: ' + taskType.level},
-                largeIcon: require('../Views/Pet/Sprites/dog.gif'),  // Static image for better compatibility
+                //largeIcon: require('../Views/Pet/Sprites/dog.gif'),  // Static image for better compatibility
             }
         });
-        
+        console.log(id)
         return id
     }
     async cancelNotification(notificationId : string)

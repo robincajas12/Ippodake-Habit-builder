@@ -22,7 +22,7 @@ export default function Todo()
             undefined,           // repsPerSet (optional)
             30                   // time (in minutes)
         ),new TaskType(
-                1,                   // id
+                2,                   // id
                 101,                 // uid
                 "Buy milk",         // title
                 2,                   // level
@@ -38,7 +38,7 @@ export default function Todo()
         )];
 
     const renderData: ListRenderItem<TaskType> = ({ item }) => {
-        return <Li task={item} />;
+        return <Li key={item.id} task={item} />;
     };
     
     return <View style={stylesMainContentView.view}>
