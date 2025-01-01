@@ -61,7 +61,7 @@ export default class NotificationController
                 color : colors.primaryColor,
                 chronometerDirection: "down",
                 style: {type: AndroidStyle.BIGTEXT, text: body + ' current level: ' + taskType.level},
-                //largeIcon: require('../Views/Pet/Sprites/dog.gif'),  // Static image for better compatibility
+                largeIcon: require('../Views/Pet/Sprites/dog.gif'),  // Static image for better compatibility
             }
         });
         console.log(id)
