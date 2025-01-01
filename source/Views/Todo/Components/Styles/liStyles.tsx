@@ -3,7 +3,7 @@ import _vw from "../../../../utils/sizeConversors"
 import colors from "../../../Components/Styles/colors"
 const liStyles = StyleSheet.create({
     liView : {
-        backgroundColor: colors.primaryColor_darker,
+        paddingBlock: 40,
         width: _vw(90),
         height: _vw(10),
         padding: _vw(5),
@@ -15,8 +15,10 @@ const liStyles = StyleSheet.create({
         height: _vw(5)
     },
     liText:{
-        fontSize: _vw(4),
-        color: colors.font
+        backgroundColor: "red",
+        color: '#fff',
+        width: _vw(85),
+        height: _vw(5)
     }
 })
 export default liStyles

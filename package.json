@@ -10,6 +10,8 @@
     "test": "jest"
   },
   "dependencies": {
+    "@notifee/react-native": "^9.1.8",
+    "notifee": "^0.0.1",
     "react": "18.3.1",
     "react-native": "0.76.5"
   },
@@ -35,5 +37,13 @@
   },
   "engines": {
     "node": ">=18"
+  },
+  "codegenConfig": {
+    "name": "myNativeModules",
+    "type": "all",
+    "jsSrcsDir": "specs",
+    "android": {
+      "javaPackageName": "com.mynativemodules"
+    }
   }
 }

@@ -44,7 +44,7 @@ export default function Todo()
     return <View style={stylesMainContentView.view}>
         <Text style = {{color: 'white'}}>{today} tasks</Text>
         <View> 
-            {/*<FlatList data={data} renderItem={renderData}></FlatList>*/}
+            <FlatList data={data} renderItem={renderData}></FlatList>
         </View>
     </View>
 }

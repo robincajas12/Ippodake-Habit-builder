@@ -13,7 +13,7 @@ export default function CheckItem({task} : propsCheckItem)
         setIsChecked(prev=> !prev);
     }
     return <View style={liStyles.liView}>
-        <Pressable style={liStyles.liPressable} onPress={onPressCheckItem}>{isChecked ? '✅':'❌'}</Pressable>
+        <Pressable style={liStyles.liPressable} onPress={onPressCheckItem}><Text>{isChecked ? '✅':'❌'}</Text></Pressable>
         <Text style={liStyles.liText}>{task.title} {task.exp} exp </Text>
     </View>
 }
