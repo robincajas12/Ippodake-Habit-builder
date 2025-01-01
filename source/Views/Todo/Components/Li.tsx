@@ -1,0 +1,19 @@
+import { Pressable, Text, View } from "react-native";
+import TaskType, { ETaskType } from "../../../Models/Task";
+import { useState } from "react";
+import liStyles from "./Styles/liStyles";
+export type propsCheckItem = {
+    task : TaskType
+}
+export default function CheckItem({task} : propsCheckItem)
+{
+    const [isChecked, setIsChecked] = useState<boolean>(false)
+    function onPressCheckItem()
+    {
+        setIsChecked(prev=> !prev);
+    }
+    return <View style={liStyles.liView}>
+        <Pressable style={liStyles.liPressable} onPress={onPressCheckItem}>{isChecked ? '✅':'❌'}</Pressable>
+        <Text style={liStyles.liText}>{task.title} {task.exp} exp </Text>
+    </View>
+}
