@@ -33,9 +33,9 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
             val habitTracker = HabitTracker(taskType.first().minT.toDouble(),
                 taskType.first().maxT.toDouble(), 0.3,0.3)
             val sdf = SimpleDateFormat("YYYY-MM-dd")
-            val fechas = datesDao.obtenerSerieFechas(sdf.format(taskType.first().creationDate),
-                sdf.format(datesDao.getDay()))
-            var i = 1
+            //val fechas = datesDao.obtenerSerieFechas(sdf.format(taskType.first().creationDate),
+               // sdf.format(datesDao.getDay()))
+            /*var i = 1
             for (fecha in fechas)
             {
                 if(fecha == sdf.format(datesDao.getDay())) break
@@ -44,7 +44,7 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
                 else habitTracker.recordDay(i, taskOfThatDay.first().t.toDouble())
                 i++
 
-            }
+            }*/
             tasksDao.createTask(Tasks(
                 idTaskType = idtaskType.toInt(),
                 completed = ECompletedTask.UNCOMPLETED,
@@ -64,7 +64,7 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
             jsonObject.put("idTaskType", task.idTaskType)
             jsonObject.put("t", task.t)
             jsonObject.put("completed", task.completed)
-            jsonObject.put("date", task.date)
+            jsonObject.put("date", task.date.toString())
             jsonArray.put(jsonObject)
         }
         return jsonArray.toString()
@@ -100,7 +100,7 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
                 maxT = maxT.toInt(),
                 minT = minT.toInt(),
                 title = "Prueba tarea",
-                creationDate = datesDao.getDay().first().date,
+                creationDate = TimeUtil.today.getStartOfToday(),
                 exp = 0,
                 uid = 0
             ));

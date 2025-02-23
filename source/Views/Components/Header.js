@@ -2,6 +2,7 @@ import { StatusBar, View,Text, Button } from "react-native";
 import stylesHeader from "./Styles/stylesHeader";
 import colors from "./Styles/colors";
 import NativeLevelHandler from "../../../specs/NativeLevelHandler";
+import NativeTodayTasksHandler from "../../../specs/NativeTodayTasksHandler";
 import { useEffect, useState } from "react";
 export default function Header()
 {
@@ -11,6 +12,9 @@ export default function Header()
     {
         setLevel(NativeLevelHandler.getUserLevel())
         setStreak(NativeLevelHandler.getStreak())
+           NativeTodayTasksHandler.createTaskType("e", 0, 60,5)
+            console.log(NativeTodayTasksHandler.createTaskForToday(1))
+            console.log(NativeTodayTasksHandler.getAllMainTasks())
     }
     return <View style = {stylesHeader.viewHeader}>
         <StatusBar hidden={false} backgroundColor={colors.primaryColor}>

@@ -11,6 +11,8 @@ import { ListViewKey } from './source/Views/Components/listViews';
 import notifee from '@notifee/react-native'
 import { EventType } from '@notifee/react-native';
 import NotificationController from './source/Controllers/NotificationController';
+import NativeTodayTasksHandler from './specs/NativeTodayTasksHandler';
+import { ETaskType } from './source/Models/Task';
 function App()
 {
   const [main, setMain] = useState<ListViewKey>('Home');
@@ -24,8 +26,6 @@ function App()
             console.log('Notificación presionada', detail);
         }
     });
-
-
 
     return () => {
         // Limpiar cuando el componente se desmonte si es necesario
