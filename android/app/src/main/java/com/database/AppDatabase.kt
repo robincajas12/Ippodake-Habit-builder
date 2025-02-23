@@ -10,11 +10,15 @@ import androidx.room.TypeConverters
     entities =
     [
         User::class,
-        Dates::class
+        Dates::class,
+        Tasks::class,
+        TaskType::class
+
     ],
     version = 1)
-@TypeConverters(DateConverter::class)
+@TypeConverters(DateConverter::class, ETaskTypeConverter::class)
 abstract class AppDatabase : RoomDatabase(){
     abstract fun userDao() : UserDao
     abstract fun datesDao() : DatesDao
+    abstract fun tasksDao() : TasksDao
 }

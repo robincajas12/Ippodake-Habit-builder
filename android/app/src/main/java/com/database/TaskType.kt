@@ -8,14 +8,11 @@ import java.util.Date
 data class TaskType(
     @PrimaryKey(autoGenerate = true) val id : Int = 0,
     val uid : Int,
-    var level : Int,
-    var until : Date?,
-    var repeatDays : String?,
-    var type : TaskType?,
+    var title : String,
+    var type : ETaskType?,
     var exp : Int,
-    var subtasks : String?,
-    var difficulty : String,
-    var setsNumber: Int?,
-    var repsPerSet : Int?,
-    var time : Int?
+    var mainTaskType : Int?,
+    var maxT : Int, // goal
+    var minT : Int, // starter
+    var creationDate: Date
 )
