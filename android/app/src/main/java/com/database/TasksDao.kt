@@ -15,8 +15,12 @@ interface TasksDao {
     fun getSubtasks(id : Int) : List<Tasks>
     @Query("select * from TaskType where id = :id LIMIT 1")
     fun getTaskType(id : Int) : List<TaskType>
+    @Query("select * from TaskType")
+    fun getTaskType() : List<TaskType>
     @Query("select * from Tasks where idTaskType = :id")
     fun getTasksByTaskTypeId(id : Int) : List<Tasks>
+    @Query("select * from Tasks where id = :id")
+    fun getTaskById(id : Int) : List<Tasks>
     @Query("select * from Tasks where date = :date")
     fun getTasksByDate(date: Date = TimeUtil.today.getStartOfToday()) : List<Tasks>
     @Query("select * from Tasks where date = :date and idTaskType = :idTask")

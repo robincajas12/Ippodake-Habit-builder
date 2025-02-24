@@ -6,12 +6,17 @@ import com.database.ECompletedTask
 import com.database.ETaskType
 import com.database.TaskType
 import com.database.Tasks
+import com.database.TasksDao
 import com.facebook.react.bridge.ReactApplicationContext
 import com.hrsmodels.HabitTracker
 import com.utils.TimeUtil
 import org.json.JSONArray
 import org.json.JSONObject
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.ZoneId
+import java.util.Calendar
+import java.util.Date
 
 class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : NativeTodayTasksHandlerSpec(reactContext){
     private val datesDao : DatesDao = DatabaseHelper.DataBaseProvider.getDatabase(reactContext).datesDao()
@@ -19,7 +24,7 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
         return datesDao.getDay().first().date.toString()
     }
 
-    override fun recordDay(idtask: Double, actualTime: Double) {
+    override fun recordDay(idtask: Double, setCompleted: Boolean): Boolean {
         TODO("Not yet implemented")
     }
 
@@ -32,19 +37,17 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
 
             val habitTracker = HabitTracker(taskType.first().minT.toDouble(),
                 taskType.first().maxT.toDouble(), 0.3,0.3)
-            val sdf = SimpleDateFormat("YYYY-MM-dd")
-            //val fechas = datesDao.obtenerSerieFechas(sdf.format(taskType.first().creationDate),
-               // sdf.format(datesDao.getDay()))
-            /*var i = 1
-            for (fecha in fechas)
+            val number : Int = tasksDao.getTasksByTaskTypeId(idtaskType.toInt()).count()
+            val dateCreated = taskType.first().creationDate
+            val calendar : Calendar = Calendar.getInstance().apply { time = dateCreated }
+            for(i in 1..number)
             {
-                if(fecha == sdf.format(datesDao.getDay())) break
-                val taskOfThatDay = tasksDao.getTasksByTaskTypeIdAndDate(taskType.first().id, fecha)
-                if(taskOfThatDay.isEmpty()) habitTracker.recordDay(i, 0.toDouble())
-                else habitTracker.recordDay(i, taskOfThatDay.first().t.toDouble())
-                i++
-
-            }*/
+                val newTime : Date = calendar.time
+                val taskForThatDate = tasksDao.getTasksByDate(newTime)
+                if(taskForThatDate.isEmpty()) habitTracker.recordDay(i, 0.0)
+                else habitTracker.recordDay(i, taskForThatDate.first().t.toDouble())
+                calendar.add(Calendar.DAY_OF_MONTH, 1)
+            }
             tasksDao.createTask(Tasks(
                 idTaskType = idtaskType.toInt(),
                 completed = ECompletedTask.UNCOMPLETED,
@@ -52,6 +55,23 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
                 date = datesDao.getDay().first().date))
             return true
         }
+    }
+
+    override fun getTaskForToday(id: Double): String {
+        val jsonArray = JSONArray()
+        val tasks = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).tasksDao().getTaskById(id.toInt())
+
+        for (task in tasks)
+        {
+            val jsonObject = JSONObject();
+            jsonObject.put("id", task.id)
+            jsonObject.put("idTaskType", task.idTaskType)
+            jsonObject.put("t", task.t)
+            jsonObject.put("completed", task.completed)
+            jsonObject.put("date", task.date.toString())
+            jsonArray.put(jsonObject)
+        }
+        return jsonArray.toString()
     }
 
     override fun getAllMainTasks(): String {
@@ -86,6 +106,22 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
         return jsonArray.toString()
     }
 
+
+
+    override fun getAllTaskTypes(): String {
+        val jsonArray = JSONArray()
+        val tasksTypes = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext)
+            .tasksDao().getTaskType()
+        for (taskType in tasksTypes)
+        {
+            val jsonObject = JSONObject();
+            jsonObject.put("id", taskType.id)
+            jsonObject.put("title", taskType.title)
+            jsonArray.put(jsonObject)
+        }
+        return jsonArray.toString()
+    }
+
     override fun createTaskType(
         type: String?,
         mainTaskType: Double,
@@ -99,7 +135,7 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
                 mainTaskType = null,
                 maxT = maxT.toInt(),
                 minT = minT.toInt(),
-                title = "Prueba tarea",
+                title = "Stop using phone",
                 creationDate = TimeUtil.today.getStartOfToday(),
                 exp = 0,
                 uid = 0
