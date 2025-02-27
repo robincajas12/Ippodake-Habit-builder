@@ -1,111 +1,73 @@
-export enum ETaskType {
-    CHECK = "CHECK",
-    TIME = "TIME",
-    SETS_AND_REPS = "SETS_AND_REPS",
-}
-export function parseETaskType(taskType: string | undefined): ETaskType | undefined {
-    return ETaskType[taskType as keyof typeof ETaskType];
-}
-export default class TaskType {
-        private _id: number;
-        private _title : string;
-        private _uid: number;
-        private _level: number;
-        private _until?: Date;
-        private _repeatDays?: string;
-        private _type?: ETaskType; // Cambiado a ETaskType
-        private _exp: number;
-        private _subtasks?: string;
-        private _difficulty: string;
-        private _setsNumber?: number;
-        private _repsPerSet?: number;
-        private _time?: number;
-    
-        constructor(
-            id: number = 0,
-            uid: number,
-            title : string,
-            level: number,
-            exp: number,
-            difficulty: string,
-            until?: Date,
-            repeatDays?: string,
-            type?: string, // Cambiado a ETaskType
-            subtasks?: string,
-            setsNumber?: number,
-            repsPerSet?: number,
-            time?: number
-        ) {
-            this._id = id;
-            this._title = title
-            this._uid = uid;
-            this._level = level;
-            this._until = until;
-            this._repeatDays = repeatDays;
-            this._type = parseETaskType(type);
-            if (type && !this._type) {
-                throw new Error(`Invalid task type: ${type}. Valid types are ${Object.values(ETaskType).join(", ")}`);
-            }
-            this._exp = exp;
-            this._subtasks = subtasks;
-            this._difficulty = difficulty;
-            this._setsNumber = setsNumber;
-            this._repsPerSet = repsPerSet;
-            this._time = time;
-        }
-    
-        // Getters
-        get type(): ETaskType | undefined {
-            return this._type;
-        }
-    
-        // Setter
-        set type(newType: ETaskType | undefined) {
-            this._type = newType;
-        }
-    // Getters
+export default class Task {
+    private _id: number;
+    private _idTaskType: number;
+    private _t: number;
+    private _completed: boolean;
+    private _date: number;
+    private _tCompleted: number;  // tCompleted como number
+
+    constructor(id: number, idTaskType: number, t: number, completed: boolean, date: number, tCompleted: number) {
+        this._id = id;
+        this._idTaskType = idTaskType;
+        this._t = t;
+        this._completed = completed;
+        this._date = date;
+        this._tCompleted = tCompleted;  // Asignar tCompleted como number
+    }
+
     get id(): number {
         return this._id;
     }
-    get title(): string{
-        return this._title
-    }
-    get uid(): number {
-        return this._uid;
+
+    set id(value: number) {
+        this._id = value;
     }
 
-    get level(): number {
-        return this._level;
+    get idTaskType(): number {
+        return this._idTaskType;
     }
 
-    get until(): Date | undefined {
-        return this._until;
+    set idTaskType(value: number) {
+        this._idTaskType = value;
     }
 
-    get repeatDays(): string | undefined {
-        return this._repeatDays;
-    }
-    get exp(): number {
-        return this._exp;
+    get t(): number {
+        return this._t;
     }
 
-    get subtasks(): string | undefined {
-        return this._subtasks;
+    set t(value: number) {
+        this._t = value;
     }
 
-    get difficulty(): string {
-        return this._difficulty;
+    get completed(): boolean {
+        return this._completed;
     }
 
-    get setsNumber(): number | undefined {
-        return this._setsNumber;
+    set completed(value: boolean) {
+        this._completed = value;
     }
 
-    get repsPerSet(): number | undefined {
-        return this._repsPerSet;
+    get date(): number {
+        return this._date;
     }
 
-    get time(): number | undefined {
-        return this._time;
+    set date(value: number) {
+        this._date = value;
+    }
+
+    get tCompleted(): number {
+        return this._tCompleted;
+    }
+
+    set tCompleted(value: number) {
+        this._tCompleted = value;
+    }
+
+
+
+    static fromJSON(json: string): Task {
+        console.log(json)
+        const data = JSON.parse(json);
+        return new Task(data.id, data.idTaskType, Number(data.t), data.completed, data.date, Number(data.tCompleted));  // Asegurar que tCompleted sea un número
     }
 }

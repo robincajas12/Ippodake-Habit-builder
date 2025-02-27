@@ -3,7 +3,7 @@ import stylesMainContentView from "../Components/Styles/stylesMainContentView";
 import { useState } from "react";
 import NativeTodayTasksHandler from "../../../specs/NativeTodayTasksHandler";
 import Li from "./Components/Li";
-import TaskType from "../../Models/Task";
+import TaskType from "../../Models/TaskType";
 export default function Todo()
 {
     const [today, SetToday ] = useState(NativeTodayTasksHandler.getToday())

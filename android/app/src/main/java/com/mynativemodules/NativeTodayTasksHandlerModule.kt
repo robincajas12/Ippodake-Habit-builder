@@ -17,6 +17,7 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.util.Calendar
 import java.util.Date
+import kotlin.math.ceil
 
 class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : NativeTodayTasksHandlerSpec(reactContext){
     private val datesDao : DatesDao = DatabaseHelper.DataBaseProvider.getDatabase(reactContext).datesDao()
@@ -24,9 +25,22 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
         return datesDao.getDay().first().date.time.toString()
     }
 
-    override fun recordDay(idtask: Double, setCompleted: Boolean): Boolean {
-        TODO("Not yet implemented")
+    override fun recordDay(idtask: Double, timeSpent: Double): Boolean {
+        val tasksDao = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).tasksDao()
+        val tasks = tasksDao.getTaskById(idtask.toInt())
+        if(tasks.isEmpty()) return false
+        val taskTypes = tasksDao.getTaskType(tasks.first().idTaskType)
+        if(taskTypes.isEmpty()) return false
+
+        var isCompleted : Boolean= false
+        if(tasks.first().tCompleted >= taskTypes.first().minT) isCompleted = true
+        val task = tasks.first()
+        task.tCompleted = ceil(timeSpent).toInt()
+        task.completed = if(isCompleted)  ECompletedTask.COMPLETED else ECompletedTask.UNCOMPLETED
+        tasksDao.updateTask(task)
+        return true
     }
+
 
     override fun createTaskForToday(idtaskType: Double): Boolean {
         val tasksDao = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).tasksDao()
@@ -52,6 +66,7 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
                 idTaskType = idtaskType.toInt(),
                 completed = ECompletedTask.UNCOMPLETED,
                 t = habitTracker.habitModel.getCurrentTime().toInt(),
+                tCompleted = 0,
                 date = datesDao.getDay().first().date))
             return true
         }
@@ -67,6 +82,7 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
             jsonObject.put("id", task.id)
             jsonObject.put("idTaskType", task.idTaskType)
             jsonObject.put("t", task.t)
+            jsonObject.put("tCompleted",task.tCompleted)
             jsonObject.put("completed", task.completed)
             jsonObject.put("date", task.date.time)
             jsonArray.put(jsonObject)
@@ -83,6 +99,7 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
             jsonObject.put("id", task.id)
             jsonObject.put("idTaskType", task.idTaskType)
             jsonObject.put("t", task.t)
+            jsonObject.put("tCompleted",task.tCompleted)
             jsonObject.put("completed", task.completed)
             jsonObject.put("date", task.date.time)
             jsonArray.put(jsonObject)
@@ -99,6 +116,7 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
             jsonObject.put("id", task.id)
             jsonObject.put("idTaskType", task.idTaskType)
             jsonObject.put("t", task.t)
+            jsonObject.put("tCompleted",task.tCompleted)
             jsonObject.put("completed", task.completed)
             jsonObject.put("date", task.date.time)
             jsonArray.put(jsonObject)
@@ -117,6 +135,8 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
             val jsonObject = JSONObject();
             jsonObject.put("id", taskType.id)
             jsonObject.put("title", taskType.title)
+            jsonObject.put("exp", taskType.exp)
+            jsonObject.put("creationDate", taskType.creationDate)
             jsonArray.put(jsonObject)
         }
         return jsonArray.toString()

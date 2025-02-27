@@ -12,7 +12,7 @@ import notifee from '@notifee/react-native'
 import { EventType } from '@notifee/react-native';
 import NotificationController from './source/Controllers/NotificationController';
 import NativeTodayTasksHandler from './specs/NativeTodayTasksHandler';
-import { ETaskType } from './source/Models/Task';
+import { ETaskType } from './source/Models/TaskType';
 import Form from './source/Views/Components/General/Components/Form';
 import NativeLevelHandler from './specs/NativeLevelHandler';
 function App()

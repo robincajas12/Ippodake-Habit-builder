@@ -3,7 +3,7 @@ import { TurboModule, TurboModuleRegistry } from "react-native";
 export interface Spec extends TurboModule
 {
     getToday() : string,
-    recordDay(idtask : number, setCompleted : boolean): boolean
+    recordDay(idtask : number,timeSpent: number): boolean
     createTaskForToday(idtaskType : number): boolean,
     getTaskForToday(id : number) : string,
     getAllMainTasks() : string,

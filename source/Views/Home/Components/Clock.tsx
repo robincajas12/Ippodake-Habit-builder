@@ -3,21 +3,31 @@ import stylesClock from "../styles/stylesClock";
 import { useEffect, useState } from "react";
 import notifee from '@notifee/react-native';
 import NotificationController from "../../../Controllers/NotificationController";
-import TaskType from "../../../Models/Task";
+import TaskType, { ETaskType } from "../../../Models/TaskType";
 import NativeTodayTasksHandler from "../../../../specs/NativeTodayTasksHandler";
+import Task from "../../../Models/Task";
 
 export default function ({ setClockStarted, setTime, updateTimer }: any) {
     const [isPlaying, setIsPlaying] = useState(false);
     const [notfID, setNotfID] = useState<string | null>(null);
-    const selectedTask = new TaskType(
-        1, 101, "Don't use your phone", 2, 10, "Medium", undefined, undefined, 
-        "TIME", undefined, undefined, undefined, 30
-    );
-
+    const [selectedTaskType, setSelectTaskType] = useState(()=>{
+        JSON.parse(NativeTodayTasksHandler.getAllTaskTypes())
+    });
+    const [selectedTask, setSelectTask] = useState<Task | null>(()=>{
+        if(NativeTodayTasksHandler.getAllTaskTypes() != "[]" && NativeTodayTasksHandler.getAllMainTasks() != "[]")
+        {
+            const today = JSON.parse(NativeTodayTasksHandler
+                .getTaskForToday(JSON.parse(NativeTodayTasksHandler.getAllTaskTypes())[0]["id"]))[0]
+            return Task.fromJSON(JSON.stringify(today))
+        }
+        return null
+    })
+    
     const miController = NotificationController.get();
 
     async function createBackgroundService() {
-        const notificationId: string = (await miController.lauchChronometer(selectedTask)).toString();
+        if(selectedTask == null) return;
+        const notificationId: string = (await miController.lauchChronometerWithTask(selectedTask, ETaskType.TIME)).toString();
         setNotfID(notificationId);
     }
 

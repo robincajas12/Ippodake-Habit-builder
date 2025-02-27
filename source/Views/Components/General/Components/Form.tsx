@@ -1,7 +1,7 @@
 import { View, Text, TextInput, Button, Alert } from "react-native"
 import { useState } from "react"
 import NativeTodayTasksHandler from "../../../../../specs/NativeTodayTasksHandler"
-import { ETaskType } from "../../../../Models/Task"
+import { ETaskType } from "../../../../Models/TaskType"
 import stylesForm from "../Styles/stylesForm"
 type formProps = {
     setIsVsible: (isVisible: boolean) => void

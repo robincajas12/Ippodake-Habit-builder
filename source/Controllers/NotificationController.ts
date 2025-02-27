@@ -1,8 +1,9 @@
 import { ModuleWithStatics } from "@notifee/react-native/dist/types/Module";
-import notifee, { AndroidImportance, AndroidStyle, AuthorizationStatus } from '@notifee/react-native'
-import TaskType, { ETaskType } from "../Models/Task";
+import notifee, { AndroidImportance, AndroidStyle, AndroidVisibility, AuthorizationStatus } from '@notifee/react-native'
+import TaskType, { ETaskType } from "../Models/TaskType";
 import { ms } from "../utils/timeDiference";
 import colors, { getNotificationColors } from "../Views/Components/Styles/colors";
+import Task from "../Models/Task";
 export default class NotificationController
 {
     private static notification : NotificationController | null = null;
@@ -37,19 +38,20 @@ export default class NotificationController
             await notifee.createChannel({
                 id: etaskType,
                 name: etaskType.toLocaleLowerCase(),
-                importance: AndroidImportance.HIGH
+                importance: AndroidImportance.HIGH,
+                visibility: AndroidVisibility.PUBLIC
             })
         }
     }    
     public async lauchChronometer(taskType  : TaskType) : Promise<String>{
         if(taskType.type !== ETaskType.TIME) throw new Error('It can not launch a chronometer notification because task type is not ' + ETaskType.TIME)
-        if(!(await NotificationController.get().channelExist(taskType.type))) await NotificationController.get().createChannelForTask(taskType.type)
+        if(!(await NotificationController.get().channelExist(ETaskType.TIME))) await NotificationController.get().createChannelForTask(taskType.type)
         let timeInMinutes = 0
-        if(taskType.time != undefined)
+        if(taskType.maxT != undefined)
         {
-            timeInMinutes = Date.now() + ms.minutes* taskType.time
+            timeInMinutes = Date.now() + ms.minutes* taskType.maxT
         }
-        const body = `<p>Complete: <span style="color: ${getNotificationColors().primaryColor}; font-style: italic;">${taskType.title}</span> in <span style="color: ${getNotificationColors().primaryColor}; font-weight: bold;">${taskType.time} minutes</span></p>`
+        const body = `<p>Complete: <span style="color: ${getNotificationColors().primaryColor}; font-style: italic;">${taskType.title}</span> in <span style="color: ${getNotificationColors().primaryColor}; font-weight: bold;">${taskType.minT} minutes</span></p>`
         const id = await notifee.displayNotification({
             title: `<p style="color: ${getNotificationColors().primaryColor}; font-weight: bold;">${taskType.exp} EXP if you complete this task</p>`,
             body: body,
@@ -60,8 +62,37 @@ export default class NotificationController
                 timestamp: timeInMinutes,
                 color : colors.primaryColor,
                 chronometerDirection: "down",
-                style: {type: AndroidStyle.BIGTEXT, text: body + ' current level: ' + taskType.level},
+                style: {type: AndroidStyle.BIGTEXT, text: body + ''},
                 largeIcon: require('../Views/Pet/Sprites/dog.gif'),  // Static image for better compatibility
+            }
+        });
+        console.log(id)
+        return id
+    }
+    public async lauchChronometerWithTask(task  : Task, eTaskType: ETaskType ) : Promise<String>{
+        if(eTaskType !== ETaskType.TIME) throw new Error('It can not launch a chronometer notification because task type is not ' + ETaskType.TIME)
+        if(!(await NotificationController.get().channelExist(ETaskType.TIME))) await NotificationController.get().createChannelForTask(eTaskType)
+        let timeInMinutes = 0
+        if(task != undefined)
+        {
+            timeInMinutes = Date.now() + ms.minutes* task.t
+        }
+        const body = `<p>Just focus for <span style="color: ${getNotificationColors().primaryColor}; font-style: italic;"></span> in <span style="color: ${getNotificationColors().primaryColor}; font-weight: bold;"> ${task.t} minutes</span></p>`
+        const id = await notifee.displayNotification({
+            title: `<p style="color: ${getNotificationColors().primaryColor}; font-weight: bold;">you can do it!</p>`,
+            body: body,
+            subtitle: '⏱️',
+            android: {
+                channelId: eTaskType,
+                showChronometer: true,
+                timestamp: timeInMinutes,
+                color : colors.primaryColor,
+                chronometerDirection: "down",
+                style: {type: AndroidStyle.BIGTEXT, text: body + 'Please put your phone away'},
+                largeIcon: require('../Views/Pet/Sprites/dog.gif'),  // Static image for better compatibility
+                autoCancel: false,
+                visibility: AndroidVisibility.PUBLIC,
+                ongoing: true
             }
         });
         console.log(id)

@@ -25,6 +25,10 @@ interface TasksDao {
     fun getTasksByDate(date: Date = TimeUtil.today.getStartOfToday()) : List<Tasks>
     @Query("select * from Tasks where date = :date and idTaskType = :idTask")
     fun getTasksByTaskTypeIdAndDate(idTask : Int, date : String) : List<Tasks>
+    @Query("select * from Tasks where date >= :date order by date desc")
+    fun getTaskSinceCertainDate(date : Date) : List<Tasks>
+    @Query("select avg(tCompleted) from Tasks where date >= :date and idTaskType = :idTaskType order by date desc")
+    fun getAVGTaskSinceCertainDate(idTaskType: Int,date : Date) : Double
     @Insert
     fun createTaskType(taskType: TaskType)
     @Insert

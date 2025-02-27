@@ -8,7 +8,8 @@ import java.util.Date
 data class Tasks(
     @PrimaryKey(autoGenerate = true) val id : Int = 0,
     val idTaskType : Int,
-    val completed: ECompletedTask,
-    val t : Int, // current t
+    var completed: ECompletedTask,
+    val t : Int, // current t,
+    var tCompleted : Int,
     val date : Date
 )

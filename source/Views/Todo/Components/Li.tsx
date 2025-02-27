@@ -1,5 +1,5 @@
 import { Pressable, Text, View } from "react-native";
-import TaskType, { ETaskType } from "../../../Models/Task";
+import TaskType, { ETaskType } from "../../../Models/TaskType";
 import { useState } from "react";
 import liStyles from "./Styles/liStyles";
 export type propsCheckItem = {
