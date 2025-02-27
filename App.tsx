@@ -32,7 +32,6 @@ function App()
       if(NativeTodayTasksHandler.getTaskForToday(id) == "[]"){
         NativeTodayTasksHandler.createTaskForToday(id)
         console.log(NativeTodayTasksHandler.getAllMainTasks())
-        console.log(NativeTodayTasksHandler.getAllTaskTypes())
       }
     }
   })

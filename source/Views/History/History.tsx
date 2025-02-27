@@ -16,7 +16,8 @@ const History = ({ items, promedio }: HistoryProps) => {
   if (jsonData !== "[]") {
     const data = JSON.parse(jsonData);
     data.forEach((element: { t: number; date: string }) => {
-      items.push(element);
+      items.unshift(element);
+      
     });
   }
 
@@ -101,13 +102,16 @@ itemContainer: {
     fontSize: _vw(5),
   },
 });
+const sampleData = Array.from({ length: 100 }, (_, index) => {
+  const randomT = Math.floor(Math.random() * 101); // Genera un valor aleatorio de 0 a 100 para 't'
+  
+  // Genera una fecha aleatoria en un rango entre el 2025-03-02 y el 2025-03-21
+  const randomDate = new Date(2025, 2, 2 + index, Math.floor(Math.random() * 24), Math.floor(Math.random() * 60));
+  const dateString = randomDate.toISOString();
+  
+  return { t: randomT, date: dateString };
+});
 
-const sampleData = [
-  { t: 30, date: "2025-02-20T10:00:00Z" },
-  { t: 45, date: "2025-02-21T14:30:00Z" },
-  { t: 60, date: "2025-02-22T18:15:00Z" },
-  { t: 25, date: "2025-02-23T09:45:00Z" },
-  { t: 50, date: "2025-02-24T20:00:00Z" },
-];
 
-export default () => <History items={sampleData} promedio={50} />;
+
+export default () => <History items={sampleData} promedio={Math.floor(sampleData.map(t=> t.t).reduce((prev,i) => prev + i)/sampleData.length)} />;

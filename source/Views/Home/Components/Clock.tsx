@@ -1,45 +1,54 @@
 import { Pressable, Text, View } from "react-native";
 import stylesClock from "../styles/stylesClock";
 import { useEffect, useState } from "react";
-import notifee, { AndroidImportance, AndroidNotificationSetting, TimestampTrigger } from '@notifee/react-native';
-import {IntervalTrigger, TriggerType, TimeUnit} from '@notifee/react-native';
-import { addTime } from "../../../utils/timeDiference";
+import notifee from '@notifee/react-native';
 import NotificationController from "../../../Controllers/NotificationController";
 import TaskType from "../../../Models/Task";
-export default function ({setClockStarted, setTime, updateTimer} : any)
-{
+import NativeTodayTasksHandler from "../../../../specs/NativeTodayTasksHandler";
+
+export default function ({ setClockStarted, setTime, updateTimer }: any) {
     const [isPlaying, setIsPlaying] = useState(false);
-    const [selectedTask, setSelectedTask] = useState<TaskType>(new TaskType(
-        1,                   // id
-        101,                 // uid
-        "Read a novel",         // title
-        2,                   // level
-        10,                  // exp
-        "Medium",            // difficulty
-        undefined,           // until (optional)
-        undefined,           // repeatDays (optional)
-        "TIME",              // type (this will be parsed as ETaskType.TIME)
-        undefined,           // subtasks (optional)
-        undefined,           // setsNumber (optional)
-        undefined,           // repsPerSet (optional)
-        30                   // time (in minutes)
-    ))
-    const  miControler = NotificationController.get()
-    const [notfID, setNotfID] = useState<String | null >(null)
+    const [notfID, setNotfID] = useState<string | null>(null);
+    const selectedTask = new TaskType(
+        1, 101, "Don't use your phone", 2, 10, "Medium", undefined, undefined, 
+        "TIME", undefined, undefined, undefined, 30
+    );
+
+    const miController = NotificationController.get();
+
     async function createBackgroundService() {
-        setNotfID(await miControler.lauchChronometer(selectedTask))
+        const notificationId: string = (await miController.lauchChronometer(selectedTask)).toString();
+        setNotfID(notificationId);
     }
-    
+
+    useEffect(() => {
+        let timer: NodeJS.Timeout | null = null;
+        
+        if (isPlaying) {
+            timer = setInterval(() => {
+                setTime((t: Date) => {
+                    const newTime = new Date(t.getTime()); // Crear una nueva instancia
+                    newTime.setSeconds(newTime.getSeconds() + 1);
+                    return newTime;
+                });
+            }, 1000);
+        } else if (timer) {
+            clearInterval(timer);
+        }
+
+        return () => {
+            if (timer) clearInterval(timer);
+        };
+    }, [isPlaying]);
+
     async function onClickClock() {
         try {
-            if(!isPlaying)
-            {
+            if (!isPlaying) {
                 await createBackgroundService();
-                setIsPlaying(true)
-            }else{
-                if(notfID != null)
-                {
-                    if(selectedTask.type != undefined) await miControler.cancelNotification(notfID.toString())
+                setIsPlaying(true);
+            } else {
+                if (notfID) {
+                    await miController.cancelNotification(notfID);
                     setNotfID(null);
                 }
                 setIsPlaying(false);
@@ -48,10 +57,12 @@ export default function ({setClockStarted, setTime, updateTimer} : any)
             console.error('Error handling clock click:', error);
         }
     }
-    return <View style={stylesClock.view}>
-        <Pressable style={stylesClock.container} onTouchEnd={onClickClock}>
-            <Text style={stylesClock.btn}>{isPlaying?'⏸️': '▶️'}</Text>
-            {/*⏸ ▶️⏸️*/}
-        </Pressable>
-    </View>
+
+    return (
+        <View style={stylesClock.view}>
+            <Pressable style={stylesClock.container} onPress={onClickClock}>
+                <Text style={stylesClock.btn}>{isPlaying ? '⏸️' : '▶️'}</Text>
+            </Pressable>
+        </View>
+    );
 }

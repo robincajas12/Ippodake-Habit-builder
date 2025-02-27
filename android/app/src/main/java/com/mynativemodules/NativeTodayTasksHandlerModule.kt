@@ -21,7 +21,7 @@ import java.util.Date
 class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : NativeTodayTasksHandlerSpec(reactContext){
     private val datesDao : DatesDao = DatabaseHelper.DataBaseProvider.getDatabase(reactContext).datesDao()
     override fun getToday(): String {
-        return datesDao.getDay().first().date.toString()
+        return datesDao.getDay().first().date.time.toString()
     }
 
     override fun recordDay(idtask: Double, setCompleted: Boolean): Boolean {
@@ -68,7 +68,7 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
             jsonObject.put("idTaskType", task.idTaskType)
             jsonObject.put("t", task.t)
             jsonObject.put("completed", task.completed)
-            jsonObject.put("date", task.date.toString())
+            jsonObject.put("date", task.date.time)
             jsonArray.put(jsonObject)
         }
         return jsonArray.toString()
@@ -84,7 +84,7 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
             jsonObject.put("idTaskType", task.idTaskType)
             jsonObject.put("t", task.t)
             jsonObject.put("completed", task.completed)
-            jsonObject.put("date", task.date.toString())
+            jsonObject.put("date", task.date.time)
             jsonArray.put(jsonObject)
         }
         return jsonArray.toString()
@@ -100,7 +100,7 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
             jsonObject.put("idTaskType", task.idTaskType)
             jsonObject.put("t", task.t)
             jsonObject.put("completed", task.completed)
-            jsonObject.put("date", task.date)
+            jsonObject.put("date", task.date.time)
             jsonArray.put(jsonObject)
         }
         return jsonArray.toString()
