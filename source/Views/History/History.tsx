@@ -6,6 +6,8 @@ import stylesMainContentView from "../Components/Styles/stylesMainContentView";
 import colors from "../Components/Styles/colors"; // Adjust the import path to where your colors file is located
 import _vh from "../../utils/sizeConversors";
 import _vw from "../../utils/sizeConversors";
+import { BannerAd, BannerAdSize, TestIds } from "react-native-google-mobile-ads";
+
 type HistoryProps = {
   items: { t: number; date: string }[];
   promedio: number;
@@ -16,15 +18,19 @@ const History = ({ items, promedio }: HistoryProps) => {
   if (jsonData !== "[]") {
     const data = JSON.parse(jsonData);
     data.forEach((element: { t: number; date: string }) => {
-      items.unshift(element);
+      const element2 = element
+      element2.t = element.t/(1000*60)
+      items.unshift(element2);
       
     });
   }
 
   return (
     <View style={stylesMainContentView.view}>
-        <View style={styles.container}>
-        <Text style={styles.title}>Historial</Text>
+            
+       <View style={styles.container}>
+            
+      <Text style={styles.title}>Historial</Text>
       <Text style={styles.promedio}>Promedio: {promedio} min</Text>
       <FlatList
         style={{ paddingHorizontal: _vw(4)}}
@@ -37,7 +43,7 @@ const History = ({ items, promedio }: HistoryProps) => {
             <View style={styles.itemContainer}>
                 <Text style={styles.textMidDanger}>{new Date(item.date).toLocaleDateString()}</Text>
               <View style={styles.row}>
-                <Text style={styles.text}>Tiempo dedicado :     <Text style={porcentaje >= 80 ? styles.textNoDanger : porcentaje <= 50 && porcentaje < 80 ? styles.textDanger : styles.textMidDanger}>{item.t} min</Text></Text> 
+                <Text style={styles.text}>Tiempo dedicado : <Text style={porcentaje >= 80 ? styles.textNoDanger : porcentaje <= 50 && porcentaje < 80 ? styles.textDanger : styles.textMidDanger}>{item.t} min  </Text></Text> 
                 {porcentajeItem}
               </View>
               
@@ -45,8 +51,11 @@ const History = ({ items, promedio }: HistoryProps) => {
           );
         }}
       />
+          <BannerAd unitId={TestIds.BANNER} size={BannerAdSize.BANNER}/>
         </View>
+
     </View>
+    
   );
 };
 
@@ -54,7 +63,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingBlockStart: _vw(4),
-    backgroundColor: colors.primaryColor_darker, // Use primaryColor_darker for background
+    backgroundColor: colors.primaryColor_darker, // Use primaryColor_darker for background,
+    alignItems:"center"
   },
   title: {
     fontSize: _vw(10),

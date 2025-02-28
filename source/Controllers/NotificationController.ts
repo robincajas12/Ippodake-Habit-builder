@@ -46,10 +46,10 @@ export default class NotificationController
     public async lauchChronometer(taskType  : TaskType) : Promise<String>{
         if(taskType.type !== ETaskType.TIME) throw new Error('It can not launch a chronometer notification because task type is not ' + ETaskType.TIME)
         if(!(await NotificationController.get().channelExist(ETaskType.TIME))) await NotificationController.get().createChannelForTask(taskType.type)
-        let timeInMinutes = 0
+        let timeInMiliseconds = 0
         if(taskType.maxT != undefined)
         {
-            timeInMinutes = Date.now() + ms.minutes* taskType.maxT
+            timeInMiliseconds= Date.now() + taskType.maxT
         }
         const body = `<p>Complete: <span style="color: ${getNotificationColors().primaryColor}; font-style: italic;">${taskType.title}</span> in <span style="color: ${getNotificationColors().primaryColor}; font-weight: bold;">${taskType.minT} minutes</span></p>`
         const id = await notifee.displayNotification({
@@ -59,7 +59,7 @@ export default class NotificationController
             android: {
                 channelId: taskType.type,
                 showChronometer: true,
-                timestamp: timeInMinutes,
+                timestamp: timeInMiliseconds,
                 color : colors.primaryColor,
                 chronometerDirection: "down",
                 style: {type: AndroidStyle.BIGTEXT, text: body + ''},
@@ -72,12 +72,12 @@ export default class NotificationController
     public async lauchChronometerWithTask(task  : Task, eTaskType: ETaskType ) : Promise<String>{
         if(eTaskType !== ETaskType.TIME) throw new Error('It can not launch a chronometer notification because task type is not ' + ETaskType.TIME)
         if(!(await NotificationController.get().channelExist(ETaskType.TIME))) await NotificationController.get().createChannelForTask(eTaskType)
-        let timeInMinutes = 0
+        let timeInMiliseconds = 0
         if(task != undefined)
         {
-            timeInMinutes = Date.now() + ms.minutes* task.t
+            timeInMiliseconds = Date.now() +  task.t
         }
-        const body = `<p>Just focus for <span style="color: ${getNotificationColors().primaryColor}; font-style: italic;"></span> in <span style="color: ${getNotificationColors().primaryColor}; font-weight: bold;"> ${task.t} minutes</span></p>`
+        const body = `<p>Just focus for <span style="color: ${getNotificationColors().primaryColor}; font-style: italic;"></span> in <span style="color: ${getNotificationColors().primaryColor}; font-weight: bold;"> ${task.t/(1000*60)} minutes</span></p>`
         const id = await notifee.displayNotification({
             title: `<p style="color: ${getNotificationColors().primaryColor}; font-weight: bold;">you can do it!</p>`,
             body: body,
@@ -85,7 +85,7 @@ export default class NotificationController
             android: {
                 channelId: eTaskType,
                 showChronometer: true,
-                timestamp: timeInMinutes,
+                timestamp: timeInMiliseconds,
                 color : colors.primaryColor,
                 chronometerDirection: "down",
                 style: {type: AndroidStyle.BIGTEXT, text: body + 'Please put your phone away'},

@@ -14,7 +14,7 @@ class DatabaseHelper {
                 val userDao = appDatabase!!.userDao()
                 if(userDao.getAll().isEmpty())
                 {
-                    userDao.createUser(User(streak=50,level = 10))
+                    userDao.createUser(User(streak=0,level = 0))
                 }
                 val dateDao = appDatabase!!.datesDao()
                 val user = userDao.getAll().first()

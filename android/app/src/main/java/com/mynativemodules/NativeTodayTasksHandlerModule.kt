@@ -49,7 +49,7 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
         val chronometerDao = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).
                 chronometerDao()
         val calendar : Calendar = Calendar.getInstance()
-        calendar.add(Calendar.MINUTE, ceil(time).toInt())
+        calendar.add(Calendar.MILLISECOND, ceil(time).toInt())
         val id = chronometerDao.create(Chronometer(isTimerActive = false, start = Calendar.getInstance().time, finish = calendar.time))
         return id.toDouble()
     }

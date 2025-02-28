@@ -15,8 +15,8 @@ import React, { useState, useEffect } from "react";
 import { View, Text, Button } from "react-native";
 import TimeCounter from "./Components/TimeCounter";
 import Clock from "./Components/Clock";
-
-
+import { BannerAd,TestIds,BannerAdSize } from "react-native-google-mobile-ads";
+import stylesHome from "./styles/stylesHome";
 export default function Home() {
   const [clockStarted, setClockStarted] = useState(false);
   const [time, setTime] = useState(()=>  {
@@ -28,9 +28,11 @@ export default function Home() {
   });
 
   return (
-    <View style={{ flex: 8, display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <Clock setClockStarted={setClockStarted} setTime={setTime} />
-      <TimeCounter time={time} />
+    <View style={{ flex: 7, display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
+      <View style={stylesHome.container}>
+        <TimeCounter time={time} />
+        <Clock setClockStarted={setClockStarted} setTime={setTime} />
+      </View>
     </View>
   );
 }

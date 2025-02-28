@@ -16,7 +16,7 @@ export default function Form(props : formProps) {
 
     function onButtonPress() {
         if(NativeTodayTasksHandler.getAllTaskTypes() == "[]" && goal != "" && parseFloat(goal) > 0){
-            console.log(NativeTodayTasksHandler.createTaskType(ETaskType.TIME,-1, parseFloat(goal), 1))
+            console.log(NativeTodayTasksHandler.createTaskType(ETaskType.TIME,-1, parseFloat(goal) * 1000 * 60 * 60, 3 * 1000 * 60))
             if(NativeTodayTasksHandler.getAllTaskTypes() != "[]"){
                 props.setIsVsible(false)
             }

@@ -1,5 +1,6 @@
 import { Dimensions, PixelRatio, StyleSheet, View } from "react-native";
 import colors from "../../Components/Styles/colors";
+import _vw from "../../../utils/sizeConversors";
 
 const stylesClock = StyleSheet.create({
     view:{
@@ -8,25 +9,19 @@ const stylesClock = StyleSheet.create({
     container: {
         padding:0,
         backgroundColor: colors.clock,
-        width: Dimensions.get('screen').width - Dimensions.get('screen').width*0.2,
-        height: Dimensions.get('screen').width - Dimensions.get('screen').width*0.2,
-        borderRadius: Dimensions.get('screen').width - Dimensions.get('screen').width/PixelRatio.get(),
+        width: _vw(20),
+        height: _vw(20),
+        borderRadius: _vw(5),
         display:'flex',
         justifyContent: 'center',
         alignItems:'center',
         justifyContent:'center',
-        borderWidth: 15,
         borderColor: colors.clock_border,
         overflow:'hidden'
     },
     btn:{
-        color: colors.font,
-        textAlign:'center',
-        display:'flex',
-        fontSize: 1 * (Dimensions.get('screen').width - Dimensions.get('screen').width * 0.2),
-        position:'absolute',
-        top:(Dimensions.get('screen').width - Dimensions.get('screen').width * 1.2),
-        alignSelf:'center'
+        fontSize: _vw(10),
+        margin:0
     }
 });
 export default stylesClock;

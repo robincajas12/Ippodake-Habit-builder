@@ -13,6 +13,9 @@ const stylesFooter = StyleSheet.create({
         flex: 1,
         borderTopLeftRadius: _vw(5),
         borderTopRightRadius: _vw(5),
+        borderRadius: _vw(4),
+        margin: _vw(5),
+        marginTop:_vw(1),
         possition: 'absolute'
     },
     btn:{

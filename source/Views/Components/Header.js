@@ -17,6 +17,7 @@ export default function Header()
             console.log(NativeTodayTasksHandler.getAllMainTasks())
     }
     return <View style = {stylesHeader.viewHeader}>
+
         <StatusBar hidden={false} backgroundColor={colors.primaryColor}>
         </StatusBar> 
         <Text style={stylesHeader.textHeader}>Level {level}</Text>

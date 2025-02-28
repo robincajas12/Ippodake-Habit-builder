@@ -1,6 +1,7 @@
 import { Pressable, Text, View } from "react-native";
 import stylesFooter from "./Styles/stylesFooter";
 import listView from "./listViews";
+import { BannerAd, BannerAdSize, TestIds } from "react-native-google-mobile-ads";
 export default function Footer({setMain})
 {
     function touchEnd(viewToShow)

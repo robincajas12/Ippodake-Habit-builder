@@ -71,7 +71,7 @@ import { Appearance } from 'react-native';
 const lightColors = {
   primaryColor: '#6753F9',
   primaryColor_darker: '#252840',
-  clock: '#0A0A0F',
+  clock: '#252840',
   clock_border: '#fff',
   white_blue: '#BEC0FF',
   font: '#fff',

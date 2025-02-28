@@ -15,26 +15,24 @@ import NativeTodayTasksHandler from './specs/NativeTodayTasksHandler';
 import { ETaskType } from './source/Models/TaskType';
 import Form from './source/Views/Components/General/Components/Form';
 import NativeLevelHandler from './specs/NativeLevelHandler';
+
 function App()
 {
   const [main, setMain] = useState<ListViewKey>('Home');
   const [isVisible, setIsVsible] = useState(false);
-  useEffect(()=>{
-    if(NativeTodayTasksHandler.getAllTaskTypes() == "[]")
-      { 
-        
-        setIsVsible(true)
-
-      }
-    else{
-      const tasksType = JSON.parse(NativeTodayTasksHandler.getAllTaskTypes())
-      const id = tasksType[0]["id"]
-      if(NativeTodayTasksHandler.getTaskForToday(id) == "[]"){
-        NativeTodayTasksHandler.createTaskForToday(id)
-        console.log(NativeTodayTasksHandler.getAllMainTasks())
+  useEffect(() => {
+    if (NativeTodayTasksHandler.getAllTaskTypes() == "[]") { 
+      setIsVsible(true);
+    } else {
+      const tasksType = JSON.parse(NativeTodayTasksHandler.getAllTaskTypes());
+      const id = tasksType[0]["id"];
+      if (NativeTodayTasksHandler.getTaskForToday(id) == "[]") {
+        NativeTodayTasksHandler.createTaskForToday(id);
+        console.log(NativeTodayTasksHandler.getAllMainTasks());
       }
     }
-  })
+  }, []); // 👈 Se ejecuta solo una vez después del primer render
+  
   const MainComponent = listView[main];
 
   useEffect(() => {

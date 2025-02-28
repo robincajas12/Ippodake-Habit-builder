@@ -17,9 +17,7 @@ export default function ({ setClockStarted, setTime, updateTimer }: any) {
         jsonObject.put("finish",chronometer.finish)
     */
     const [chronometerInfo, setChronometerInfo] = useState<{id:number, isTimerActive: boolean, start: number, finish: number} | null>(null)
-    const [selectedTaskType, setSelectTaskType] = useState(()=>{
-        JSON.parse(NativeTodayTasksHandler.getAllTaskTypes())
-    });
+    const [selectedTaskType, setSelectTaskType] = useState(null);
     const [selectedTask, setSelectTask] = useState<Task | null>(()=>{
         if(NativeTodayTasksHandler.getAllTaskTypes() != "[]" && NativeTodayTasksHandler.getAllMainTasks() != "[]")
         {
@@ -88,7 +86,7 @@ export default function ({ setClockStarted, setTime, updateTimer }: any) {
                         const getChronometerInfo = NativeTodayTasksHandler.updateChronometerStatus(idChronometer, true)
                         const chonometer = NativeTodayTasksHandler.getChronometer(idChronometer)
                         const parsedChronometer = JSON.parse(chonometer);
-                        setChronometerInfo({id : parsedChronometer.id, isTimerActive : parsedChronometer.isTimerActive, start: Number(parsedChronometer.finish), finish: Number(parsedChronometer.finish)})
+                        setChronometerInfo({id : parsedChronometer.id, isTimerActive : parsedChronometer.isTimerActive, start: Number(parsedChronometer.start), finish: Number(parsedChronometer.finish)})
                         setIsPlaying(true)
                         const date : Date = new  Date()
                         date.setHours(0)
