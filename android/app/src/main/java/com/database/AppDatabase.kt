@@ -12,7 +12,8 @@ import androidx.room.TypeConverters
         User::class,
         Dates::class,
         Tasks::class,
-        TaskType::class
+        TaskType::class,
+        Chronometer::class
 
     ],
     version = 1)
@@ -21,4 +22,5 @@ abstract class AppDatabase : RoomDatabase(){
     abstract fun userDao() : UserDao
     abstract fun datesDao() : DatesDao
     abstract fun tasksDao() : TasksDao
+    abstract fun chronometerDao() : ChronometerDao
 }

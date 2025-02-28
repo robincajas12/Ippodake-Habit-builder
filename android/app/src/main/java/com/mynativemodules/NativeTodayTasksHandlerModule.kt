@@ -1,5 +1,6 @@
 package com.mynativemodules
 
+import com.database.Chronometer
 import com.database.DatabaseHelper
 import com.database.DatesDao
 import com.database.ECompletedTask
@@ -13,6 +14,7 @@ import com.utils.TimeUtil
 import org.json.JSONArray
 import org.json.JSONObject
 import java.text.SimpleDateFormat
+import java.time.Duration
 import java.time.LocalDate
 import java.time.ZoneId
 import java.util.Calendar
@@ -23,6 +25,56 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
     private val datesDao : DatesDao = DatabaseHelper.DataBaseProvider.getDatabase(reactContext).datesDao()
     override fun getToday(): String {
         return datesDao.getDay().first().date.time.toString()
+    }
+
+    override fun getChronometerTimeRemaining(id: Double): Double {
+        val chronometerDao = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).chronometerDao()
+        val chronos = chronometerDao.getById(id.toInt())
+        if(chronos.isEmpty()) return 0.0
+        val chronometer = chronos.first()
+        val timeRemaining : Long= chronometer.finish.time - Calendar.getInstance().time.time
+        return timeRemaining.toDouble()
+    }
+
+    override fun deleteChronometer(id: Double): Boolean {
+        val chronometerDao = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).chronometerDao()
+        val chronos = chronometerDao.getById(id.toInt())
+        if(chronos.isEmpty()) return false
+        val chronometer = chronos.first()
+        chronometerDao.delete(chronos.first())
+        return true
+    }
+
+    override fun createChronometer(time: Double): Double {
+        val chronometerDao = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).
+                chronometerDao()
+        val calendar : Calendar = Calendar.getInstance()
+        calendar.add(Calendar.MINUTE, ceil(time).toInt())
+        val id = chronometerDao.create(Chronometer(isTimerActive = false, start = Calendar.getInstance().time, finish = calendar.time))
+        return id.toDouble()
+    }
+
+    override fun updateChronometerStatus(id : Double,isActive: Boolean): Boolean {
+        val chronometerDao = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).chronometerDao()
+        val chronos = chronometerDao.getById(id.toInt())
+        if(chronos.isEmpty()) return false
+        val chronometer = chronos.first()
+        chronometer.isTimerActive = isActive
+        chronometerDao.update(chronometer)
+        return true
+    }
+
+    override fun getChronometer(id: Double): String {
+        val chronometerDao = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).chronometerDao()
+        val chrono = chronometerDao.getById(id.toInt())
+        if(chrono.isEmpty()) return "{}"
+        val chronometer = chrono.first()
+        val jsonObject = JSONObject();
+        jsonObject.put("id", chronometer.id)
+        jsonObject.put("isTimerActive", chronometer.isTimerActive)
+        jsonObject.put("start", chronometer.start)
+        jsonObject.put("finish",chronometer.finish)
+        return jsonObject.toString()
     }
 
     override fun recordDay(idtask: Double, timeSpent: Double): Boolean {

@@ -10,6 +10,13 @@ import Task from "../../../Models/Task";
 export default function ({ setClockStarted, setTime, updateTimer }: any) {
     const [isPlaying, setIsPlaying] = useState(false);
     const [notfID, setNotfID] = useState<string | null>(null);
+    /*
+           jsonObject.put("id", chronometer.id)
+        jsonObject.put("isTimerActive", chronometer.isTimerActive)
+        jsonObject.put("start", chronometer.start)
+        jsonObject.put("finish",chronometer.finish)
+    */
+    const [chronometerInfo, setChronometerInfo] = useState<{id:number, isTimerActive: boolean, start: number, finish: number} | null>(null)
     const [selectedTaskType, setSelectTaskType] = useState(()=>{
         JSON.parse(NativeTodayTasksHandler.getAllTaskTypes())
     });
@@ -37,8 +44,23 @@ export default function ({ setClockStarted, setTime, updateTimer }: any) {
         if (isPlaying) {
             timer = setInterval(() => {
                 setTime((t: Date) => {
-                    const newTime = new Date(t.getTime()); // Crear una nueva instancia
-                    newTime.setSeconds(newTime.getSeconds() + 1);
+                    if(chronometerInfo)
+                    {
+                        setIsPlaying(true)
+                        const date : Date = new  Date()
+                        date.setHours(0)
+                        date.setMinutes(0)
+                        date.setSeconds(0)
+                        date.setMilliseconds(0)
+                        date.setMilliseconds(NativeTodayTasksHandler.getChronometerTimeRemaining(chronometerInfo.id))
+                        return date
+                    }
+                        
+                    const newTime = new Date(); // Crear una nueva instancia
+                    newTime.setHours(0),
+                    newTime.setMinutes(0),
+                    newTime.setSeconds(0),
+                    newTime.setMilliseconds(0)
                     return newTime;
                 });
             }, 1000);
@@ -55,10 +77,39 @@ export default function ({ setClockStarted, setTime, updateTimer }: any) {
         try {
             if (!isPlaying) {
                 await createBackgroundService();
+                console.log("hola")
+                if(selectedTask?.t)
+                {
+                    console.log("Uwu")
+                    const idChronometer = NativeTodayTasksHandler.createChronometer(selectedTask.t)
+                    const chronometer = NativeTodayTasksHandler.getChronometer(idChronometer)
+                    if(chronometer != "{}")
+                    {
+                        const getChronometerInfo = NativeTodayTasksHandler.updateChronometerStatus(idChronometer, true)
+                        const chonometer = NativeTodayTasksHandler.getChronometer(idChronometer)
+                        const parsedChronometer = JSON.parse(chonometer);
+                        setChronometerInfo({id : parsedChronometer.id, isTimerActive : parsedChronometer.isTimerActive, start: Number(parsedChronometer.finish), finish: Number(parsedChronometer.finish)})
+                        setIsPlaying(true)
+                        const date : Date = new  Date()
+                        date.setHours(0)
+                        date.setMinutes(0)
+                        date.setSeconds(0)
+                        date.setMilliseconds(0)
+                        date.setMilliseconds(NativeTodayTasksHandler.getChronometerTimeRemaining(idChronometer))
+                        console.log(NativeTodayTasksHandler.getChronometerTimeRemaining(idChronometer))
+                        setTime(date)
+                    }
+                    
+                }
                 setIsPlaying(true);
             } else {
                 if (notfID) {
                     await miController.cancelNotification(notfID);
+                    if(chronometerInfo && chronometerInfo.id)
+                    {
+                        NativeTodayTasksHandler.updateChronometerStatus(Number(chronometerInfo?.id), false)
+                    }
+                    
                     setNotfID(null);
                 }
                 setIsPlaying(false);
