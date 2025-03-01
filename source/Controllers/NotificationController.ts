@@ -75,9 +75,9 @@ export default class NotificationController
         let timeInMiliseconds = 0
         if(task != undefined)
         {
-            timeInMiliseconds = Date.now() +  task.t
+            timeInMiliseconds = Date.now() +  task.t - task.tCompleted
         }
-        const body = `<p>Just focus for <span style="color: ${getNotificationColors().primaryColor}; font-style: italic;"></span> in <span style="color: ${getNotificationColors().primaryColor}; font-weight: bold;"> ${task.t/(1000*60)} minutes</span></p>`
+        const body = `<p>Just focus for <span style="color: ${getNotificationColors().primaryColor}; font-style: italic;"></span> in <span style="color: ${getNotificationColors().primaryColor}; font-weight: bold;"> ${(task.t - task.tCompleted)/(1000*60)} minutes</span></p>`
         const id = await notifee.displayNotification({
             title: `<p style="color: ${getNotificationColors().primaryColor}; font-weight: bold;">you can do it!</p>`,
             body: body,

@@ -3,9 +3,10 @@ import { TurboModule, TurboModuleRegistry } from "react-native";
 export interface Spec extends TurboModule
 {
     getToday() : string
+    getAVGTaskTCompleted(pastNDays: number) : number
     getChronometerTimeRemaining(id: number) : number
     deleteChronometer(id: number) : boolean
-    createChronometer(time : number) : number,
+    createChronometer(time : number) : number
     updateChronometerStatus(id : number, isActive:boolean) : boolean
     getChronometer(id: number) : string
     recordDay(idtask : number,timeSpent: number): boolean

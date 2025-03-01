@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
 import NativeTodayTasksHandler from "../../../specs/NativeTodayTasksHandler";
 import stylesMainContainer from "../Components/Styles/stylesMainContainer";
@@ -9,21 +9,37 @@ import _vw from "../../utils/sizeConversors";
 import { BannerAd, BannerAdSize, TestIds } from "react-native-google-mobile-ads";
 
 type HistoryProps = {
-  items: { t: number; date: string }[];
+  items: { t: number; date: string,tCompleted:number }[];
   promedio: number;
 };
-
-const History = ({ items, promedio }: HistoryProps) => {
-  const jsonData = NativeTodayTasksHandler.getAllMainTasks();
-  if (jsonData !== "[]") {
-    const data = JSON.parse(jsonData);
-    data.forEach((element: { t: number; date: string }) => {
-      const element2 = element
-      element2.t = element.t/(1000*60)
-      items.unshift(element2);
-      
-    });
+function trunc(x: number, posiciones = 0): number {
+  if (!Number.isFinite(x) || !Number.isInteger(posiciones) || posiciones < 0) {
+    throw new Error("Entrada no válida");
   }
+  
+  const factor = 10 ** posiciones;
+  return Math.trunc(x * factor) / factor;
+}
+
+const History = () => {
+  const [items, setItems] = useState<{ t: number; date: string; tCompleted: number }[]>([])
+  useEffect(()=>{
+    const jsonData = NativeTodayTasksHandler.getAllMainTasks();
+    if (jsonData !== "[]") {
+      const data = JSON.parse(jsonData);
+        data.forEach((element: { t: number; date: string, tCompleted:number }) => {
+          const element2 = element
+          element2.tCompleted = trunc((element.tCompleted / (1000 * 60)))
+          element2.t =element.t/(1000*60)
+          console.log(element2) 
+          setItems(t=> {
+            t.unshift(element2)
+            return t
+          })
+        });
+    }
+    console.log(items)
+  },[])
 
   return (
     <View style={stylesMainContentView.view}>
@@ -31,19 +47,20 @@ const History = ({ items, promedio }: HistoryProps) => {
        <View style={styles.container}>
             
       <Text style={styles.title}>Historial</Text>
-      <Text style={styles.promedio}>Promedio: {promedio} min</Text>
+      <Text style={styles.promedio}>Promedio: {NativeTodayTasksHandler.getAVGTaskTCompleted(30)/(60*1000)} min</Text>
       <FlatList
         style={{ paddingHorizontal: _vw(4)}}
         data={items}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => {
-          const porcentaje = Number(((item.t / promedio) * 100).toFixed(0));
+          let porcentaje =trunc(Number(((item.tCompleted / item.t) * 100)),1);
+          if(Number.isNaN(porcentaje)) porcentaje = 0
           const porcentajeItem = <Text style={porcentaje >= 95 ? styles.textNoDanger : porcentaje <= 50 && porcentaje < 95 ? styles.textDanger : styles.textMidDanger}>{porcentaje}%</Text>
           return (
             <View style={styles.itemContainer}>
                 <Text style={styles.textMidDanger}>{new Date(item.date).toLocaleDateString()}</Text>
               <View style={styles.row}>
-                <Text style={styles.text}>Tiempo dedicado : <Text style={porcentaje >= 80 ? styles.textNoDanger : porcentaje <= 50 && porcentaje < 80 ? styles.textDanger : styles.textMidDanger}>{item.t} min  </Text></Text> 
+                <Text style={styles.text}>Tiempo dedicado : <Text style={porcentaje >= 80 ? styles.textNoDanger : porcentaje <= 50 && porcentaje < 80 ? styles.textDanger : styles.textMidDanger}>{item.tCompleted} min  </Text></Text> 
                 {porcentajeItem}
               </View>
               
@@ -124,4 +141,4 @@ const sampleData = Array.from({ length: 100 }, (_, index) => {
 
 
 
-export default () => <History items={sampleData} promedio={Math.floor(sampleData.map(t=> t.t).reduce((prev,i) => prev + i)/sampleData.length)} />;
+export default () => <History/>;

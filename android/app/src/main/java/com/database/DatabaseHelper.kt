@@ -12,6 +12,7 @@ class DatabaseHelper {
             {
                 appDatabase = Room.databaseBuilder(context,  AppDatabase::class.java, "db").build()
                 val userDao = appDatabase!!.userDao()
+                val taskDao = appDatabase!!.tasksDao()
                 if(userDao.getAll().isEmpty())
                 {
                     userDao.createUser(User(streak=0,level = 0))
@@ -21,6 +22,18 @@ class DatabaseHelper {
                 if(dateDao.getDay().isEmpty())
                 {
                     dateDao.createDates(Dates(uid = user.uid, level = user.level, streak = user.streak, date = TimeUtil.today.getStartOfToday()))
+                }
+                if(taskDao.getTaskType().isEmpty())
+                {
+                    taskDao.createTaskType(TaskType(
+                        uid = userDao.getAll().first().uid,
+                        title = "",
+                        type = ETaskType.TIME,
+                        exp = 100,
+                        minT = 3*1000*60,
+                        maxT = 60*100*60,
+                        creationDate = TimeUtil.today.getStartOfToday(),
+                        mainTaskType = null))
                 }
             }
             return appDatabase!!;

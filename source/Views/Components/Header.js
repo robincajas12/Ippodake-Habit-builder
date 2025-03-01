@@ -21,7 +21,7 @@ export default function Header()
         <StatusBar hidden={false} backgroundColor={colors.primaryColor}>
         </StatusBar> 
         <Text style={stylesHeader.textHeader}>Level {level}</Text>
-        <Text style={stylesHeader.textHeader}>🔥 {streak}</Text>
+        <Text style={stylesHeader.textHeader}>🌟 {streak}</Text>
         {/*<Button onPress={()=>{increase()}} title={'PRESS ME'}></Button>*/}
     </View>
 }

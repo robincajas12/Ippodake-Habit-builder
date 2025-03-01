@@ -27,13 +27,23 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
         return datesDao.getDay().first().date.time.toString()
     }
 
+    override fun getAVGTaskTCompleted(pastNDays: Double): Double {
+        val taskDao = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).
+                tasksDao()
+        val calendar = Calendar.getInstance().apply { time = datesDao.getDay().first().date }
+        calendar.add(Calendar.DAY_OF_MONTH, -pastNDays.toInt())
+        val avg = taskDao.getAVGTaskSinceCertainDate(taskDao.getTaskType().first().id, calendar.time)
+        return avg
+    }
+
     override fun getChronometerTimeRemaining(id: Double): Double {
         val chronometerDao = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).chronometerDao()
         val chronos = chronometerDao.getById(id.toInt())
         if(chronos.isEmpty()) return 0.0
         val chronometer = chronos.first()
         val timeRemaining : Long= chronometer.finish.time - Calendar.getInstance().time.time
-        return timeRemaining.toDouble()
+        if(timeRemaining.toDouble() > 0) return timeRemaining.toDouble()
+        return 0.0
     }
 
     override fun deleteChronometer(id: Double): Boolean {
@@ -102,7 +112,7 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
         else {
 
             val habitTracker = HabitTracker(taskType.first().minT.toDouble(),
-                taskType.first().maxT.toDouble(), 0.3,0.3)
+                taskType.first().maxT.toDouble(), 0.2,0.3)
             val number : Int = tasksDao.getTasksByTaskTypeId(idtaskType.toInt()).count()
             val dateCreated = taskType.first().creationDate
             val calendar : Calendar = Calendar.getInstance().apply { time = dateCreated }
@@ -126,7 +136,7 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
 
     override fun getTaskForToday(id: Double): String {
         val jsonArray = JSONArray()
-        val tasks = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).tasksDao().getTaskById(id.toInt())
+        val tasks = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).tasksDao().getTasksByDate()
 
         for (task in tasks)
         {
