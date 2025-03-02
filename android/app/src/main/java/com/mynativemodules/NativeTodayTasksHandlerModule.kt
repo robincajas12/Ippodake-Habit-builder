@@ -108,11 +108,13 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
         val tasksDao = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).tasksDao()
         val datesDao = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).datesDao()
         val taskType = tasksDao.getTaskType(idtaskType.toInt())
+        val calendar = Calendar.getInstance().apply { time = datesDao.getDay().first().date }
+        calendar.add(Calendar.DAY_OF_MONTH, -21)
         if(taskType.isEmpty()) return false
         else {
 
-            val habitTracker = HabitTracker(taskType.first().minT.toDouble(),
-                taskType.first().maxT.toDouble(), 0.2,0.3)
+            val habitTracker = HabitTracker(tasksDao.getAVGTaskSinceCertainDate(taskType.first().id, calendar.time),
+                taskType.first().maxT.toDouble(), 0.2,0.4)
             val number : Int = tasksDao.getTasksByTaskTypeId(idtaskType.toInt()).count()
             val dateCreated = taskType.first().creationDate
             val calendar : Calendar = Calendar.getInstance().apply { time = dateCreated }
@@ -121,7 +123,7 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
                 val newTime : Date = calendar.time
                 val taskForThatDate = tasksDao.getTasksByDate(newTime)
                 if(taskForThatDate.isEmpty()) habitTracker.recordDay(i, 0.0)
-                else habitTracker.recordDay(i, taskForThatDate.first().t.toDouble())
+                else habitTracker.recordDay(i, taskForThatDate.first().tCompleted.toDouble())
                 calendar.add(Calendar.DAY_OF_MONTH, 1)
             }
             tasksDao.createTask(Tasks(

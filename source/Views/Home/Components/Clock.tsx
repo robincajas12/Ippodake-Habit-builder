@@ -9,6 +9,7 @@ import Task from "../../../Models/Task";
 
 export default function ({ setClockStarted,clockStarted,setTime,selectedTask, setSelectedTask}: any) {
     const [t, setT] = useState(0)
+    console.log(clockStarted)
     const [notfID, setNotfID] = useState<string | null>(null);
     /*
            jsonObject.put("id", chronometer.id)
@@ -25,12 +26,12 @@ export default function ({ setClockStarted,clockStarted,setTime,selectedTask, se
         const notificationId: string = (await miController.lauchChronometerWithTask(selectedTask, ETaskType.TIME)).toString();
         setNotfID(notificationId);
     }
-
+    let timer: NodeJS.Timeout | null = null;
     useEffect(() => {
-        let timer: NodeJS.Timeout | null = null;
-        
         if (clockStarted) {
             timer = setInterval(() => {
+                if(chronometerInfo) {
+                }
                 if(selectedTask && selectedTask.t && selectedTask.idTaskType && chronometerInfo?.id)
                     {
                         setSelectedTask(()=>{
@@ -75,14 +76,12 @@ export default function ({ setClockStarted,clockStarted,setTime,selectedTask, se
             clearInterval(timer);
         }
 
-        return () => {
-            if (timer) clearInterval(timer);
-        };
+
     }, [clockStarted]);
 
     async function onClickClock() {
         try {
-            if (!clockStarted) {
+            if (clockStarted == false) {
                 await createBackgroundService();
                 console.log("hola")
                 if(selectedTask?.t)
@@ -115,6 +114,7 @@ export default function ({ setClockStarted,clockStarted,setTime,selectedTask, se
                     setNotfID(null);
                 }
                 setClockStarted(false);
+                if(timer) clearInterval(timer)
                 if(chronometerInfo && chronometerInfo.id)
                 {
                     NativeTodayTasksHandler.updateChronometerStatus(Number(chronometerInfo?.id), false)
@@ -122,6 +122,7 @@ export default function ({ setClockStarted,clockStarted,setTime,selectedTask, se
             }
         } catch (error) {
             console.error('Error handling clock click:', error);
+            if(timer) clearInterval(timer)
         }
     }
 

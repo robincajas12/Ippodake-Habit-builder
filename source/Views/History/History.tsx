@@ -22,24 +22,15 @@ function trunc(x: number, posiciones = 0): number {
 }
 
 const History = () => {
-  const [items, setItems] = useState<{ t: number; date: string; tCompleted: number }[]>([])
-  useEffect(()=>{
-    const jsonData = NativeTodayTasksHandler.getAllMainTasks();
-    if (jsonData !== "[]") {
-      const data = JSON.parse(jsonData);
-        data.forEach((element: { t: number; date: string, tCompleted:number }) => {
-          const element2 = element
-          element2.tCompleted = trunc((element.tCompleted / (1000 * 60)))
-          element2.t =element.t/(1000*60)
-          console.log(element2) 
-          setItems(t=> {
-            t.unshift(element2)
-            return t
-          })
-        });
-    }
-    console.log(items)
-  },[])
+  //const [items, setItems] = useState<{ t: number; date: string; tCompleted: number }[]>([])
+  const items = JSON.parse(NativeTodayTasksHandler.getAllMainTasks()).map((element: { t: number; date: string, tCompleted:number }) =>{
+    const element2 = element
+    element2.tCompleted = (element.tCompleted / (1000 * 60))
+    element2.t =element.t/(1000*60)
+    return element2
+  }).reverse()
+
+
 
   return (
     <View style={stylesMainContentView.view}>
@@ -47,20 +38,20 @@ const History = () => {
        <View style={styles.container}>
             
       <Text style={styles.title}>Historial</Text>
-      <Text style={styles.promedio}>Promedio: {NativeTodayTasksHandler.getAVGTaskTCompleted(30)/(60*1000)} min</Text>
+      <Text style={styles.promedio}>Promedio: {trunc(NativeTodayTasksHandler.getAVGTaskTCompleted(30)/(60*1000),3)} min</Text>
       <FlatList
         style={{ paddingHorizontal: _vw(4)}}
         data={items}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => {
-          let porcentaje =trunc(Number(((item.tCompleted / item.t) * 100)),1);
+          let porcentaje =trunc(Number(((item.tCompleted / item.t) * 100)));
           if(Number.isNaN(porcentaje)) porcentaje = 0
-          const porcentajeItem = <Text style={porcentaje >= 95 ? styles.textNoDanger : porcentaje <= 50 && porcentaje < 95 ? styles.textDanger : styles.textMidDanger}>{porcentaje}%</Text>
+          const porcentajeItem = <Text style={porcentaje >= 95 ? styles.textNoDanger : porcentaje <= 50 && porcentaje < 95 ? styles.textDanger : styles.textMidDanger}>{trunc(porcentaje, 1)}%</Text>
           return (
             <View style={styles.itemContainer}>
                 <Text style={styles.textMidDanger}>{new Date(item.date).toLocaleDateString()}</Text>
               <View style={styles.row}>
-                <Text style={styles.text}>Tiempo dedicado : <Text style={porcentaje >= 80 ? styles.textNoDanger : porcentaje <= 50 && porcentaje < 80 ? styles.textDanger : styles.textMidDanger}>{item.tCompleted} min  </Text></Text> 
+                <Text style={styles.text}>Tiempo dedicado : <Text style={porcentaje >= 80 ? styles.textNoDanger : porcentaje <= 50 && porcentaje < 80 ? styles.textDanger : styles.textMidDanger}>{trunc(item.tCompleted,1)} min  </Text></Text> 
                 {porcentajeItem}
               </View>
               

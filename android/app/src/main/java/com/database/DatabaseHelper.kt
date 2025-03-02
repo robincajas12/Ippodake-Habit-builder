@@ -31,7 +31,7 @@ class DatabaseHelper {
                         type = ETaskType.TIME,
                         exp = 100,
                         minT = 3*1000*60,
-                        maxT = 60*100*60,
+                        maxT = 60*1000*60,
                         creationDate = TimeUtil.today.getStartOfToday(),
                         mainTaskType = null))
                 }

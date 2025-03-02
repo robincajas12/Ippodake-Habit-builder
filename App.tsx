@@ -44,7 +44,6 @@ function App()
   }, []); // 👈 Se ejecuta solo una vez después del primer render
   
   const MainComponent = listView[main];
-
   useEffect(() => {
     // Solo registrar una vez
     NotificationController.requestUserPermission()
