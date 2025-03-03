@@ -6,6 +6,7 @@ import androidx.room.Room
 import com.controllers.NotificationController
 import com.database.AppDatabase
 import com.database.DatabaseHelper
+import com.database.LocalStorage
 import com.facebook.react.bridge.ReactApplicationContext
 import com.database.User
 
@@ -20,6 +21,26 @@ public class NativeLevelHandlerModule (reactContext : ReactApplicationContext) :
 
     override fun getStreak(): Double {
         return userDao.getAll().first().streak.toDouble()
+    }
+
+    override fun setItem(key: String?, value: String?) {
+        if(key == null || value == null) return
+       val lStorage = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).localStorageDao()
+        lStorage.upsert(LocalStorage(key, value))
+    }
+
+    override fun getItem(key: String?): String {
+        val lStorage = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).localStorageDao()
+        if(key == null) return ""
+        val items = lStorage.getByKey(key)
+        if(items.isEmpty()) return ""
+        return items.first().value
+    }
+
+    override fun removeItem(key: String?) {
+        if(key == null) return
+        val lStorage = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).localStorageDao()
+        lStorage.deleteById(key)
     }
 
     override fun getName() = NAME

@@ -66,7 +66,7 @@ export default class Task {
 
 
     static fromJSON(json: string): Task {
-        console.log(json)
+        console.log("fromJson: " ,json)
         const data = JSON.parse(json);
         return new Task(data.id, data.idTaskType, Number(data.t), data.completed, data.date, Number(data.tCompleted));  // Asegurar que tCompleted sea un número
     }

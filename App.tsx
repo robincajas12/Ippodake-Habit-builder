@@ -16,6 +16,7 @@ import TaskType, { ETaskType } from './source/Models/TaskType';
 import Form from './source/Views/Components/General/Components/Form';
 import NativeLevelHandler from './specs/NativeLevelHandler';
 import Task from './source/Models/Task';
+import { ELocalStorageKeys } from './source/Enums/LocalStorageKeys';
 export interface ContextProps {
   selectedTask: Task | null;
   setSelectedTask: React.Dispatch<React.SetStateAction<Task | null>>;
@@ -23,16 +24,20 @@ export interface ContextProps {
   setClockStarted: React.Dispatch<React.SetStateAction<boolean>> |null;
   time: Date;
   setTime: React.Dispatch<React.SetStateAction<Date>>;
+  timer: NodeJS.Timeout | null;
+  setIsVsible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const Context = createContext<ContextProps | null>(null);
 function App()
 {
+  let timer : NodeJS.Timeout | null = null
   const [main, setMain] = useState<ListViewKey>('Home');
-  const [clockStarted, setClockStarted] = useState(false);
+  const [clockStarted, setClockStarted] = useState(()=>{
+    return NativeLevelHandler.getItem(ELocalStorageKeys.CLOCK_STATUS) === "true"
+  });
   const [isVisible, setIsVsible] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task| null>(null)
-  const [selectedTaskType, setSelectedTaskType] = useState<TaskType| null>(null)
     const [time, setTime] = useState(()=>  {
         const time = new Date();
         time.setHours(0);
@@ -40,7 +45,20 @@ function App()
         time.setSeconds(0);
         return time;
     });
+  function setSelectedTaskType(id : number)
+  {
+        const taskTypes = NativeTodayTasksHandler.getAllTaskTypes()
+        if(taskTypes != "[]")
+        {
+          NativeLevelHandler.setItem(
+            ELocalStorageKeys.ID_SELECTED_TASKTYPE,
+            JSON.parse(NativeTodayTasksHandler.getAllTaskTypes())[0]["id"].toString())
+        }
+        else NativeLevelHandler.setItem(ELocalStorageKeys.ID_SELECTED_TASKTYPE,  "")
+      
+  }
   useEffect(() => {
+
   }, []); // 👈 Se ejecuta solo una vez después del primer render
   
   const MainComponent = listView[main];
@@ -54,15 +72,20 @@ function App()
     });
     if(selectedTask == null)
     {
+
         setSelectedTask(()=>{
           if(NativeTodayTasksHandler.getAllTaskTypes() != "[]" && NativeTodayTasksHandler.getTaskForToday(1) != "[]")
             {
+              setSelectedTaskType(1)
               const today = JSON.parse(NativeTodayTasksHandler
-              .getTaskForToday(JSON.parse(NativeTodayTasksHandler.getTaskForToday(1))[0]["id"]))[0]
-              return Task.fromJSON(JSON.stringify(today))
+              .getTaskForToday(Number(NativeLevelHandler.getItem(ELocalStorageKeys.ID_SELECTED_TASKTYPE))))[0]
+              const task = Task.fromJSON(JSON.stringify(today))
+              NativeLevelHandler.setItem(ELocalStorageKeys.ID_SELECTED_TASK, task.id.toString())
+              return task
             }
             return null
         })
+        
     }
     return () => {
         // Limpiar cuando el componente se desmonte si es necesario
@@ -70,6 +93,8 @@ function App()
 }, []);
   
   return <Context.Provider value={{ 
+    timer,
+    setIsVsible,
     selectedTask, 
     setSelectedTask,
     clockStarted,

@@ -31,7 +31,7 @@ const History = () => {
        <View style={styles.container}>
             
       <Text style={styles.title}>Historial</Text>
-      <Text style={styles.promedio}>Promedio: {trunc(NativeTodayTasksHandler.getAVGTaskTCompleted(30)/(60*1000),3)} min</Text>
+      <Text style={styles.promedio}>Promedio: {/*trunc(NativeTodayTasksHandler.getAVGTaskTCompleted(30)/(60*1000),3)*/} min</Text>
       <FlatList
         style={{ paddingHorizontal: _vw(4)}}
         data={items}

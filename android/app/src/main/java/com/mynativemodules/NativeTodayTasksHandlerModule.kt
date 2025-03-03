@@ -7,16 +7,11 @@ import com.database.ECompletedTask
 import com.database.ETaskType
 import com.database.TaskType
 import com.database.Tasks
-import com.database.TasksDao
 import com.facebook.react.bridge.ReactApplicationContext
 import com.hrsmodels.HabitTracker
 import com.utils.TimeUtil
 import org.json.JSONArray
 import org.json.JSONObject
-import java.text.SimpleDateFormat
-import java.time.Duration
-import java.time.LocalDate
-import java.time.ZoneId
 import java.util.Calendar
 import java.util.Date
 import kotlin.math.ceil
@@ -27,6 +22,29 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
         return datesDao.getDay().first().date.time.toString()
     }
 
+    override fun getHabitFormationModelCurrentTime(idtaskType: Double): Double {
+        val tasksDao = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).tasksDao()
+        val taskType = tasksDao.getTaskType(idtaskType.toInt())
+        val calendar1 = Calendar.getInstance().apply { time = datesDao.getDay().first().date }
+        calendar1.add(Calendar.DAY_OF_MONTH, -21)
+        var avg = tasksDao.getAVGTaskSinceCertainDate(taskType.first().id, calendar1.time)
+        if(avg < taskType.first().minT) avg = taskType.first().minT.toDouble()
+        val habitTracker = HabitTracker(avg,
+            taskType.first().maxT.toDouble(), 0.2,0.4)
+        val number : Int = tasksDao.getTasksByTaskTypeId(idtaskType.toInt()).count()
+        val dateCreated = taskType.first().creationDate
+        val calendar : Calendar = Calendar.getInstance().apply { time = dateCreated }
+        for(i in 1..number)
+        {
+            val newTime : Date = calendar.time
+            val taskForThatDate = tasksDao.getTasksByDate(newTime)
+            if(taskForThatDate.isEmpty()) habitTracker.recordDay(i, 0.0)
+            else habitTracker.recordDay(i, taskForThatDate.first().tCompleted.toDouble())
+            calendar.add(Calendar.DAY_OF_MONTH, 1)
+        }
+        return habitTracker.habitModel.getCurrentTime()
+    }
+
     override fun getAVGTaskTCompleted(pastNDays: Double): Double {
         val taskDao = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).
                 tasksDao()
@@ -34,6 +52,16 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
         calendar.add(Calendar.DAY_OF_MONTH, -pastNDays.toInt())
         val avg = taskDao.getAVGTaskSinceCertainDate(taskDao.getTaskType().first().id, calendar.time)
         return avg
+    }
+
+    override fun getRealAVG(pastNDays: Double): Double {
+        val taskDao = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).
+        tasksDao()
+        val calendar = Calendar.getInstance().apply { time = datesDao.getDay().first().date }
+        calendar.add(Calendar.DAY_OF_MONTH, -pastNDays.toInt())
+        val sum = taskDao.getSumTaskSinceCertainDate(taskDao.getTaskType().first().id, calendar.time)
+        if(sum <= 0.01) return 0.0
+        return sum/pastNDays
     }
 
     override fun getChronometerTimeRemaining(id: Double): Double {
@@ -51,7 +79,7 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
         val chronos = chronometerDao.getById(id.toInt())
         if(chronos.isEmpty()) return false
         val chronometer = chronos.first()
-        chronometerDao.delete(chronos.first())
+        chronometerDao.delete(chronometer)
         return true
     }
 
@@ -104,13 +132,13 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
     }
 
 
-    override fun createTaskForToday(idtaskType: Double): Boolean {
+    override fun createTaskForToday(idtaskType: Double): Double {
         val tasksDao = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).tasksDao()
         val datesDao = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).datesDao()
         val taskType = tasksDao.getTaskType(idtaskType.toInt())
         val calendar1 = Calendar.getInstance().apply { time = datesDao.getDay().first().date }
         calendar1.add(Calendar.DAY_OF_MONTH, -21)
-        if(taskType.isEmpty()) return false
+        if(taskType.isEmpty()) return -1.0
         else {
             var avg = tasksDao.getAVGTaskSinceCertainDate(taskType.first().id, calendar1.time)
             if(avg < taskType.first().minT) avg = taskType.first().minT.toDouble()
@@ -127,14 +155,25 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
                 else habitTracker.recordDay(i, taskForThatDate.first().tCompleted.toDouble())
                 calendar.add(Calendar.DAY_OF_MONTH, 1)
             }
-            tasksDao.createTask(Tasks(
+            return tasksDao.createTask(Tasks(
                 idTaskType = idtaskType.toInt(),
                 completed = ECompletedTask.UNCOMPLETED,
                 t = habitTracker.habitModel.getCurrentTime().toInt(),
                 tCompleted = 0,
-                date = datesDao.getDay().first().date))
-            return true
+                date = datesDao.getDay().first().date)).toDouble()
         }
+    }
+
+    override fun createTaskForTodayWithTime(idtaskType: Double, t: Double): Double {
+        val tasksDao = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).tasksDao()
+        val tasksType = tasksDao.getTaskType(idtaskType.toInt())
+        if(tasksType.isEmpty()) return -1.0
+        return tasksDao.createTask(Tasks(
+            idTaskType = idtaskType.toInt(),
+            completed = ECompletedTask.UNCOMPLETED,
+            t = t.toInt(),
+            tCompleted = 0,
+            date = datesDao.getDay().first().date)).toDouble()
     }
 
     override fun getTaskForToday(id: Double): String {
@@ -212,9 +251,9 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
         mainTaskType: Double,
         maxT: Double,
         minT: Double
-    ): Boolean {
+    ): Double {
         val datesDao = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).datesDao()
-        DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext)
+        return DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext)
             .tasksDao().createTaskType(TaskType(
                 type = ETaskType.TIME,
                 mainTaskType = null,
@@ -224,8 +263,7 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
                 creationDate = TimeUtil.today.getStartOfToday(),
                 exp = 0,
                 uid = 0
-            ));
-        return true
+            )).toDouble()
     }
 
     override fun getName() = NAME

@@ -21,7 +21,7 @@ export default function CreateTask({ selectedTask,setSelectTask, styleView}: any
                 else   setTime(new Date())
             },1000)
         }
-      })
+      }, [])
 
       function onPress()
       {
@@ -37,6 +37,19 @@ export default function CreateTask({ selectedTask,setSelectTask, styleView}: any
                         }
                         return null
                     })
+                if(selectedTask)
+                {
+                    setTime(t=>{
+                        const date = new Date()
+                        date.setDate(0)
+                        date.setHours(0)
+                        date.setMinutes(0)
+                        date.setSeconds(0)
+                        date.setMilliseconds(0)
+                        date.setMilliseconds(selectedTask.t - selectedTask.tCompleted)
+                        return date
+                    })
+                }
             }
       }
     return (<View style={styleView}>

@@ -14,6 +14,8 @@ interface ChronometerDao {
     fun getAllInactiveChronometers() : List<Chronometer>
     @Query("select * from Chronometer where id = :id")
     fun getById(id : Int) : List<Chronometer>
+    @Query("update Chronometer set isTimerActive = 0 where isTimerActive = 1")
+    fun desactivateAllChronometers()
     @Insert
     fun create(chronometer: Chronometer) : Long
     @Delete

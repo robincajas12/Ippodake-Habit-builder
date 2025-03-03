@@ -9,9 +9,9 @@ import java.util.Date
 
 @Dao
 interface TasksDao {
-    @Query("SELECT t.* FROM Tasks as t join TaskType as tp on t.idTaskType = tp.id where tp.mainTaskType is null")
+    @Query("SELECT t.* FROM Tasks as t join TaskType as tp on t.idTaskType = tp.id where tp.mainTaskType is null order by date desc")
     fun getAllMainTasks() : List<Tasks>
-    @Query("SELECT t.* FROM Tasks as t join TaskType as tp on t.idTaskType = tp.id where tp.mainTaskType = :id")
+    @Query("SELECT t.* FROM Tasks as t join TaskType as tp on t.idTaskType = tp.id where tp.mainTaskType = :id order by date desc")
     fun getSubtasks(id : Int) : List<Tasks>
     @Query("select * from TaskType where id = :id LIMIT 1")
     fun getTaskType(id : Int) : List<TaskType>
@@ -27,12 +27,14 @@ interface TasksDao {
     fun getTasksByTaskTypeIdAndDate(idTask : Int, date : String) : List<Tasks>
     @Query("select * from Tasks where date >= :date order by date desc")
     fun getTaskSinceCertainDate(date : Date) : List<Tasks>
-    @Query("select avg(tCompleted) from Tasks where date >= :date and idTaskType = :idTaskType order by date desc")
+    @Query("select avg(tCompleted) from Tasks where date >= :date and idTaskType = :idTaskType")
     fun getAVGTaskSinceCertainDate(idTaskType: Int,date : Date) : Double
+    @Query("select sum(tCompleted) from Tasks where date >= :date and idTaskType = :idTaskType")
+    fun getSumTaskSinceCertainDate(idTaskType: Int,date : Date) : Double
     @Insert
-    fun createTaskType(taskType: TaskType)
+    fun createTaskType(taskType: TaskType) : Long
     @Insert
-    fun createTask(task : Tasks)
+    fun createTask(task : Tasks) : Long
     @Update
     fun updateTaskType(taskType: TaskType)
     @Update
