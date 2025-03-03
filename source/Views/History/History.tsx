@@ -7,19 +7,12 @@ import colors from "../Components/Styles/colors"; // Adjust the import path to w
 import _vh from "../../utils/sizeConversors";
 import _vw from "../../utils/sizeConversors";
 import { BannerAd, BannerAdSize, TestIds } from "react-native-google-mobile-ads";
-
+import { trunc } from "../../utils/mathForDummies";
 type HistoryProps = {
   items: { t: number; date: string,tCompleted:number }[];
   promedio: number;
 };
-function trunc(x: number, posiciones = 0): number {
-  if (!Number.isFinite(x) || !Number.isInteger(posiciones) || posiciones < 0) {
-    throw new Error("Entrada no válida");
-  }
-  
-  const factor = 10 ** posiciones;
-  return Math.trunc(x * factor) / factor;
-}
+
 
 const History = () => {
   //const [items, setItems] = useState<{ t: number; date: string; tCompleted: number }[]>([])
@@ -77,16 +70,17 @@ const styles = StyleSheet.create({
   title: {
     fontSize: _vw(10),
     paddingLeft: _vw(6),
-    fontWeight: "bold",
     marginBottom: _vw(2),
-    color: colors.white_blue, // Use font color for text
+    color: colors.white_blue, // Use font color for text,
+    fontFamily: 'Roboto-Regular', 
   },
   promedio: {
     paddingLeft: _vw(6),
     fontSize: _vw(5),
-    fontWeight: "bold",
+    fontFamily: 'Roboto-Bold', 
     marginBottom: _vw(1),
-    color: colors.font, // Use font color for text
+    color: colors.font, // Use font color for text,
+    
   },
 itemContainer: {
     backgroundColor: colors.primaryColor + "22",
@@ -102,22 +96,27 @@ itemContainer: {
   },
   text:{
     fontSize: _vw(5),
-    color: colors.font
+    color: colors.font,
+    fontFamily: 'Roboto-Regular'
   },
   textNoDanger: {
     fontSize: _vw(5),
+     fontFamily: 'Roboto-Regular',
     color: colors.nonDanger, // Ensure text uses font color
   },
   textDanger:{
     fontSize: _vw(5),
+     fontFamily: 'Roboto-Regular',
     color: colors.danger, // Ensure text uses danger color
   },
   textMidDanger:{
     fontSize:  _vw(5),
-    color: colors.white_blue
+    color: colors.white_blue,
+     fontFamily: 'Roboto-Regular'
   },
   emoji: {
     fontSize: _vw(5),
+     fontFamily: 'Roboto-Regular'
   },
 });
 const sampleData = Array.from({ length: 100 }, (_, index) => {

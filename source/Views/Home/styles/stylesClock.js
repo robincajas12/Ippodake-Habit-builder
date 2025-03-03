@@ -21,6 +21,7 @@ const stylesClock = StyleSheet.create({
     },
     btn:{
         fontSize: _vw(10),
+         fontFamily: 'Roboto-Regular',
         margin:0
     }
 });

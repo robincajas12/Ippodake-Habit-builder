@@ -18,7 +18,8 @@ const stylesHeader = StyleSheet.create({
     {
       color: colors.font,
       fontSize: 20,
-      paddingHorizontal: 25
+      paddingHorizontal: 25,
+      fontFamily: 'Roboto-Regular'
     }
 });
 export default stylesHeader;

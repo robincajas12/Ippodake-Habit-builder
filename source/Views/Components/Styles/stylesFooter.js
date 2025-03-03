@@ -25,7 +25,9 @@ const stylesFooter = StyleSheet.create({
         color: colors.font,
         display:'flex',
         alignSelf:'center',
-        padding: 10
+        padding: 10,
+        fontFamily: 'Roboto-Regular'
+        
     }
 
 });

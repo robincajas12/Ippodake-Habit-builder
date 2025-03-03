@@ -108,12 +108,13 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
         val tasksDao = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).tasksDao()
         val datesDao = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).datesDao()
         val taskType = tasksDao.getTaskType(idtaskType.toInt())
-        val calendar = Calendar.getInstance().apply { time = datesDao.getDay().first().date }
-        calendar.add(Calendar.DAY_OF_MONTH, -21)
+        val calendar1 = Calendar.getInstance().apply { time = datesDao.getDay().first().date }
+        calendar1.add(Calendar.DAY_OF_MONTH, -21)
         if(taskType.isEmpty()) return false
         else {
-
-            val habitTracker = HabitTracker(tasksDao.getAVGTaskSinceCertainDate(taskType.first().id, calendar.time),
+            var avg = tasksDao.getAVGTaskSinceCertainDate(taskType.first().id, calendar1.time)
+            if(avg < taskType.first().minT) avg = taskType.first().minT.toDouble()
+            val habitTracker = HabitTracker(avg,
                 taskType.first().maxT.toDouble(), 0.2,0.4)
             val number : Int = tasksDao.getTasksByTaskTypeId(idtaskType.toInt()).count()
             val dateCreated = taskType.first().creationDate

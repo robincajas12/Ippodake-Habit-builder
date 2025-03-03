@@ -17,7 +17,8 @@ const stylesCreateTask = StyleSheet.create({
     },
     pressableText:{
         fontSize: _vw(5),
-        color: colors.font
+        color: colors.font,
+        fontFamily: 'Roboto-Regular'
     },
     container: {
         backgroundColor: colors.primaryColor_darker,
@@ -27,9 +28,10 @@ const stylesCreateTask = StyleSheet.create({
         flex:1
     },
     textH1:{
-        fontSize:_vw(5),
+        fontSize:_vw(6),
         paddingVertical: _vw(5),
-        color: colors.font
+        color: colors.font,
+         fontFamily: 'Roboto-Bold'
     }
 });
 export default stylesCreateTask
