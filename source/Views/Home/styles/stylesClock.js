@@ -4,23 +4,21 @@ import _vw from "../../../utils/sizeConversors";
 
 const stylesClock = StyleSheet.create({
     view:{
-        padding:Dimensions.get('screen').width*0.1
+        padding: _vw(5)
     },
     container: {
         padding:0,
-        backgroundColor: colors.clock,
         width: _vw(20),
         height: _vw(20),
-        borderRadius: _vw(5),
+        borderRadius: _vw(0),
         display:'flex',
         justifyContent: 'center',
         alignItems:'center',
         justifyContent:'center',
-        borderColor: colors.clock_border,
         overflow:'hidden'
     },
     btn:{
-        fontSize: _vw(10),
+        fontSize: _vw(15),
          fontFamily: 'Roboto-Regular',
         margin:0
     }

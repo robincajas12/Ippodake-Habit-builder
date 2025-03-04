@@ -69,27 +69,27 @@ import { Appearance } from 'react-native';
 
 // Colores para modo claro
 const lightColors = {
-  primaryColor: '#6753F9',
-  primaryColor_darker: '#252840',
+  primaryColor: "#fff",//'#6753F9',
+  primaryColor_darker: '#eee',
   clock: '#252840',
   clock_border: '#fff',
   white_blue: '#BEC0FF',
-  font: '#fff',
+  font: '#555',
   // Colores mejorados para "danger" y "nonDanger"
-  danger: '#E57373',      // Rojo suave
+  danger: '#da4e45',      // Rojo suave
   nonDanger: '#81C784',   // Verde suave
 };
 
 // Colores para modo oscuro
 const darkColors = {
-  primaryColor: '#1E1E1E',
-  primaryColor_darker: '#121212',
+  primaryColor: '#1b2022',
+  primaryColor_darker: '#111',
   clock: '#333333',
   clock_border: '#ccc',
   white_blue: '#BEC0FF',
-  font: '#fff',
+  font: '#dfdfe2',
   // Mismos tonos que en modo claro para mantener consistencia
-  danger: '#E57373',
+  danger: '#da4e45',
   nonDanger: '#81C784',
 };
 

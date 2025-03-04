@@ -33,7 +33,7 @@ const History = () => {
       <Text style={styles.title}>Historial</Text>
       <Text style={styles.promedio}>Promedio: {/*trunc(NativeTodayTasksHandler.getAVGTaskTCompleted(30)/(60*1000),3)*/} min</Text>
       <FlatList
-        style={{ paddingHorizontal: _vw(4)}}
+        style={{ paddingHorizontal: _vw(1), width: _vw(95)}}
         data={items}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => {
@@ -42,7 +42,7 @@ const History = () => {
           const porcentajeItem = <Text style={porcentaje >= 95 ? styles.textNoDanger : porcentaje <= 50 && porcentaje < 95 ? styles.textDanger : styles.textMidDanger}>{trunc(porcentaje, 1)}%</Text>
           return (
             <View style={styles.itemContainer}>
-                <Text style={styles.textMidDanger}>{new Date(item.date).toLocaleDateString()}</Text>
+                <Text style={styles.textDate}>{new Date(item.date).toLocaleDateString()}</Text>
               <View style={styles.row}>
                 <Text style={styles.text}>Tiempo dedicado : <Text style={porcentaje >= 80 ? styles.textNoDanger : porcentaje <= 50 && porcentaje < 80 ? styles.textDanger : styles.textMidDanger}>{trunc(item.tCompleted,1)} min  </Text></Text> 
                 {porcentajeItem}
@@ -65,14 +65,25 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingBlockStart: _vw(4),
     backgroundColor: colors.primaryColor_darker, // Use primaryColor_darker for background,
-    alignItems:"center"
+    alignItems:"center",
+    width: _vw(100)
   },
   title: {
     fontSize: _vw(10),
     paddingLeft: _vw(6),
     marginBottom: _vw(2),
-    color: colors.white_blue, // Use font color for text,
+    color: colors.font, // Use font color for text,
     fontFamily: 'Roboto-Regular', 
+  },
+  textDate:{
+    fontFamily: 'Roboto-Bold',
+    backgroundColor: colors.white_blue,
+    textAlign: 'center',
+    width: _vw(20),
+    padding: _vw(1),
+    borderRadius: _vw(5),
+    display: 'flex',
+    color: colors.font
   },
   promedio: {
     paddingLeft: _vw(6),
@@ -83,7 +94,7 @@ const styles = StyleSheet.create({
     
   },
 itemContainer: {
-    backgroundColor: colors.primaryColor + "22",
+    backgroundColor: colors.primaryColor,
     padding: _vw(3),
     marginVertical: _vw(2),
     borderRadius: _vw(2),
