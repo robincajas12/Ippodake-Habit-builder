@@ -68,7 +68,7 @@ export const getNotificationColors = () => {
 import { Appearance } from 'react-native';
 
 // Colores para modo claro
-const lightColors = {
+export const lightColors = {
   primaryColor: "#fff",//'#6753F9',
   primaryColor_darker: '#eee',
   clock: '#252840',
@@ -81,7 +81,7 @@ const lightColors = {
 };
 
 // Colores para modo oscuro
-const darkColors = {
+export const darkColors = {
   primaryColor: '#1b2022',
   primaryColor_darker: '#111',
   clock: '#333333',

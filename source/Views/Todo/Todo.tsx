@@ -14,12 +14,12 @@ export default function Todo()
 }*/
 import React from 'react';
 import { Text, View, StyleSheet } from 'react-native';
+import Chat from '../Chat/Chat';
 
 export default function Todo() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>This is Roboto Regular!</Text>
-      <Text style={styles.defaultText}>This is the default font.</Text>
+      <Chat></Chat>
     </View>
   );
 }

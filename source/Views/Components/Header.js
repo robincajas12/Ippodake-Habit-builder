@@ -1,6 +1,6 @@
-import { StatusBar, View,Text, Button } from "react-native";
+import { StatusBar, View,Text, Button, Pressable } from "react-native";
 import stylesHeader from "./Styles/stylesHeader";
-import colors from "./Styles/colors";
+import colors, { lightColors } from "./Styles/colors";
 import NativeLevelHandler from "../../../specs/NativeLevelHandler";
 import NativeTodayTasksHandler from "../../../specs/NativeTodayTasksHandler";
 import { useEffect, useState } from "react";
@@ -16,12 +16,13 @@ export default function Header()
             console.log(NativeTodayTasksHandler.createTaskForToday(1))
             console.log(NativeTodayTasksHandler.getAllMainTasks())
     }
-    return <View style = {stylesHeader.viewHeader}>
-
-        <StatusBar hidden={false} backgroundColor={colors.primaryColor}>
-        </StatusBar> 
-        <Text style={stylesHeader.textHeader}>Level {level}</Text>
-        <Text style={stylesHeader.textHeader}>🌟 {streak}</Text>
-        {/*<Button onPress={()=>{increase()}} title={'PRESS ME'}></Button>*/}
-    </View>
-}
+    return (
+        <View style={stylesHeader.viewHeader}>
+            <StatusBar hidden={false} backgroundColor={colors.primaryColor} barStyle={colors.primaryColor === lightColors.primaryColor ? "dark-content" : "light-content"}  />
+            <Text style={stylesHeader.textHeader}>🌟 {streak}</Text>
+            <Pressable style={stylesHeader.helpPressable}>
+                <Text style={stylesHeader.helpText}>?</Text>
+            </Pressable>
+        </View>
+    );
+}    

@@ -60,13 +60,14 @@ const stylesCreateTask = StyleSheet.create({
         transform: [{scale: _vw(0.25)}]
     },
     boostBtnContainerSelected: {
-        boxShadow: _vw(1)+" "+_vw(1)+" " + _vw(5) + " " + colors.clock+"55"
+        boxShadow: _vw(1)+" "+_vw(1)+" " + _vw(5) + " " + colors.clock+"55",
+        transform: [{scale: _vw(0.30)}]
     },
     boostBtnEmoji:{
         fontSize: _vw(15)
     },
     boostBtnEmojiSelected:{
-        fontSize: _vw(20)
+        //fontSize: _vw(20)
     },
     boostBtnTxt:{
         fontFamily: 'Roboto-Regular',
@@ -91,7 +92,8 @@ const stylesCreateTask = StyleSheet.create({
         fontSize: _vw(15),
         top: "25%",
         left: "25%",
-        opacity: 0.6
+        opacity: 0.8
+
     },
     containerCreateTask:{
         display: 'flex',
@@ -101,6 +103,6 @@ const stylesCreateTask = StyleSheet.create({
         display: 'flex',
         flexGrow: 0,
         flexDirection: 'row',
-    }
+    },
 });
 export default stylesCreateTask

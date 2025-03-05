@@ -7,11 +7,13 @@ import Slider from "@react-native-community/slider";
 import _vw from "../../utils/sizeConversors";
 import CreateTask from "./Components/CreateTask";
 import stylesMainContentView from "../Components/Styles/stylesMainContentView";
-import { Context, ContextProps } from "../../../App";
+import { Context, ContextProps } from "../../ContextComponent";
 import NativeTodayTasksHandler from "../../../specs/NativeTodayTasksHandler";
 import NativeLevelHandler from "../../../specs/NativeLevelHandler";
 import { ELocalStorageKeys } from "../../Enums/LocalStorageKeys";
 import Task from "../../Models/Task";
+import NotificationController from "../../Controllers/NotificationController";
+import notifee, { EventType } from '@notifee/react-native';
 export default function Home() {
   const context = useContext(Context);
   if (!context) {
@@ -21,7 +23,15 @@ export default function Home() {
   function onValueChange()
   {
   }
-
+  useEffect(()=>{
+        // Solo registrar una vez
+        NotificationController.requestUserPermission()
+        notifee.onBackgroundEvent(async ({ type, detail }) => {
+            if (type === EventType.PRESS) {
+                console.log('Notificación presionada', detail);
+            }
+        });
+  })
   useEffect(()=>{
     console.log(selectedTask)
     if(selectedTask)

@@ -35,6 +35,13 @@ class DatabaseHelper {
                         creationDate = TimeUtil.today.getStartOfToday(),
                         mainTaskType = null))
                 }
+                val sessionStorageDao = appDatabase!!.localStorageDao()
+                val key = "ID_SELECTED_TASKTYPE"
+                if(sessionStorageDao.getByKey(key).equals(""))
+                {
+                    sessionStorageDao.upsert(LocalStorage(key, taskDao.getTaskType().first().id.toString()))
+                }
+
             }
             return appDatabase!!;
         }

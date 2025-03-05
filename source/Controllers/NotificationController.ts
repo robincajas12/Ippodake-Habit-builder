@@ -63,8 +63,7 @@ export default class NotificationController
                 color : colors.primaryColor,
                 chronometerDirection: "down",
                 style: {type: AndroidStyle.BIGTEXT, text: body + ''},
-                largeIcon: require('../Views/Pet/Sprites/dog.gif'),  // Static image for better compatibility
-            }
+                }
         });
         console.log(id)
         return id
@@ -89,7 +88,6 @@ export default class NotificationController
                 color : colors.primaryColor,
                 chronometerDirection: "down",
                 style: {type: AndroidStyle.BIGTEXT, text: body + 'Please put your phone away'},
-                largeIcon: require('../Views/Pet/Sprites/dog.gif'),  // Static image for better compatibility
                 autoCancel: false,
                 visibility: AndroidVisibility.PUBLIC,
                 ongoing: true
