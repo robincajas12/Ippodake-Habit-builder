@@ -65,7 +65,6 @@ export default function Home() {
     selectedTask == null ? <CreateTask styleView={stylesMainContentView.view} selectedTask={selectedTask} setSelectTask={setSelectedTask}></CreateTask>:
     <View style={{ flex: 7, display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
         <Text>{time.getTime()/(1000*60)}</Text>
-      <Slider minimumValue={0} maximumValue={1000} style={{width:_vw(90)}} value={time.getTime()/(1000*60)} onValueChange={onValueChange}></Slider>
       <View style={stylesHome.container}>
         <TimeCounter time={time} />
         {setClockStarted && <Clock clockStarted={clockStarted} setClockStarted={setClockStarted} setTime={setTime} time={time} selectedTask={selectedTask} setSelectedTask={setSelectedTask}/>}

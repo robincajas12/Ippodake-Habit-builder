@@ -50,7 +50,9 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
                 tasksDao()
         val calendar = Calendar.getInstance().apply { time = datesDao.getDay().first().date }
         calendar.add(Calendar.DAY_OF_MONTH, -pastNDays.toInt())
-        val avg = taskDao.getAVGTaskSinceCertainDate(taskDao.getTaskType().first().id, calendar.time)
+        val taskType =  taskDao.getTaskType().first()
+        val avg = taskDao.getAVGTaskSinceCertainDate(taskType.id, calendar.time)
+        if(avg <= taskType.minT) return taskType.minT.toDouble()
         return avg
     }
 
@@ -59,9 +61,11 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
         tasksDao()
         val calendar = Calendar.getInstance().apply { time = datesDao.getDay().first().date }
         calendar.add(Calendar.DAY_OF_MONTH, -pastNDays.toInt())
-        val sum = taskDao.getSumTaskSinceCertainDate(taskDao.getTaskType().first().id, calendar.time)
-        if(sum <= 0.01) return 0.0
-        return sum/pastNDays
+        val taskType = taskDao.getTaskType().first()
+        val sum = taskDao.getSumTaskSinceCertainDate(taskType.id, calendar.time)
+        val avg = sum/(pastNDays.toInt())
+        if(avg <= taskType.minT) return taskType.minT.toDouble()
+        return avg.toDouble()
     }
 
     override fun getChronometerTimeRemaining(id: Double): Double {
@@ -241,6 +245,8 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
             jsonObject.put("title", taskType.title)
             jsonObject.put("exp", taskType.exp)
             jsonObject.put("creationDate", taskType.creationDate)
+            jsonObject.put("minT", taskType.minT)
+            jsonObject.put("maxT", taskType.maxT)
             jsonArray.put(jsonObject)
         }
         return jsonArray.toString()

@@ -4,7 +4,7 @@ import _vw from "../../../utils/sizeConversors";
 
 const stylesClock = StyleSheet.create({
     view:{
-        padding: _vw(5)
+        padding: _vw(5),
     },
     container: {
         padding:0,
@@ -15,7 +15,7 @@ const stylesClock = StyleSheet.create({
         justifyContent: 'center',
         alignItems:'center',
         justifyContent:'center',
-        overflow:'hidden'
+        overflow:'hidden',
     },
     btn:{
         fontSize: _vw(15),

@@ -45,20 +45,23 @@ function App()
         time.setSeconds(0);
         return time;
     });
+
+  
   function setSelectedTaskType(id : number)
   {
         const taskTypes = NativeTodayTasksHandler.getAllTaskTypes()
+        console.log(taskTypes)
         if(taskTypes != "[]")
         {
           NativeLevelHandler.setItem(
             ELocalStorageKeys.ID_SELECTED_TASKTYPE,
             JSON.parse(NativeTodayTasksHandler.getAllTaskTypes())[0]["id"].toString())
         }
-        else NativeLevelHandler.setItem(ELocalStorageKeys.ID_SELECTED_TASKTYPE,  "")
+        else NativeLevelHandler.removeItem(ELocalStorageKeys.ID_SELECTED_TASKTYPE)
       
   }
   useEffect(() => {
-
+    setSelectedTaskType(1)
   }, []); // 👈 Se ejecuta solo una vez después del primer render
   
   const MainComponent = listView[main];

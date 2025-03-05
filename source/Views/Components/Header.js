@@ -12,7 +12,7 @@ export default function Header()
     {
         setLevel(NativeLevelHandler.getUserLevel())
         setStreak(NativeLevelHandler.getStreak())
-           NativeTodayTasksHandler.createTaskType("e", 0, 60,5)
+           NativeTodayTasksHandler.createTaskType("Task", 0, 60,5)
             console.log(NativeTodayTasksHandler.createTaskForToday(1))
             console.log(NativeTodayTasksHandler.getAllMainTasks())
     }
