@@ -21,7 +21,7 @@ const History = () => {
     element2.tCompleted = (element.tCompleted / (1000 * 60))
     element2.t =element.t/(1000*60)
     return element2
-  }).reverse()
+  })
 
 
 
@@ -31,7 +31,7 @@ const History = () => {
        <View style={styles.container}>
             
       <Text style={styles.title}>Historial</Text>
-      <Text style={styles.promedio}>Promedio: {/*trunc(NativeTodayTasksHandler.getAVGTaskTCompleted(30)/(60*1000),3)*/} min</Text>
+      <Text style={styles.promedio}>Promedio: {trunc(NativeTodayTasksHandler.getAVGTaskTCompleted(30)/(60*1000),3)} min</Text>
       <FlatList
         style={{ paddingHorizontal: _vw(1), width: _vw(95)}}
         data={items}
@@ -79,11 +79,11 @@ const styles = StyleSheet.create({
     fontFamily: 'Roboto-Bold',
     backgroundColor: colors.white_blue,
     textAlign: 'center',
-    width: _vw(20),
+    width: _vw(25),
     padding: _vw(1),
     borderRadius: _vw(5),
     display: 'flex',
-    color: colors.font
+    color: colors.primaryColor
   },
   promedio: {
     paddingLeft: _vw(6),

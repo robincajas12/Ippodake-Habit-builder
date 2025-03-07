@@ -9,28 +9,26 @@ import com.database.DatabaseHelper
 import com.database.LocalStorage
 import com.facebook.react.bridge.ReactApplicationContext
 import com.database.User
+import java.util.Calendar
 
 public class NativeLevelHandlerModule (reactContext : ReactApplicationContext) : NativeLevelHandlerSpec(reactContext)
 {
     private val userDao = DatabaseHelper.DataBaseProvider.getDatabase(reactContext).userDao()
     override fun getUserLevel(): Double {
         val user = userDao.getAll().first()
-        userDao.updateUser(User(user.uid, user.streak+1, user.level+1))
         return userDao.getAll().first().level.toDouble()
     }
 
     override fun getStreak(): Double {
-        val streak = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).localStorageDao().getByKey("STARS")
-        if(streak.isEmpty()) return 0.0
-        try {
-            if(streak.first().value.toInt() > 0)
-            {
-                return streak.first().value.toInt().toDouble();
-            }
-        }catch (_: Exception){
-            return 0.0
-        }
-        return 0.0
+            val datesDao = DatabaseHelper.DataBaseProvider.getDatabase((this.reactApplicationContext)).datesDao()
+            val pastNDays = 21
+            val taskDao = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).
+            tasksDao()
+            val calendar = Calendar.getInstance().apply { time = datesDao.getDay().first().date }
+            calendar.add(Calendar.DAY_OF_MONTH, -pastNDays.toInt())
+            val taskType =  taskDao.getTaskType().first()
+            val count = taskDao.getCountTaskSinceCertainDate(taskType.id, calendar.time)
+            return count
 
     }
 

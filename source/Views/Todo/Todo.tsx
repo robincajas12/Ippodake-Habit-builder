@@ -19,7 +19,9 @@ import Chat from '../Chat/Chat';
 export default function Todo() {
   return (
     <View style={styles.container}>
-      <Chat></Chat>
+      <Chat setIsVisible={function (t: boolean): void {
+        throw new Error('Function not implemented.');
+      } }></Chat>
     </View>
   );
 }

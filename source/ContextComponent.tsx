@@ -12,12 +12,13 @@ import stylesMainContainer from "./Views/Components/Styles/stylesMainContainer";
 import Home from "./Views/Home/Home";
 import Task from "./Models/Task";
 import Header from "./Views/Components/Header";
+import { getTaskForToday } from "./utils/getTaskForToday";
 
 export interface ContextProps {
     selectedTask: Task | null;
     setSelectedTask: React.Dispatch<React.SetStateAction<Task | null>>;
     clockStarted: boolean;
-    setClockStarted: React.Dispatch<React.SetStateAction<boolean>> |null;
+    setClockStarted: React.Dispatch<React.SetStateAction<boolean>>;
     time: Date;
     setTime: React.Dispatch<React.SetStateAction<Date>>;
     timer: NodeJS.Timeout | null;
@@ -34,7 +35,7 @@ export interface ContextProps {
     });
     const [isVisible, setIsVsible] = useState(false);
     const [selectedTask, setSelectedTask] = useState<Task| null>(null)
-      const [time, setTime] = useState(()=>  {
+      const [time, setTime] = useState<Date>(()=>  {
           const time = new Date();
           time.setHours(0);
           time.setMinutes(0);
@@ -66,16 +67,14 @@ export interface ContextProps {
       {
   
           setSelectedTask(()=>{
-            if(NativeTodayTasksHandler.getAllTaskTypes() != "[]" && NativeTodayTasksHandler.getTaskForToday(1) != "[]")
+            const taskForToday = getTaskForToday()
+            console.log(taskForToday, "tarea para hoy")
+            if(taskForToday)
               {
-                setSelectedTaskType(1)
-                const today = JSON.parse(NativeTodayTasksHandler
-                .getTaskForToday(Number(NativeLevelHandler.getItem(ELocalStorageKeys.ID_SELECTED_TASKTYPE))))[0]
-                const task = Task.fromJSON(JSON.stringify(today))
-                NativeLevelHandler.setItem(ELocalStorageKeys.ID_SELECTED_TASK, task.id.toString())
-                return task
-              }
-              return null
+                NativeLevelHandler.setItem(ELocalStorageKeys.ID_SELECTED_TASK, taskForToday.id.toString())
+                return taskForToday
+            }
+            return null
           })
           
       }
@@ -84,21 +83,21 @@ export interface ContextProps {
       };
   }, []);
   useEffect(() => {
-    const handleAppStateChange = async (stage: string) => {
+    const handleAppStateChange = (stage: string) => {
         if (stage === 'active') {
             const today = NativeTodayTasksHandler.getToday();
-            const storedDate = await NativeLevelHandler.getItem(ELocalStorageKeys.CURRENT_DATE);
-
+            const storedDate = NativeLevelHandler.getItem(ELocalStorageKeys.CURRENT_DATE);
             if (today !== storedDate) {
-                await NativeLevelHandler.setItem(ELocalStorageKeys.CURRENT_DATE, today);
-                
-                // Eliminar valores de almacenamiento
-                await NativeLevelHandler.removeItem(ELocalStorageKeys.CLOCK_STATUS);
-                await NativeLevelHandler.removeItem(ELocalStorageKeys.ID_ACTIVE_NOTIFICATION);
-                await NativeLevelHandler.removeItem(ELocalStorageKeys.ID_SELECTED_TASK);
-                await NativeLevelHandler.removeItem(ELocalStorageKeys.ID_CHRONOMETER);
-                
                 setSelectedTask(null);
+                setClockStarted(false)
+                NativeLevelHandler.setItem(ELocalStorageKeys.CURRENT_DATE, NativeTodayTasksHandler.getToday())
+                if(NativeLevelHandler.getItem(ELocalStorageKeys.ID_TIMER))
+                {
+                  clearInterval(Number(NativeLevelHandler.getItem(ELocalStorageKeys.ID_TIMER)))
+                }
+                setClockStarted(false)
+                NativeLevelHandler.removeItem(ELocalStorageKeys.ID_TIMER)
+                NativeLevelHandler.removeItem(ELocalStorageKeys.CLOCK_STATUS)
             }
         }
     };

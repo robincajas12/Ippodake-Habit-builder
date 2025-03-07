@@ -31,6 +31,8 @@ interface TasksDao {
     fun getAVGTaskSinceCertainDate(idTaskType: Int,date : Date) : Double
     @Query("select sum(tCompleted) from Tasks where date >= :date and idTaskType = :idTaskType")
     fun getSumTaskSinceCertainDate(idTaskType: Int,date : Date) : Double
+    @Query("select count(tCompleted) from Tasks where date >= :date and idTaskType = :idTaskType")
+    fun getCountTaskSinceCertainDate(idTaskType: Int,date : Date) : Double
     @Insert
     fun createTaskType(taskType: TaskType) : Long
     @Insert
