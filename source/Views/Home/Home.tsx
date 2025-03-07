@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, Text, Button } from "react-native";
+import { View, Text, Button, AppState } from "react-native";
 import TimeCounter from "./Components/TimeCounter";
 import Clock from "./Components/Clock";
 import stylesHome from "./styles/stylesHome";
@@ -23,15 +23,9 @@ export default function Home() {
   function onValueChange()
   {
   }
-  useEffect(()=>{
-        // Solo registrar una vez
-        NotificationController.requestUserPermission()
-        notifee.onBackgroundEvent(async ({ type, detail }) => {
-            if (type === EventType.PRESS) {
-                console.log('Notificación presionada', detail);
-            }
-        });
-  })
+
+
+
   useEffect(()=>{
     console.log(selectedTask)
     if(selectedTask)
@@ -74,9 +68,9 @@ export default function Home() {
   return (
     selectedTask == null ? <CreateTask styleView={stylesMainContentView.view} selectedTask={selectedTask} setSelectTask={setSelectedTask}></CreateTask>:
     <View style={{ flex: 7, display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
-        <Text>{time.getTime()/(1000*60)}</Text>
+      <Text>{time.getTime()/(1000*60)}</Text>
       <View style={stylesHome.container}>
-        <TimeCounter time={time} />
+        <TimeCounter txtColor={null} time={time} />
         {setClockStarted && <Clock clockStarted={clockStarted} setClockStarted={setClockStarted} setTime={setTime} time={time} selectedTask={selectedTask} setSelectedTask={setSelectedTask}/>}
       </View>
     </View>

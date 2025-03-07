@@ -20,7 +20,18 @@ public class NativeLevelHandlerModule (reactContext : ReactApplicationContext) :
     }
 
     override fun getStreak(): Double {
-        return userDao.getAll().first().streak.toDouble()
+        val streak = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).localStorageDao().getByKey("STARS")
+        if(streak.isEmpty()) return 0.0
+        try {
+            if(streak.first().value.toInt() > 0)
+            {
+                return streak.first().value.toInt().toDouble();
+            }
+        }catch (_: Exception){
+            return 0.0
+        }
+        return 0.0
+
     }
 
     override fun setItem(key: String?, value: String?) {

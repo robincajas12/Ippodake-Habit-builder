@@ -13,6 +13,7 @@ import stylesClock from "../styles/stylesClock";
 import Slider from "@react-native-community/slider";
 import colors from "../../Components/Styles/colors";
 import Help from "../../Components/General/Components/Help";
+import { UserKeys } from "../../../Enums/UserKeys";
 
 enum boost {
     IPPODAKE = "🐢",
@@ -34,7 +35,7 @@ const btns : btnData[] = [
         name: "Avg + 10%",
         fun: (idTaskType:number)=>
         {
-            return (Math.ceil(NativeTodayTasksHandler.getAVGTaskTCompleted(idTaskType))) + 1*60*1000
+            return Math.ceil((NativeTodayTasksHandler.getAVGTaskTCompleted(idTaskType))+ (NativeTodayTasksHandler.getHabitFormationModelCurrentTime(idTaskType)*0.1))
         }
     },
     {
@@ -48,7 +49,13 @@ const btns : btnData[] = [
         type: boost.SAME,
         name: "Froze time",
         fun: (idTaskType: number) => {
-            return 0
+            const frozenTime = NativeLevelHandler.getItem(ELocalStorageKeys.FROZEN_TIME)
+            if(frozenTime)
+            {
+                const n = Number(frozenTime)
+                if(n > 3*60*1000) return n
+            }
+            return 3*60*1000
         }
     },
     {
@@ -56,7 +63,7 @@ const btns : btnData[] = [
         type: boost.MIN,
         name: "Min + 10%",
         fun: (idTaskType: number)=>{
-            return (3 + 1) * 60*1000
+            return Math.ceil(((3) * 60*1000) +  (NativeTodayTasksHandler.getHabitFormationModelCurrentTime(idTaskType)*0.1))
         }
     }
 ]
@@ -98,6 +105,22 @@ export default function CreateTask({ selectedTask,setSelectTask, styleView}: any
 
         }
       }, [timeForTask])
+      function txt()
+        {
+            const language = NativeLevelHandler.getItem(ELocalStorageKeys.LANGUAGE) as keyof typeof dataTxt;
+            if(language) return dataTxt[language]
+            else return dataTxt.en
+        }
+        const dataTxt = {
+            en: {
+                pressableText: "🛠️ Create task for today",
+                txtSubTitle: "Choose your boost for today"
+            },
+            es: {
+                pressableText: "🛠️ Crear tarea para hoy",
+                txtSubTitle: "Elige tu mejora para hoy"
+            }
+        };
       function renderItem(item : btnData)
       {
         if(idSelectedTask != "")
@@ -170,19 +193,38 @@ export default function CreateTask({ selectedTask,setSelectTask, styleView}: any
                 }
             }
       }
+      const btnIce = <View style={[(selectedBoost == boost.SAME) && stylesCreateTask.iceBtnSelected]}>
+                            <Text style={stylesCreateTask.iceIcon}>🧊</Text>
+                            <Text style={[stylesCreateTask.iceTxt]}>freeze time</Text></View>
+      function onFreezeTimeBtnSelected()
+      {
+        setSelectedBoost(boost.SAME)
+        if(timeForTask)
+        {
+            NativeLevelHandler.setItem(ELocalStorageKeys.FROZEN_TIME, timeForTask.toString())
+        }
+      }
     return (<View style={[styleView]}>
         <View style={[stylesCreateTask.container]}>
-            <Text style={stylesCreateTask.textH1}>✨ Welcome! ✨</Text>
-            <Text style={[stylesCreateTask.pressableText ,{fontSize: _vw(6), fontFamily: 'Roboto-Italic'}]}>Choose your boost for today</Text>
+            <Text style={stylesCreateTask.textH1}>{NativeLevelHandler.getItem(UserKeys.GOAL_NAME)}</Text>
+            <Text style={[stylesCreateTask.pressableText ,{fontSize: _vw(6), fontFamily: 'Roboto-Italic'}]}>{txt().txtSubTitle}</Text>
             <ScrollView horizontal={true} scrollEnabled={true} style={[stylesCreateTask.boostBtnScrollView]} showsHorizontalScrollIndicator={false} >
             <View style={stylesCreateTask.containerBtn}>
                 {btns.map(item => renderItem(item))}
             </View>
             </ScrollView>
-            <TimeCounter time={time}></TimeCounter>
-            <Pressable onPress={onPress} style={stylesCreateTask.pressable}>
-                <Text style={stylesCreateTask.pressableText}>🛠️ Create task for today</Text>
-            </Pressable>
+            <TimeCounter txtColor={selectedBoost == boost.SAME ? stylesCreateTask.iceTxtSelected.color: null} time={time}></TimeCounter>
+            <View style={stylesCreateTask.containerPressableAndIceBtn}>
+                <View style={{display: NativeLevelHandler.getStreak()>=7 ? 'flex' : 'none'}}>
+                {selectedBoost != boost.SAME ?  <Pressable onPress={onFreezeTimeBtnSelected} style={[stylesCreateTask.iceBtn]}>
+                    {btnIce}
+                </Pressable> : btnIce}
+                </View>
+                <Pressable onPress={onPress} style={stylesCreateTask.pressable}>
+                    <Text style={stylesCreateTask.pressableText}>{txt().pressableText}</Text>
+                </Pressable>
+            </View>
         </View>
     </View>);
 }
+

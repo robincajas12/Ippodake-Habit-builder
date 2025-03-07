@@ -16,6 +16,8 @@ class DatabaseHelper {
                 if(userDao.getAll().isEmpty())
                 {
                     userDao.createUser(User(streak=0,level = 0))
+                    val localStorage = appDatabase!!.localStorageDao()
+                    localStorage.upsert(LocalStorage("STARS", "0"))
                 }
                 val dateDao = appDatabase!!.datesDao()
                 val user = userDao.getAll().first()

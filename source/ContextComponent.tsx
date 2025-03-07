@@ -1,6 +1,6 @@
 import notifee, { EventType } from "@notifee/react-native";
 import { createContext, useState, useEffect } from "react";
-import { View } from "react-native";
+import { AppState, View } from "react-native";
 import NativeLevelHandler from "../specs/NativeLevelHandler";
 import NativeTodayTasksHandler from "../specs/NativeTodayTasksHandler";
 import NotificationController from "./Controllers/NotificationController";
@@ -62,13 +62,6 @@ export interface ContextProps {
     
     const MainComponent = listView[main];
     useEffect(() => {
-      // Solo registrar una vez
-      NotificationController.requestUserPermission()
-      notifee.onBackgroundEvent(async ({ type, detail }) => {
-          if (type === EventType.PRESS) {
-              console.log('Notificación presionada', detail);
-          }
-      });
       if(selectedTask == null)
       {
   
@@ -90,7 +83,32 @@ export interface ContextProps {
           // Limpiar cuando el componente se desmonte si es necesario
       };
   }, []);
-    
+  useEffect(() => {
+    const handleAppStateChange = async (stage: string) => {
+        if (stage === 'active') {
+            const today = NativeTodayTasksHandler.getToday();
+            const storedDate = await NativeLevelHandler.getItem(ELocalStorageKeys.CURRENT_DATE);
+
+            if (today !== storedDate) {
+                await NativeLevelHandler.setItem(ELocalStorageKeys.CURRENT_DATE, today);
+                
+                // Eliminar valores de almacenamiento
+                await NativeLevelHandler.removeItem(ELocalStorageKeys.CLOCK_STATUS);
+                await NativeLevelHandler.removeItem(ELocalStorageKeys.ID_ACTIVE_NOTIFICATION);
+                await NativeLevelHandler.removeItem(ELocalStorageKeys.ID_SELECTED_TASK);
+                await NativeLevelHandler.removeItem(ELocalStorageKeys.ID_CHRONOMETER);
+                
+                setSelectedTask(null);
+            }
+        }
+    };
+
+    const suscription = AppState.addEventListener('change', handleAppStateChange);
+
+    return () => {
+        suscription.remove(); // Limpieza del evento al desmontar el componente
+    };
+}, []);
     return <Context.Provider value={{ 
       timer,
       setIsVsible,
@@ -101,7 +119,7 @@ export interface ContextProps {
       time,
       setTime
       }}>
-        {isVisible ? <Form setIsVsible={setIsVsible}></Form> : 
+        {!isVisible &&
         <View style={stylesMainContainer.view}>
         <Header></Header>
             {MainComponent? <MainComponent></MainComponent> : <Home></Home>}

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
+  AppState,
   View,
 } from 'react-native';
 import Header from './source/Views/Components/Header';
@@ -21,6 +22,15 @@ import ContextComponent from './source/ContextComponent';
 import FakeChat from './source/Views/Chat/Chat';
 function App(){
   const [wasChadOpen,setWasChatOpen] = useState(true)
+    useEffect(()=>{
+          // Solo registrar una vez
+          NotificationController.requestUserPermission()
+          notifee.onBackgroundEvent(async ({ type, detail }) => {
+              if (type === EventType.PRESS) {
+                  console.log('Notificación presionada', detail);
+              }
+          });
+    })
   useEffect(()=>{
     if(NativeLevelHandler.getItem(ELocalStorageKeys.CHAT_WAS_OPEN) != true.toString())
       {

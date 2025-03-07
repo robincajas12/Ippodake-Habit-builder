@@ -6,6 +6,8 @@ export enum ELocalStorageKeys{
     CLOCK_STATUS = "CLOCK_STATUS",
     ID_TIMER = "ID_TIMER",
     CHAT_WAS_OPEN = "CHAT_WAS_OPEN",
-    LANGUAGE = "LANGUAGE" 
+    LANGUAGE = "LANGUAGE",
+    FROZEN_TIME = "FROZEN_TIME",
+    CURRENT_DATE = "CURRENT_DATE"
     
 }

@@ -2,9 +2,11 @@ package com.mynativemodules
 
 import com.database.Chronometer
 import com.database.DatabaseHelper
+import com.database.Dates
 import com.database.DatesDao
 import com.database.ECompletedTask
 import com.database.ETaskType
+import com.database.LocalStorage
 import com.database.TaskType
 import com.database.Tasks
 import com.facebook.react.bridge.ReactApplicationContext
@@ -19,6 +21,19 @@ import kotlin.math.ceil
 class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : NativeTodayTasksHandlerSpec(reactContext){
     private val datesDao : DatesDao = DatabaseHelper.DataBaseProvider.getDatabase(reactContext).datesDao()
     override fun getToday(): String {
+        val userDao =  DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).userDao()
+        val user = userDao.getAll().first()
+        if(datesDao.getDay().isEmpty())
+        {
+            datesDao.createDates(Dates(uid = user.uid, level = user.level, streak = user.streak, date = TimeUtil.today.getStartOfToday()))
+            val ls = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).localStorageDao()
+            if(ls.getByKey("STARS").isEmpty())
+            {
+                ls.upsert(LocalStorage("STARS", "0"))
+            }
+            val starts : Int= ls.getByKey("STARS").first().value.toInt()
+            ls.upsert(LocalStorage("STARTS", (starts+1).toString()))
+        }
         return datesDao.getDay().first().date.time.toString()
     }
 

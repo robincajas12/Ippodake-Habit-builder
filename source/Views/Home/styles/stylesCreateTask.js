@@ -12,7 +12,8 @@ const stylesCreateTask = StyleSheet.create({
         alignItems: 'center',
         textAlign:'center',
         borderRadius: _vw(3),
-        borderWidth: _vw(0.1)
+        //borderWidth: _vw(0.1),
+        boxShadow: _vw(1)+" "+_vw(1)+" " + _vw(5) + " " + colors.clock+"22",
     }
     ,
     pressableText:{
@@ -44,7 +45,8 @@ const stylesCreateTask = StyleSheet.create({
         padding: 0,
         paddingHorizontal: _vw(3),
         margin: 0,
-        flexDirection: 'row'
+        flexDirection: 'row',
+        
     },
     boostBtnStartsRequired:{
         fontSize: _vw(3),
@@ -104,5 +106,48 @@ const stylesCreateTask = StyleSheet.create({
         flexGrow: 0,
         flexDirection: 'row',
     },
+    containerPressableAndIceBtn:{
+        display: 'flex',
+        flexDirection: 'row'
+    },
+    iceIcon: {
+        fontSize: _vw(9),
+        textAlign: 'center'
+    },
+    iceTxt: {
+        fontSize: _vw(3), 
+        fontFamily: 'Roboto-Regular',
+        color: colors.font,
+    },
+    iceTxtSelected  : {
+        fontFamily: 'Roboto-Bold',
+        color: "rgb(1, 161, 224)"
+    },
+    iceBtn:{
+        width: _vw(15),
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: colors.primaryColor,
+        boxShadow: _vw(1)+" "+_vw(1)+" " + _vw(5) + " " + colors.clock+"22",
+        borderRadius: _vw(2),
+        marginRight:  _vw(5),
+        width: _vw(20),
+        height: _vw(20),
+        //borderWidth: _vw(0.1),
+
+    },
+    iceBtnSelected: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: colors.primaryColor_darker,
+        boxShadow: _vw(1)+" "+_vw(1)+" " + _vw(5) + " " + colors.clock+"66",
+        borderRadius: _vw(2),
+        marginRight:  _vw(5),
+        width: _vw(20),
+        height: _vw(20),
+        opacity: 0.5
+    }
 });
 export default stylesCreateTask
