@@ -82,6 +82,8 @@ export default function ({ time, setClockStarted, clockStarted, setTime, selecte
             }else{
                 setClockStarted(false)
                 NativeLevelHandler.removeItem(ELocalStorageKeys.ID_TIMER)
+                //NotificationController.get().cancelTriggerNotification()
+                NotificationController.get().cancelActiveNotifications()
             }
         }catch(e)
         {
@@ -101,7 +103,7 @@ export default function ({ time, setClockStarted, clockStarted, setTime, selecte
         NativeLevelHandler.setItem(ELocalStorageKeys.CLOCK_STATUS, status.toString());
     }
 
-    function onClickClock() {
+    async function onClickClock() {
         if (NativeLevelHandler.getItem(ELocalStorageKeys.CLOCK_STATUS) !== "true") {
             changeClockStatus(true);
             setClockStarted(true);
@@ -112,7 +114,13 @@ export default function ({ time, setClockStarted, clockStarted, setTime, selecte
             if(selectedTask)
             {
                 NativeLevelHandler.setItem(ELocalStorageKeys.ID_CHRONOMETER,NativeTodayTasksHandler.createChronometer(selectedTask.t-selectedTask.tCompleted).toString())
-            }        
+                NativeLevelHandler.setItem(ELocalStorageKeys.ID_ACTIVE_NOTIFICATION,(await NotificationController.get().lauchChronometerWithTask(selectedTask, ETaskType.TIME)).toString())
+                const idTrigerNotification = NotificationController.get().createTriggerNotification(ETaskType.TIME, selectedTask.t-selectedTask.tCompleted)
+                if(await idTrigerNotification != "")
+                {
+                    NativeLevelHandler.setItem(ELocalStorageKeys.ID_ACTIVE_TRIGER_NOTIFICATION, await idTrigerNotification)
+                }
+            }     
         } else {
             changeClockStatus(false);
             setClockStarted(false);
@@ -123,6 +131,12 @@ export default function ({ time, setClockStarted, clockStarted, setTime, selecte
             if (storedTimer) {
                 clearInterval(storedTimer);
                 NativeLevelHandler.removeItem(ELocalStorageKeys.ID_TIMER);
+            }
+            const idTrigerNotification = NativeLevelHandler.getItem(ELocalStorageKeys.ID_ACTIVE_TRIGER_NOTIFICATION)
+            if(idTrigerNotification != "")
+            {
+                NotificationController.get().cancelTriggerNotification()
+                NativeLevelHandler.removeItem(ELocalStorageKeys.ID_ACTIVE_TRIGER_NOTIFICATION)
             }
         }
     }
