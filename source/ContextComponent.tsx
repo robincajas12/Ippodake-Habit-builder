@@ -13,7 +13,7 @@ import Home from "./Views/Home/Home";
 import Task from "./Models/Task";
 import Header from "./Views/Components/Header";
 import { getTaskForToday } from "./utils/getTaskForToday";
-
+import { BannerAd, BannerAdSize, TestIds } from "react-native-google-mobile-ads";
 export interface ContextProps {
     selectedTask: Task | null;
     setSelectedTask: React.Dispatch<React.SetStateAction<Task | null>>;

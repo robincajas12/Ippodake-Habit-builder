@@ -4,7 +4,7 @@ import _vw from "../../../utils/sizeConversors";
 
 const stylesClock = StyleSheet.create({
     view:{
-        padding: _vw(5),
+        //padding: _vw(5),
     },
     container: {
         padding:0,

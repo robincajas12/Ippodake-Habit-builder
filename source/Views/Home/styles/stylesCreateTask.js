@@ -4,8 +4,7 @@ import _vw, { _vh } from "../../../utils/sizeConversors";
 import { StyleSheet } from "react-native";
 const stylesCreateTask = StyleSheet.create({
     pressable:{
-        width: _vw(60),
-        height:_vw(20),
+        padding: _vw(5),
         backgroundColor: colors.primaryColor,
         display:'flex',
         justifyContent:'center',
@@ -24,7 +23,7 @@ const stylesCreateTask = StyleSheet.create({
     container: {
         backgroundColor: colors.primaryColor_darker,
         display:'flex',
-        justifyContent:'center',
+        justifyContent:"flex-start",
         alignItems:'center',
         flex:1
     },
@@ -37,11 +36,10 @@ const stylesCreateTask = StyleSheet.create({
     },
     containerBtn:{
         width: 'auto',
-        height: _vw(50),
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: _vw(2),
+        gap: _vw(5),
         padding: 0,
         paddingHorizontal: _vw(3),
         margin: 0,
@@ -59,7 +57,8 @@ const stylesCreateTask = StyleSheet.create({
         borderRadius: _vw(5),
         paddingHorizontal: _vw(4),
         padding: _vw(3),
-        transform: [{scale: _vw(0.25)}]
+        gap: _vw(2),
+        height: 'auto'
     },
     boostBtnContainerSelected: {
         boxShadow: _vw(1)+" "+_vw(1)+" " + _vw(5) + " " + colors.clock+"55",
@@ -102,6 +101,7 @@ const stylesCreateTask = StyleSheet.create({
         flexDirection: 'row'
     },
     boostBtnScrollView:{
+        paddingVertical: _vw(5),
         display: 'flex',
         flexGrow: 0,
         flexDirection: 'row',

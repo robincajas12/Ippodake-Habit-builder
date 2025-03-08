@@ -1,11 +1,11 @@
 import History from "../History/History";
 import Home from "../Home/Home";
-import Todo from "../Todo/Todo";
+import Settings from "../Settings/Settings";
 
 const listView = {
     Home,
     History,
-    Todo
+    Settings
 }
 export type ListViewKey = keyof typeof listView;
 export default listView

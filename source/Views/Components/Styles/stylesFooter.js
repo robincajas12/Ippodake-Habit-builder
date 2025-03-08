@@ -15,7 +15,7 @@ const stylesFooter = StyleSheet.create({
         borderTopRightRadius: _vw(5),
         marginTop:_vw(1),
         possition: 'absolute',
-        
+        minHeight: _vw(30),  
     },
     btn:{
         width: _vw(25)

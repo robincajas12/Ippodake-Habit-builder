@@ -204,7 +204,8 @@ export default function CreateTask({ selectedTask,setSelectTask, styleView}: any
             NativeLevelHandler.setItem(ELocalStorageKeys.FROZEN_TIME, timeForTask.toString())
         }
       }
-    return (<View style={[styleView]}>
+    return (<ScrollView>
+        <View style={[styleView]}>
         <View style={[stylesCreateTask.container]}>
             <Text style={stylesCreateTask.textH1}>{NativeLevelHandler.getItem(UserKeys.GOAL_NAME)}</Text>
             <Text style={[stylesCreateTask.pressableText ,{fontSize: _vw(6), fontFamily: 'Roboto-Italic'}]}>{txt().txtSubTitle}</Text>
@@ -225,6 +226,7 @@ export default function CreateTask({ selectedTask,setSelectTask, styleView}: any
                 </Pressable>
             </View>
         </View>
-    </View>);
+    </View>
+    </ScrollView>);
 }
 

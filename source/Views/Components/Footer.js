@@ -36,7 +36,7 @@ export default function Footer({setMain})
             <Text style={[stylesFooter.text, selected === "History" && stylesFooter.btnSelected]}>📖</Text>
             <Text style={[stylesFooter.text,  selected === "History" && stylesFooter.selectedText]}>History</Text>
         </Pressable>
-        <Pressable style={stylesFooter.btn} onTouchEnd={()=>touchEnd('Todo')}>
+        <Pressable style={stylesFooter.btn} onTouchEnd={()=>touchEnd('Settings')}>
             <Text style={[stylesFooter.text, selected === "Todo" && stylesFooter.btnSelected]}>⚙️</Text>
             <Text style={[stylesFooter.text, selected === "Todo" && stylesFooter.selectedText]}>Settings</Text>
         </Pressable>

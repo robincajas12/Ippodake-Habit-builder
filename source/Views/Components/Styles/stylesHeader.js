@@ -13,7 +13,8 @@ const stylesHeader = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center", // Centra los elementos horizontalmente
     paddingHorizontal: 20, // Evita que el texto se pegue a los bordes
-    flex: 1
+    height: 'auto',
+    paddingVertical: _vw(5),
   },
   textHeader : 
   {
