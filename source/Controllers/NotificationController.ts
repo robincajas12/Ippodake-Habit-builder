@@ -1,5 +1,5 @@
 import { ModuleWithStatics } from "@notifee/react-native/dist/types/Module";
-import notifee, { AndroidImportance, AndroidNotificationSetting, AndroidStyle, AndroidVisibility, AuthorizationStatus, RepeatFrequency, TimestampTrigger, TriggerType } from '@notifee/react-native'
+import notifee, { AndroidImportance, AndroidNotificationSetting, AndroidStyle, AndroidVisibility, AuthorizationStatus, EventType, RepeatFrequency, TimestampTrigger, TriggerType } from '@notifee/react-native'
 import TaskType, { ETaskType } from "../Models/TaskType";
 import { ms } from "../utils/timeDiference";
 import colors, { getNotificationColors } from "../Views/Components/Styles/colors";
@@ -9,6 +9,7 @@ import { ELocalStorageKeys } from "../Enums/LocalStorageKeys";
 import NativeTodayTasksHandler from "../../specs/NativeTodayTasksHandler";
 import { getTaskForToday } from "../utils/getTaskForToday";
 import { Alert } from "react-native";
+import { trunc } from "../utils/mathForDummies";
 export default class NotificationController
 {
     cancelTriggerNotification() {
@@ -17,7 +18,6 @@ export default class NotificationController
         {
             notifee.cancelNotification(idTrigerNotification)
         }
-        throw new Error("Method not implemented.");
     }
     private static notification : NotificationController | null = null;
     
@@ -85,6 +85,9 @@ export default class NotificationController
                 color : colors.primaryColor,
                 chronometerDirection: "down",
                 style: {type: AndroidStyle.BIGTEXT, text: body + ''},
+                pressAction: {
+                    id: 'default'
+                }
                 }
         });
         console.log(id)
@@ -99,7 +102,7 @@ export default class NotificationController
         {
             timeInMiliseconds = Date.now() +  task.t - task.tCompleted
         }
-        const body = `<p>Just focus for <span style="color: ${colors.font}; font-style: italic;"></span> in <span style="color: ${colors.font}; font-weight: bold;"> ${(task.t - task.tCompleted)/(1000*60)} minutes</span></p>`
+        const body = `<p>Just focus for <span style="color: ${colors.font}; font-style: italic;"></span> in <span style="color: ${colors.font}; font-weight: bold;"> ${trunc((task.t - task.tCompleted)/(1000*60),1)} minutes</span></p>`
         const id = await notifee.displayNotification({
             title: `<p style="color: ${colors.white_blue}; font-weight: bold;">you can do it!</p>`,
             body: body,
@@ -110,15 +113,17 @@ export default class NotificationController
                 timestamp: timeInMiliseconds,
                 color : colors.primaryColor,
                 chronometerDirection: "down",
-                style: {type: AndroidStyle.BIGTEXT, text: body + 'Please put your phone away'},
+                style: {type: AndroidStyle.BIGTEXT, text: body + 'Click here to record your progress'},
                 autoCancel: false,
                 visibility: AndroidVisibility.PUBLIC,
-                ongoing: true
+                ongoing: true,
+                pressAction: {
+                    id: 'default'
+                }
             }
         });
         return id
     }
-
     async createTriggerNotification(etaskType : ETaskType,timeInMiliseconds : number)
     {
         const settings = await notifee.getNotificationSettings();
@@ -131,12 +136,17 @@ export default class NotificationController
                     allowWhileIdle: true,
                 }
             }
+            const t = getTaskForToday()
+            if(!t) return
             const id = await notifee.createTriggerNotification(
                 {
-                  title: 'Good job!',
-                  body: 'You have completed : ' + getTaskForToday()?.tCompleted + "minutesin your goal",
+                  title: 'Good job! click here to record your progress',
+                  body: 'You have completed : ' + trunc((t.tCompleted / (60*1000)),1) + "minutesin your goal",
                   android: {
                     channelId: etaskType,
+                    pressAction: {
+                        id: 'default'
+                    }
                   },
                 },
                 trigger,
@@ -148,6 +158,32 @@ export default class NotificationController
         await notifee.openAlarmPermissionSettings();
         }
         return ""
+    }
+    async createOnBackgroundEvent()
+    {
+        notifee.onBackgroundEvent(async ({ type, detail }) => {
+            if(type === EventType.DISMISSED)
+            {
+                if(NativeLevelHandler.getItem(ELocalStorageKeys.CLOCK_STATUS) == true.toString() && NativeLevelHandler.getItem(ELocalStorageKeys.ID_CHRONOMETER) != "")
+                {
+                    this.createAlertNotification( "Alert: you have an active chronometer","Click here to record your progress", ETaskType.TIME)
+
+                }
+            }
+          });
+    }
+    async  createAlertNotification(title: string,body : string, etaskType :ETaskType)
+    {
+        notifee.displayNotification({
+            title: title,
+            body: body,
+            android: {
+                channelId: etaskType,
+                pressAction: {
+                    id: 'default'
+                }
+            }
+        })
     }
     async cancelNotification(notificationId : string)
     {

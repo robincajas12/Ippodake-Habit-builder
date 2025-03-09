@@ -8,13 +8,31 @@ import _vh from "../../utils/sizeConversors";
 import _vw from "../../utils/sizeConversors";
 import { BannerAd, BannerAdSize, TestIds } from "react-native-google-mobile-ads";
 import { trunc } from "../../utils/mathForDummies";
-type HistoryProps = {
+import { ELocalStorageKeys } from "../../Enums/LocalStorageKeys";
+import NativeLevelHandler from "../../../specs/NativeLevelHandler";
+/*type HistoryProps = {
   items: { t: number; date: string,tCompleted:number }[];
   promedio: number;
 };
 
-
+type languageType = {
+  key: 'en' | 'es';
+};
 const History = () => {
+  const language = NativeLevelHandler.getItem(ELocalStorageKeys.LANGUAGE) as keyof typeof translations;
+  // Traducciones
+  const translations: { [key in languageType['key']]: { history: string, avg: string, timeSpend: string } } = {
+    en: {
+      history: "History",
+      avg: "Average (21 days)",
+      timeSpend: "Time Spend"
+    },
+    es: {
+      history: "Historial",
+      avg: "Promedio (21 días)",
+      timeSpend: "Tiempo dedicado"
+    }
+  };
   //const [items, setItems] = useState<{ t: number; date: string; tCompleted: number }[]>([])
   const items = JSON.parse(NativeTodayTasksHandler.getAllMainTasks()).map((element: { t: number; date: string, tCompleted:number }) =>{
     const element2 = element
@@ -30,8 +48,8 @@ const History = () => {
             
        <View style={styles.container}>
             
-      <Text style={styles.title}>Historial</Text>
-      <Text style={styles.promedio}>Promedio: {trunc(NativeTodayTasksHandler.getAVGTaskTCompleted(30)/(60*1000),3)} min</Text>
+      <Text style={styles.title}>{translations[language].history}</Text>
+      <Text style={styles.promedio}>{translations[language].avg}: {trunc(NativeTodayTasksHandler.getAVGTaskTCompleted(30)/(60*1000),3)} min</Text>
       <FlatList
         style={{ paddingHorizontal: _vw(1), width: _vw(95)}}
         data={items}
@@ -44,7 +62,8 @@ const History = () => {
             <View style={styles.itemContainer}>
                 <Text style={styles.textDate}>{new Date(item.date).toLocaleDateString()}</Text>
               <View style={styles.row}>
-                <Text style={styles.text}>Tiempo dedicado : <Text style={porcentaje >= 80 ? styles.textNoDanger : porcentaje <= 50 && porcentaje < 80 ? styles.textDanger : styles.textMidDanger}>{trunc(item.tCompleted,1)} min  </Text></Text> 
+                <Text style={styles.text}>{translations[language].timeSpend} </Text>
+                <Text style={porcentaje >= 95 ? styles.textNoDanger : porcentaje <= 50 && porcentaje < 80 ? styles.textDanger : styles.textMidDanger}> {trunc(item.tCompleted,1)} min  </Text> 
                 {porcentajeItem}
               </View>
               
@@ -143,3 +162,152 @@ const sampleData = Array.from({ length: 100 }, (_, index) => {
 
 
 export default () => <History/>;
+*/
+
+type HistoryProps = {
+  items: { t: number; date: string; tCompleted: number }[];
+  promedio: number;
+};
+
+type languageType = {
+  key: 'en' | 'es';
+};
+
+const History = () => {
+  const language = NativeLevelHandler.getItem(ELocalStorageKeys.LANGUAGE) as keyof typeof translations;
+
+  // Translations
+  const translations: { [key in languageType['key']]: { history: string; avg: string; timeSpend: string } } = {
+    en: {
+      history: "History",
+      avg: "Average (21 days)",
+      timeSpend: "Time Spent"
+    },
+    es: {
+      history: "Historial",
+      avg: "Promedio (21 días)",
+      timeSpend: "Tiempo dedicado"
+    }
+  };
+
+  const items = JSON.parse(NativeTodayTasksHandler.getAllMainTasks()).map((element: { t: number; date: string; tCompleted: number }) => {
+    const element2 = element;
+    element2.tCompleted = (element.tCompleted / (1000 * 60));
+    element2.t = element.t / (1000 * 60);
+    return element2;
+  });
+
+  return (
+    <View style={stylesMainContentView.view}>
+      <View style={styles.container}>
+        <Text style={styles.title}>{translations[language].history}</Text>
+        <Text style={styles.promedio}>{translations[language].avg}: {trunc(NativeTodayTasksHandler.getAVGTaskTCompleted(30) / (60 * 1000), 3)} min</Text>
+
+        <FlatList
+          style={styles.flatList}
+          data={items}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) => {
+            let porcentaje = trunc(Number(((item.tCompleted / item.t) * 100)));
+            if (Number.isNaN(porcentaje)) porcentaje = 0;
+            const porcentajeItem = (
+              <Text style={porcentaje >= 95 ? styles.textNoDanger : porcentaje <= 50 && porcentaje < 95 ? styles.textDanger : styles.textMidDanger}>
+                {trunc(porcentaje, 1)}%
+              </Text>
+            );
+            return (
+              <View style={styles.itemContainer}>
+                <Text style={styles.textDate}>{new Date(item.date).toLocaleDateString()}</Text>
+                <View style={styles.row}>
+                  <Text style={styles.text}>{translations[language].timeSpend}</Text>
+                  <Text style={porcentaje >= 95 ? styles.textNoDanger : porcentaje <= 50 && porcentaje < 80 ? styles.textDanger : styles.textMidDanger}>
+                    {trunc(item.tCompleted, 1)} min
+                  </Text>
+                  {porcentajeItem}
+                </View>
+              </View>
+            );
+          }}
+        />
+        <BannerAd unitId={TestIds.BANNER} size={BannerAdSize.BANNER} />
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingTop: _vw(4),
+    backgroundColor: colors.primaryColor_darker,
+    alignItems: 'center',
+    width: _vw(100),
+  },
+  title: {
+    fontSize: _vw(8),
+    marginBottom: _vw(3),
+    color: colors.font,
+    fontFamily: 'Roboto-Regular',
+    textAlign: 'center',
+  },
+  textDate: {
+    fontFamily: 'Roboto-Bold',
+    backgroundColor: colors.white_blue,
+    textAlign: 'center',
+    width: _vw(30),
+    padding: _vw(1),
+    borderRadius: _vw(5),
+    color: colors.primaryColor,
+    marginBottom: _vw(2),
+  },
+  promedio: {
+    fontSize: _vw(5),
+    fontFamily: 'Roboto-Bold',
+    marginBottom: _vw(3),
+    color: colors.font,
+    textAlign: 'center',
+  },
+  flatList: {
+    width: _vw(95),
+    paddingHorizontal: _vw(2),
+  },
+  itemContainer: {
+    backgroundColor: colors.primaryColor,
+    padding: _vw(4),
+    marginVertical: _vw(2),
+    borderRadius: _vw(3),
+    width: '100%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  text: {
+    fontSize: _vw(4.5),
+    color: colors.font,
+    fontFamily: 'Roboto-Regular',
+  },
+  textNoDanger: {
+    fontSize: _vw(4.5),
+    fontFamily: 'Roboto-Regular',
+    color: colors.nonDanger,
+  },
+  textDanger: {
+    fontSize: _vw(4.5),
+    fontFamily: 'Roboto-Regular',
+    color: colors.danger,
+  },
+  textMidDanger: {
+    fontSize: _vw(4.5),
+    color: colors.white_blue,
+    fontFamily: 'Roboto-Regular',
+  },
+});
+
+export default () => <History />;

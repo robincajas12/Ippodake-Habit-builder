@@ -48,6 +48,7 @@ export default function ({ time, setClockStarted, clockStarted, setTime, selecte
             console.log(NativeLevelHandler.getItem(ELocalStorageKeys.CURRENT_DATE), NativeTodayTasksHandler.getToday())
             if(NativeLevelHandler.getItem(ELocalStorageKeys.CURRENT_DATE) == NativeTodayTasksHandler.getToday())
             {
+                console.log("Hola")
                 if (time && NativeLevelHandler.getItem(ELocalStorageKeys.CLOCK_STATUS) !== "true") {
                     clearInterval(Number(NativeLevelHandler.getItem(ELocalStorageKeys.ID_TIMER)));
                     setClockStarted(false);
@@ -74,16 +75,31 @@ export default function ({ time, setClockStarted, clockStarted, setTime, selecte
                     {
                         NativeTodayTasksHandler.deleteChronometer(Number(idChrono))
                         NativeLevelHandler.removeItem(ELocalStorageKeys.ID_CHRONOMETER)
+                        clearInterval(Number(NativeLevelHandler.getItem(ELocalStorageKeys.ID_TIMER)))
+                        NativeLevelHandler.removeItem(ELocalStorageKeys.ID_TIMER)
+                        NotificationController.get().cancelTriggerNotification()
                         setClockStarted(false)
                     }
                 }
-                console.log(new Date())
-                console.log(("THis is my clokc statis aaaa: " + NativeLevelHandler.getItem(ELocalStorageKeys.CLOCK_STATUS)))
+              if(selectedTask?.tCompleted == selectedTask?.t)
+              {
+                setClockStarted(false)
+                clearInterval(Number(NativeLevelHandler.getItem(ELocalStorageKeys.ID_TIMER)))
+                NativeLevelHandler.removeItem(ELocalStorageKeys.ID_TIMER)
+                NotificationController.get().cancelTriggerNotification()
+                NotificationController.get().cancelActiveNotifications()
+                NativeLevelHandler.removeItem(ELocalStorageKeys.ID_ACTIVE_NOTIFICATION)
+                NativeLevelHandler.removeItem(ELocalStorageKeys.ID_ACTIVE_TRIGER_NOTIFICATION)
+              }
             }else{
                 setClockStarted(false)
+                clearInterval(NativeLevelHandler.getItem(ELocalStorageKeys.ID_TIMER))
                 NativeLevelHandler.removeItem(ELocalStorageKeys.ID_TIMER)
-                //NotificationController.get().cancelTriggerNotification()
+                NotificationController.get().cancelTriggerNotification()
                 NotificationController.get().cancelActiveNotifications()
+                NativeLevelHandler.removeItem(ELocalStorageKeys.ID_ACTIVE_NOTIFICATION)
+                NativeLevelHandler.removeItem(ELocalStorageKeys.ID_ACTIVE_TRIGER_NOTIFICATION)
+
             }
         }catch(e)
         {
@@ -113,12 +129,20 @@ export default function ({ time, setClockStarted, clockStarted, setTime, selecte
             }
             if(selectedTask)
             {
-                NativeLevelHandler.setItem(ELocalStorageKeys.ID_CHRONOMETER,NativeTodayTasksHandler.createChronometer(selectedTask.t-selectedTask.tCompleted).toString())
-                NativeLevelHandler.setItem(ELocalStorageKeys.ID_ACTIVE_NOTIFICATION,(await NotificationController.get().lauchChronometerWithTask(selectedTask, ETaskType.TIME)).toString())
-                const idTrigerNotification = NotificationController.get().createTriggerNotification(ETaskType.TIME, selectedTask.t-selectedTask.tCompleted)
-                if(await idTrigerNotification != "")
+                if(selectedTask.t != selectedTask.tCompleted)
                 {
-                    NativeLevelHandler.setItem(ELocalStorageKeys.ID_ACTIVE_TRIGER_NOTIFICATION, await idTrigerNotification)
+                    NativeLevelHandler.setItem(ELocalStorageKeys.ID_CHRONOMETER,NativeTodayTasksHandler.createChronometer(selectedTask.t-selectedTask.tCompleted).toString())
+                    NativeLevelHandler.setItem(ELocalStorageKeys.ID_ACTIVE_NOTIFICATION,(await NotificationController.get().lauchChronometerWithTask(selectedTask, ETaskType.TIME)).toString())
+                }
+                else{
+                    clearInterval(Number(NativeLevelHandler.getItem(ELocalStorageKeys.ID_TIMER)))
+                    const idTrigerNotification = await NotificationController.get().createTriggerNotification(ETaskType.TIME, selectedTask.t-selectedTask.tCompleted)
+                    if(idTrigerNotification)
+                    {
+                        NativeLevelHandler.setItem(ELocalStorageKeys.ID_ACTIVE_TRIGER_NOTIFICATION, idTrigerNotification)
+                    }
+                    
+                    setClockStarted(false)
                 }
             }     
         } else {
@@ -127,6 +151,8 @@ export default function ({ time, setClockStarted, clockStarted, setTime, selecte
             if(NativeLevelHandler.getItem(ELocalStorageKeys.ID_CHRONOMETER)) NativeTodayTasksHandler.deleteChronometer(Number(NativeLevelHandler.getItem(ELocalStorageKeys.ID_CHRONOMETER)))
             NativeLevelHandler.removeItem(ELocalStorageKeys.CLOCK_STATUS)
             NativeLevelHandler.removeItem(ELocalStorageKeys.ID_CHRONOMETER)
+            NotificationController.get().cancelActiveNotifications()
+            NotificationController.get().cancelTriggerNotification()
             const storedTimer = Number(NativeLevelHandler.getItem(ELocalStorageKeys.ID_TIMER));
             if (storedTimer) {
                 clearInterval(storedTimer);
@@ -137,6 +163,11 @@ export default function ({ time, setClockStarted, clockStarted, setTime, selecte
             {
                 NotificationController.get().cancelTriggerNotification()
                 NativeLevelHandler.removeItem(ELocalStorageKeys.ID_ACTIVE_TRIGER_NOTIFICATION)
+            }
+            if(NativeLevelHandler.getItem(ELocalStorageKeys.ID_ACTIVE_NOTIFICATION) != "")
+            {
+                NotificationController.get().cancelActiveNotifications()
+                NativeLevelHandler.removeItem(ELocalStorageKeys.ID_ACTIVE_NOTIFICATION)
             }
         }
     }

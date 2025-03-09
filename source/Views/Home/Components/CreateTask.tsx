@@ -149,7 +149,7 @@ export default function CreateTask({ selectedTask,setSelectTask, styleView}: any
             <Text style={stylesCreateTask.boostBtnStartsRequired}>{!(NativeLevelHandler.getStreak() >= item.startsRequired) ?  item.startsRequired + " 🌟": trunc(item.fun(Number(idSelectedTask))/(60*1000),1) + " min"}</Text>
             <Text style={[stylesCreateTask.boostBtnEmoji,item.type == selectedBoost && stylesCreateTask.boostBtnEmojiSelected, !(NativeLevelHandler.getStreak() >= item.startsRequired) && stylesCreateTask.boostBtnEmojiUnAvailable]}>{item.type}</Text>
             <Text style={[stylesCreateTask.boostBtnTxt, item.type == selectedBoost && stylesCreateTask.boostBtnTxtSelected, !(NativeLevelHandler.getStreak() >= item.startsRequired) && stylesCreateTask.boostBtnTxtUnAvailable]}>{item.name}</Text>
-            {!(NativeLevelHandler.getStreak() >= item.startsRequired) && <Text style={stylesCreateTask.boostLockNotAvailable}>🗝️</Text>}
+            {!(NativeLevelHandler.getStreak() >= item.startsRequired) && <Text style={stylesCreateTask.boostLockNotAvailable}>{ "🔒"}</Text>}
         </View>
             if(NativeLevelHandler.getStreak() >= item.startsRequired)
             {
@@ -214,7 +214,9 @@ export default function CreateTask({ selectedTask,setSelectTask, styleView}: any
                 {btns.map(item => renderItem(item))}
             </View>
             </ScrollView>
-            <TimeCounter txtColor={selectedBoost == boost.SAME ? stylesCreateTask.iceTxtSelected.color: null} time={time}></TimeCounter>
+            <View style={stylesCreateTask.containerTimeCounter}>
+                <TimeCounter txtColor={selectedBoost == boost.SAME ? stylesCreateTask.iceTxtSelected.color: null} time={time}></TimeCounter>
+            </View>
             <View style={stylesCreateTask.containerPressableAndIceBtn}>
                 <View style={{display: NativeLevelHandler.getStreak()>=7 ? 'flex' : 'none'}}>
                 {selectedBoost != boost.SAME ?  <Pressable onPress={onFreezeTimeBtnSelected} style={[stylesCreateTask.iceBtn]}>

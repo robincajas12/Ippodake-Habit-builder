@@ -29,12 +29,14 @@ export default function Todo() {
   ];
 
   // Traducciones
-  const translations: { [key in languageType['key']]: { selectedLanguage: string } } = {
+  const translations: { [key in languageType['key']]: { selectedLanguage: string, alertCloseApp: string } } = {
     en: {
       selectedLanguage: "Selected language:",
+      alertCloseApp: "To apply changes for some settings please restart the app"
     },
     es: {
       selectedLanguage: "Idioma seleccionado:",
+      alertCloseApp: "Para aplicar los cambios para algunas configuraciones reinicie la app"
     }
   };
 
@@ -80,13 +82,20 @@ export default function Todo() {
         
         {languages.map(renderLanguageBtn)}
       </View>
+      <View>
+        {/*<Text style={styles.alert}>{translations[language.key].alertCloseApp}</Text>*/}
+      </View>
     </View>
   );
 }
 
 // Estilos
 const styles = StyleSheet.create({
-  // ...tus estilos existentes...
+  alert:{
+    fontSize: _vw(5),
+    color: colors.font,
+    maxWidth: _vw(95)
+  },
   restartMessage: {
     color: colors.danger,
     marginTop: 20,
@@ -99,7 +108,9 @@ const styles = StyleSheet.create({
     borderColor: '#ffcccc',
   },
   containerSettings: {
-    padding: _vw(5)
+    padding: _vw(5),
+    maxWidth: _vw(95),
+    minWidth: _vw(95)
   },
   selectedLanguageText: {
       fontSize: _vw(6),

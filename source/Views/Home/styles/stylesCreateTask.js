@@ -108,7 +108,8 @@ const stylesCreateTask = StyleSheet.create({
     },
     containerPressableAndIceBtn:{
         display: 'flex',
-        flexDirection: 'row'
+        flexDirection: 'row',
+        marginTop: _vw(5),
     },
     iceIcon: {
         fontSize: _vw(9),
@@ -125,6 +126,7 @@ const stylesCreateTask = StyleSheet.create({
     },
     iceBtn:{
         width: _vw(15),
+
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
@@ -148,6 +150,9 @@ const stylesCreateTask = StyleSheet.create({
         width: _vw(20),
         height: _vw(20),
         opacity: 0.5
+    },
+    containerTimeCounter: {
+        paddingVertical: _vw(5),
     }
 });
 export default stylesCreateTask

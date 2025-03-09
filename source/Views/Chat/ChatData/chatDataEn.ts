@@ -1,5 +1,6 @@
 import { ChatData } from "./chatypes";
 
+
 export const chatDataEn: ChatData = {
   start: {
     bot: "Hello! My name is Ippo, and I'm a turtle 🐢",
@@ -22,7 +23,7 @@ export const chatDataEn: ChatData = {
     ]
   },
   have_you_tried_habit: {
-    bot: "Yes it is!,I like that the moral of the story is persistence more than efficiency! Have you tried building a habit?",
+    bot: "Yes it is! I like that the moral of the story is persistence more than efficiency! Have you tried building a habit?",
     options: [
       { text: "Yes, that's why I'm here. I always fail. 😞", next: "maybe_i_can_help_with_that" },
       { text: "No, I haven't tried yet. 🤔", next: "maybe_i_can_help_with_that" }
@@ -35,21 +36,22 @@ export const chatDataEn: ChatData = {
     ]
   },
   ippodake_intro: {
-    bot: "Ippodake is here to help with that! It's designed to help you maintain consistency by setting a minimum goal every day. 🌱 Whether it's a small task or a big goal, we'll take it step by step, just like the tortoise! 🐢 But here's the key: let's focus on just one habit at a time. Trying to build too many habits at once can be overwhelming, so we'll start with something small and manageable...",
+    bot: "Ippodake is here to help with that! It's designed to help you maintain consistency by setting a minimum goal every day. 🌱 Whether it's a small task or a big goal, we'll take it step by step, just like the tortoise! 🐢.",
     options: [
-      { text: "Continue  please...😄", next: "ippodake_explanation" }
+      { text: "Continue, please... 😄", next: "ippodake_explanation" }
     ]
   },
   ippodake_explanation: {
-    bot: "Well, Remember is all about taking small consistent steps every day to build lasting habits. You don't need to rush; just like the tortoise, steady progress is key. Every day, we'll set a small goal, and you'll gradually see your progress grow. 🐢 The more consistent you are, the closer you'll get to your big goal!",
+    bot: "You don't need to rush; just like the tortoise, steady progress is key. Every day, we'll set a small goal, and you'll gradually see your progress grow. 🐢 The more consistent you are, the closer you'll get to your big goal!",
     options: [
       { text: "Got it! Let's get started! 🚀", next: "enable_notifications" }
     ]
   },
   enable_notifications: {
-    bot: "For Ippodake to work properly and for you to track your progress consistently, notifications need to be enabled. Don't forget to turn them on! 🔔",
+    bot: "Okey, just one more thing... For Ippodake to work properly and for you to track your progress consistently, notifications need to be enabled. Don't forget to turn them on! 🔔 Don't worry, I'm not the green bird, I hope he's not listening...",
     options: [
-      { text: "Okay!", next: "start_tracking" }
+      { text: "Okay!", next: "start_tracking" },
+      { text: "Later...", next: "start_tracking" }
     ]
   },
   start_tracking: {

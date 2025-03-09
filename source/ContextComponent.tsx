@@ -42,7 +42,10 @@ export interface ContextProps {
           time.setSeconds(0);
           return time;
       });
-  
+      useEffect(()=>{
+          NotificationController.requestUserPermission()
+         NotificationController.get().createOnBackgroundEvent()
+      })
     
     function setSelectedTaskType(id : number)
     {
@@ -98,6 +101,13 @@ export interface ContextProps {
                 setClockStarted(false)
                 NativeLevelHandler.removeItem(ELocalStorageKeys.ID_TIMER)
                 NativeLevelHandler.removeItem(ELocalStorageKeys.CLOCK_STATUS)
+                NotificationController.get().cancelTriggerNotification()
+                const idActiveNot = NativeLevelHandler.getItem(ELocalStorageKeys.ID_ACTIVE_NOTIFICATION)
+                if(idActiveNot)
+                {
+                    notifee.cancelNotification(idActiveNot)
+                    NativeLevelHandler.removeItem(ELocalStorageKeys.ID_ACTIVE_NOTIFICATION)
+                }
             }
         }
     };

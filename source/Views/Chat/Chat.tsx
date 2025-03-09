@@ -15,13 +15,11 @@ const premadeGoals: { en: string[]; es: string[] } = {
     "📵 Stay away from my phone",
     "🎨 Draw",
     "🌿 Take a walk",
-    "⚡ Do bodyweight exercises",
   ],
   es: [
     "📵 Alejarme de mi teléfono",
     "🎨 Dibujar",
     "🌿 Caminar",
-    "⚡ Hacer ejercicios con el peso corporal",
   ]
 };
 
@@ -88,7 +86,7 @@ const ChatApp = ({ setIsVisible }: { setIsVisible: (t: boolean) => void }) => {
         </View>
       </Modal>
 
-      <ScrollView ref={scrollViewRef} contentContainerStyle={styles.contentContainer} keyboardShouldPersistTaps="handled">
+      <ScrollView  showsVerticalScrollIndicator={false} ref={scrollViewRef} contentContainerStyle={styles.contentContainer} keyboardShouldPersistTaps="handled">
         {messages.map((item, index) => (
           <View key={index} style={[styles.messageBubble, item.sender === "user" ? styles.userBubble : styles.botBubble]}>
             <Text style={[styles.messageText, item.sender === "user" && styles.messageTextUser]}>{item.text}</Text>
@@ -127,6 +125,7 @@ const ChatApp = ({ setIsVisible }: { setIsVisible: (t: boolean) => void }) => {
             value={userGoal}
             onChangeText={setUserGoal}
             placeholderTextColor={lightColors.font}
+            onSubmitEditing={() => onChandleSubmitGoalPress(userGoal)}
           />
           <TouchableOpacity style={styles.submitButton} onPress={() => onChandleSubmitGoalPress(userGoal)}>
             <Text style={styles.submitButtonText}>Submit</Text>
@@ -138,7 +137,7 @@ const ChatApp = ({ setIsVisible }: { setIsVisible: (t: boolean) => void }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: colors.primaryColor_darker },
+  container: { flex: 8, padding: 20, backgroundColor: colors.primaryColor_darker, height:_vw(100) },
   messageBubble: { padding: 10, borderRadius: 10, marginVertical: 5, maxWidth: "80%" },
   botBubble: { backgroundColor: colors.primaryColor, alignSelf: "flex-start" },
   userBubble: { backgroundColor: colors.nonDanger, alignSelf: "flex-end", borderTopRightRadius: 0 },

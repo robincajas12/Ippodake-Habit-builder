@@ -25,6 +25,7 @@ const stylesHome = StyleSheet.create({
         alignItems: 'center',
         borderRadius: _vw(6),
         padding: _vw(5),
+        minWidth: _vw(40)
     },
     container : {
         marginBottom: _vw(5),
@@ -39,7 +40,7 @@ const stylesHome = StyleSheet.create({
         fontSize: _vw(4),
         color: colors.font,
         textAlign: 'center',
-        padding: _vw(2),
+        paddingTop: _vw(2),
     },
     txtHabit:{
         fontSize: _vw(5),

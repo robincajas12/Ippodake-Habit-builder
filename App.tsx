@@ -23,13 +23,10 @@ import FakeChat from './source/Views/Chat/Chat';
 function App(){
   const [wasChadOpen,setWasChatOpen] = useState(true)
     useEffect(()=>{
-          // Solo registrar una vez
-          NotificationController.requestUserPermission()
-          notifee.onBackgroundEvent(async ({ type, detail }) => {
-              if (type === EventType.PRESS) {
-                  console.log('Notificación presionada', detail);
-              }
-          });
+      if(NativeLevelHandler.getItem(ELocalStorageKeys.CURRENT_DATE) == "")
+      {
+        NativeLevelHandler.setItem(ELocalStorageKeys.CURRENT_DATE, NativeTodayTasksHandler.getToday())
+      }
     })
   useEffect(()=>{
     if(NativeLevelHandler.getItem(ELocalStorageKeys.CHAT_WAS_OPEN) != true.toString())
@@ -37,6 +34,9 @@ function App(){
         setWasChatOpen(false)
       }
   }, [wasChadOpen])
-  return wasChadOpen ? <ContextComponent></ContextComponent> : <FakeChat setIsVisible={setWasChatOpen}></FakeChat>
+  return wasChadOpen ? <ContextComponent></ContextComponent> : <View style={{display: 'flex', flex: 1}}>
+    <Header></Header>
+    <FakeChat setIsVisible={setWasChatOpen}></FakeChat>
+  </View>
 }
 export default App;
