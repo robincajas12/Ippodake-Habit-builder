@@ -1,6 +1,6 @@
 {
   "name": "proyect1_1",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -15,6 +15,7 @@
     "notifee": "^0.0.1",
     "react": "18.3.1",
     "react-native": "0.76.5",
+    "react-native-device-info": "^14.0.4",
     "react-native-google-mobile-ads": "^14.9.1"
   },
   "devDependencies": {

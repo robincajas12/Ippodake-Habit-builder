@@ -1,24 +1,25 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, useWindowDimensions } from "react-native";
 import colors from "./colors";
 import _vw from "../../../utils/sizeConversors";
-
-const stylesFooter = StyleSheet.create({
+function stylesFooter()
+{
+    const {width,  height} = useWindowDimensions();
+    const stylesFooter1 = StyleSheet.create({
     Container:{
         paddingTop: _vw(1),
         backgroundColor: colors.primaryColor,
         display: 'flex',
-        height: _vw(30),
-        flexDirection: 'row',
+        flexDirection:  width < height ? 'row' : 'column',
         justifyContent:'space-evenly',
         alignItems:'center',
-        borderTopLeftRadius: _vw(5),
-        borderTopRightRadius: _vw(5),
-        marginTop:_vw(1),
+        borderTopLeftRadius: width < height ? _vw(5) : 0,
+        borderTopRightRadius: width < height ? _vw(5) : 0,
+        marginTop: width < height ? _vw(1) : 0,
         possition: 'absolute',
         minHeight: _vw(30),  
     },
     btn:{
-        width: _vw(25)
+        width: width < height ? _vw(25) : _vw(36)
     },
     btnSelected:{
         backgroundColor: colors.white_blue+"33", 
@@ -40,6 +41,8 @@ const stylesFooter = StyleSheet.create({
         fontFamily: 'Roboto-Regular'
         
     }
-
 });
+return stylesFooter1;
+}
+
 export default stylesFooter;

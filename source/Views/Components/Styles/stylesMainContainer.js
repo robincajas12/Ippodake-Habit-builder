@@ -1,13 +1,17 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, useWindowDimensions } from "react-native";
 import { Dimensions } from "react-native";
 import colors from "./colors";
-const stylesMainContainer = StyleSheet.create({
-    view: {
-        display:'flex',
-        flex: 1,
-        flexDirection: 'column',
-        height: Dimensions.get('screen').height,
-        backgroundColor: colors.primaryColor_darker
-    }
-})
-export default stylesMainContainer;
+
+function  stylesMainContainer() {
+    const {height, width} = useWindowDimensions()
+    const stylesMainContainer = StyleSheet.create({
+        view: {
+            display:'flex',
+            flex: 1,
+            flexDirection: width < height ? 'column' : 'row-reverse',
+            backgroundColor: colors.primaryColor_darker
+        }
+    })
+    return stylesMainContainer;
+}
+export default stylesMainContainer = stylesMainContainer;

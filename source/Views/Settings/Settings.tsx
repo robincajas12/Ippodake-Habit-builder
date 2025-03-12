@@ -74,7 +74,7 @@ export default function Todo() {
   }
 
   return (
-    <View style={stylesMainContentView.view}>
+    <View style={stylesMainContentView().view}>
       <View style={styles.containerSettings}>
         <Text style={styles.selectedLanguageText}>
           {translations[language.key].selectedLanguage} {language.txt}

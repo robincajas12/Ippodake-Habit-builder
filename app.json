@@ -2,7 +2,8 @@
   "name": "proyect1_1",
   "displayName": "proyect1_1",
   "react-native-google-mobile-ads": {
-    "android_app_id": "ca-app-pub-9679713412722657~9550606866"
+    "android_app_id": "ca-app-pub-5187514759339848~1307071175",
+    "delay_app_measurement_init": true
     
   }
 }

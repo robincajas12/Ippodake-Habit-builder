@@ -18,7 +18,7 @@ import { trunc } from "../../utils/mathForDummies";
 import colors from "../Components/Styles/colors";
 import { getTaskForToday } from "../../utils/getTaskForToday";
 import { UserKeys } from "../../Enums/UserKeys";
-import { BannerAd, BannerAdSize, TestIds } from "react-native-google-mobile-ads";
+import { AdsConsent, BannerAd, BannerAdSize, RequestOptions, TestIds } from "react-native-google-mobile-ads";
 const adUnitId = __DEV__ ? TestIds.BANNER : 'ca-app-pub-9679713412722657/5646158476';
 export default function Home() {
   const language = NativeLevelHandler.getItem(ELocalStorageKeys.LANGUAGE) as keyof typeof translations;
@@ -48,7 +48,7 @@ export default function Home() {
   if (!context) {
     return null; // Manejo del caso null
   }
-  const { selectedTask, setIsVsible, setSelectedTask, clockStarted, setClockStarted, time, setTime } : ContextProps = context;
+  const { canShowAds,selectedTask, setIsVsible, setSelectedTask, clockStarted, setClockStarted, time, setTime } : ContextProps = context;
 
   useEffect(() => {
     if (selectedTask) {
@@ -77,12 +77,32 @@ export default function Home() {
       setClockStarted(false);
     }
   }, [setTime, setSelectedTask, selectedTask]);
-
+async function loadAds()
+  {
+    const {
+      activelyScanDeviceCharacteristicsForIdentification,
+      applyMarketResearchToGenerateAudienceInsights,
+      createAPersonalisedAdsProfile,
+      createAPersonalisedContentProfile,
+      developAndImproveProducts,
+      measureAdPerformance,
+      measureContentPerformance,
+      selectBasicAds,
+      selectPersonalisedAds,
+      selectPersonalisedContent,
+      storeAndAccessInformationOnDevice,
+      usePreciseGeolocationData,
+    } = await AdsConsent.getUserChoices();
+    const requestOptions : RequestOptions = {
+      requestNonPersonalizedAdsOnly : !selectPersonalisedAds
+    }
+    return <BannerAd unitId={adUnitId} size={BannerAdSize.LARGE_BANNER} requestOptions={requestOptions} />
+  }
   return (
     selectedTask == null ? (
-      <CreateTask styleView={stylesMainContentView.view} selectedTask={selectedTask} setSelectTask={setSelectedTask} />
+      <CreateTask styleView={stylesMainContentView().view} selectedTask={selectedTask} setSelectTask={setSelectedTask} />
     ) : (
-      <View style={stylesMainContentView.view}>
+      <View style={stylesMainContentView().view}>
         <ScrollView>
           <View style={stylesHome.containerHabit}>
             <Text style={stylesHome.txtHabit}>{selectedTask.t ==selectedTask.tCompleted ? "Task completed, come back tomorrow" : translations[language].habit + ": " + habit}</Text>
@@ -109,7 +129,7 @@ export default function Home() {
                 />
               )}
             </View>
-            {clockStarted === false  ? (
+            {clockStarted === false && canShowAds  ? (
               <BannerAd unitId={adUnitId} size={BannerAdSize.LARGE_BANNER} requestOptions={{ requestNonPersonalizedAdsOnly: true }} />
             ) : (
               <View style={[stylesHome.cardsContainer]}>

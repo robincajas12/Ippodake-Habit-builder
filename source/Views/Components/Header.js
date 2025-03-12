@@ -10,11 +10,11 @@ import { ELocalStorageKeys } from "../../Enums/LocalStorageKeys";
 export default function Header()
 {
     return (
-        <View style={stylesHeader.viewHeader}>
-            <StatusBar hidden={false} backgroundColor={colors.primaryColor} barStyle={colors.primaryColor === lightColors.primaryColor ? "dark-content" : "light-content"}  />
-            <Text style={stylesHeader.textHeader}>🌟 {NativeLevelHandler.getStreak()}</Text>
-            <Pressable style={stylesHeader.helpPressable}>
-                <Text style={stylesHeader.helpText}>?</Text>
+        <View style={stylesHeader().viewHeader}>
+            <StatusBar hidden={true} backgroundColor={colors.primaryColor} barStyle={colors.primaryColor === lightColors.primaryColor ? "dark-content" : "light-content"}  />
+            <Text style={stylesHeader().textHeader}>🌟 {NativeLevelHandler.getStreak()}</Text>
+            <Pressable style={stylesHeader().helpPressable}>
+                <Text style={stylesHeader().helpText}>?</Text>
             </Pressable>
         </View>
     );

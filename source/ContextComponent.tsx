@@ -23,10 +23,11 @@ export interface ContextProps {
     setTime: React.Dispatch<React.SetStateAction<Date>>;
     timer: NodeJS.Timeout | null;
     setIsVsible: React.Dispatch<React.SetStateAction<boolean>>;
+    canShowAds: boolean;
   }
   
   export const Context = createContext<ContextProps | null>(null);
-  function ContextComponent()
+  function ContextComponent({canShowAds, setCanShowAds}:{canShowAds:boolean, setCanShowAds: (t:boolean)=>void})
   {
     let timer : NodeJS.Timeout | null = null
     const [main, setMain] = useState<ListViewKey>('Home');
@@ -126,10 +127,11 @@ export interface ContextProps {
       clockStarted,
       setClockStarted,
       time,
-      setTime
+      setTime,
+      canShowAds
       }}>
         {!isVisible &&
-        <View style={stylesMainContainer.view}>
+        <View style={stylesMainContainer().view}>
         <Header></Header>
             {MainComponent? <MainComponent></MainComponent> : <Home></Home>}
         <Footer setMain={setMain}></Footer>

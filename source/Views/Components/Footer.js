@@ -5,6 +5,7 @@ import { BannerAd, BannerAdSize, TestIds } from "react-native-google-mobile-ads"
 import { useRef, useState } from "react";
 export default function Footer({setMain})
 {
+    const styles = stylesFooter();
     const [selected, setSelected] = useState("Home");
     const animatedValue = useRef(new Animated.Value(0)).current;
     function touchEnd(viewToShow)
@@ -27,18 +28,18 @@ export default function Footer({setMain})
         ]).start();
     }
     
-    return <View style={stylesFooter.Container}>
-        <Pressable style={[stylesFooter.btn]} onTouchEnd={()=>touchEnd('Home')}>
-            <Text style={[stylesFooter.text, selected === "Home" && stylesFooter.btnSelected]}>⏰</Text>
-            <Text style={[stylesFooter.text,  selected === "Home" && stylesFooter.selectedText]}>Habit</Text>
+    return <View style={styles.Container}>
+        <Pressable style={[styles.btn]} onTouchEnd={()=>touchEnd('Home')}>
+            <Text style={[styles.text, selected === "Home" && styles.btnSelected]}>⏰</Text>
+            <Text style={[styles.text,  selected === "Home" && styles.selectedText]}>Habit</Text>
         </Pressable>
-        <Pressable style={[stylesFooter.btn]} onTouchEnd={()=>touchEnd('History')}>
-            <Text style={[stylesFooter.text, selected === "History" && stylesFooter.btnSelected]}>📖</Text>
-            <Text style={[stylesFooter.text,  selected === "History" && stylesFooter.selectedText]}>History</Text>
+        <Pressable style={[styles.btn]} onTouchEnd={()=>touchEnd('History')}>
+            <Text style={[styles.text, selected === "History" && styles.btnSelected]}>📖</Text>
+            <Text style={[styles.text,  selected === "History" && styles.selectedText]}>History</Text>
         </Pressable>
-        <Pressable style={stylesFooter.btn} onTouchEnd={()=>touchEnd('Settings')}>
-            <Text style={[stylesFooter.text, selected === "Settings" && stylesFooter.btnSelected]}>⚙️</Text>
-            <Text style={[stylesFooter.text, selected === "Settings" && stylesFooter.selectedText]}>Settings</Text>
+        <Pressable style={styles.btn} onTouchEnd={()=>touchEnd('Settings')}>
+            <Text style={[styles.text, selected === "Settings" && styles.btnSelected]}>⚙️</Text>
+            <Text style={[styles.text, selected === "Settings" && styles.selectedText]}>Settings</Text>
         </Pressable>
     </View>
 }

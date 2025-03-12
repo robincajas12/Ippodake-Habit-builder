@@ -1,25 +1,29 @@
-import { StyleSheet } from "react-native"
+import { StyleSheet, useWindowDimensions } from "react-native"
 import colors from "./colors";
-import _vw from "../../../utils/sizeConversors";
+import _vw, { _vh } from "../../../utils/sizeConversors";
 
-const stylesHeader = StyleSheet.create({
+function stylesHeader()
+{
+  const {width, height} = useWindowDimensions();
+const stylesHeader1 = StyleSheet.create({
   viewHeader: 
   {
     backgroundColor: colors.primaryColor,
-    borderBottomStartRadius: 15,
-    borderBottomEndRadius: 15,
+    borderBottomStartRadius: width < height ? 15 : 0,
+    borderBottomEndRadius:  width < height ? 15 : 0,
     display: "flex",
-    flexDirection: 'row',
-    alignItems: "center",
-    justifyContent: "center", // Centra los elementos horizontalmente
-    paddingHorizontal: 20, // Evita que el texto se pegue a los bordes
+    flexDirection: width < height ? 'row' : 'column',
+    alignItems: width < height ? "center" : "flex-start",
+    justifyContent: "space-between", // Centra los elementos horizontalmente
+    paddingHorizontal: width < height ? _vw(6): 20, // Evita que el texto se pegue a los bordes
     height: 'auto',
-    paddingVertical: _vw(5),
+    paddingVertical: width < height ? _vh(2.5) : _vw(5),
   },
   textHeader : 
   {
+    paddingVertical: width < height ? 0 : _vw(5),
     color: colors.font,
-    fontSize: 20,
+    fontSize: width < height ? _vw(8) : _vw(6),
     fontFamily: 'Roboto-Bold',
     textAlign: 'center',
     flexShrink: 1, // Evita que el texto se expanda demasiado
@@ -32,8 +36,6 @@ const stylesHeader = StyleSheet.create({
     height: _vw(10),
     justifyContent: "center",
     alignItems: "center",
-    position: 'absolute',
-    transform: [{translateX: _vw(40)}, {scale: _vw(0.15)}]
   },
   helpText:{
     fontSize: _vw(7),
@@ -42,6 +44,8 @@ const stylesHeader = StyleSheet.create({
     textAlign: 'center',
   }
 });
+return stylesHeader1;
+}
 
 
 export default stylesHeader;
