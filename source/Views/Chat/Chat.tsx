@@ -112,7 +112,7 @@ const ChatApp = ({ setIsVisible }: { setIsVisible: (t: boolean) => void }) => {
 
       {showTextInput && (
         <View style={styles.inputContainer}>
-          <Text style={{color: lightColors.font, fontSize: _vw(10), paddingBottom: _vw(5), fontFamily: 'Roboto-Italic'}}>Suggestions</Text>
+          <Text style={{color: lightColors.font, fontSize: _vw(10), paddingBottom: _vw(5), fontFamily: 'Roboto-Italic'}}>Suggestions/sugerencias</Text>
           {premadeGoals[selectedLanguage].map((goal, index) => (
             <TouchableOpacity key={index} style={styles.premadeGoalContainer} onPress={() => setUserGoal(goal)}>
               <Text style={styles.optionText}>{goal}</Text>
@@ -121,14 +121,14 @@ const ChatApp = ({ setIsVisible }: { setIsVisible: (t: boolean) => void }) => {
 
           <TextInput
             style={styles.textInput}
-            placeholder="Write your goal..."
+            placeholder="Write your goal/Escribe tu Meta"
             value={userGoal}
             onChangeText={setUserGoal}
             placeholderTextColor={lightColors.font}
             onSubmitEditing={() => onChandleSubmitGoalPress(userGoal)}
           />
           <TouchableOpacity style={styles.submitButton} onPress={() => onChandleSubmitGoalPress(userGoal)}>
-            <Text style={styles.submitButtonText}>Submit</Text>
+            <Text style={styles.submitButtonText}>Submit / enviar</Text>
           </TouchableOpacity>
         </View>
       )}

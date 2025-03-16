@@ -33,8 +33,10 @@ export default class NotificationController
       
         if (settings.authorizationStatus >= AuthorizationStatus.AUTHORIZED) {
           console.log('Permission settings:', settings);
+          NativeLevelHandler.setItem(ELocalStorageKeys.USER_NOTIFICATION_STATUS,settings.toString())
         } else {
           console.log('User declined permissions');
+          NativeLevelHandler.setItem(ELocalStorageKeys.USER_NOTIFICATION_STATUS, "declined")
         }
       }
     private async channelExist(id: string): Promise<boolean> {

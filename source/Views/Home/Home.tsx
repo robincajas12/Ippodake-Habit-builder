@@ -19,8 +19,10 @@ import colors from "../Components/Styles/colors";
 import { getTaskForToday } from "../../utils/getTaskForToday";
 import { UserKeys } from "../../Enums/UserKeys";
 import { AdsConsent, BannerAd, BannerAdSize, RequestOptions, TestIds } from "react-native-google-mobile-ads";
-const adUnitId = __DEV__ ? TestIds.BANNER : 'ca-app-pub-9679713412722657/5646158476';
-export default function Home() {
+//const adUnitId = 'ca-app-pub-9679713412722657/5646158476';
+const adUnitId = TestIds.BANNER
+export default function Home( {canShowAds} : {canShowAds: boolean} ) {
+  const [resquestOption, setResquestOption] = useState<RequestOptions | null>(null);
   const language = NativeLevelHandler.getItem(ELocalStorageKeys.LANGUAGE) as keyof typeof translations;
 
   // Traducciones
@@ -48,8 +50,22 @@ export default function Home() {
   if (!context) {
     return null; // Manejo del caso null
   }
-  const { canShowAds,selectedTask, setIsVsible, setSelectedTask, clockStarted, setClockStarted, time, setTime } : ContextProps = context;
-
+  const { selectedTask, setIsVsible, setSelectedTask, clockStarted, setClockStarted, time, setTime } : ContextProps = context;
+  useEffect(()=>{
+    const loadAds = async () => {
+      const {
+        selectPersonalisedAds,
+      } = await AdsConsent.getUserChoices();
+      console.log("selectPersonalisedAds", selectPersonalisedAds);
+      const requestOptions: RequestOptions = {
+        requestNonPersonalizedAdsOnly: !selectPersonalisedAds,
+      };
+      
+      setResquestOption(requestOptions); // Set the request options after loading
+    };
+    console.log("can show ads? " ,canShowAds)
+    if(canShowAds == true && clockStarted == false) loadAds();
+}, [canShowAds, setResquestOption])
   useEffect(() => {
     if (selectedTask) {
       setTime((t) => {
@@ -76,34 +92,15 @@ export default function Home() {
       }
       setClockStarted(false);
     }
-  }, [setTime, setSelectedTask, selectedTask]);
-async function loadAds()
-  {
-    const {
-      activelyScanDeviceCharacteristicsForIdentification,
-      applyMarketResearchToGenerateAudienceInsights,
-      createAPersonalisedAdsProfile,
-      createAPersonalisedContentProfile,
-      developAndImproveProducts,
-      measureAdPerformance,
-      measureContentPerformance,
-      selectBasicAds,
-      selectPersonalisedAds,
-      selectPersonalisedContent,
-      storeAndAccessInformationOnDevice,
-      usePreciseGeolocationData,
-    } = await AdsConsent.getUserChoices();
-    const requestOptions : RequestOptions = {
-      requestNonPersonalizedAdsOnly : !selectPersonalisedAds
-    }
-    return <BannerAd unitId={adUnitId} size={BannerAdSize.LARGE_BANNER} requestOptions={requestOptions} />
-  }
+  }, [setTime, setSelectedTask, selectedTask, setResquestOption]);
+
   return (
     selectedTask == null ? (
       <CreateTask styleView={stylesMainContentView().view} selectedTask={selectedTask} setSelectTask={setSelectedTask} />
     ) : (
       <View style={stylesMainContentView().view}>
         <ScrollView>
+          {__DEV__  && <Text style={{color: 'red'}}>DevMODE</Text>}
           <View style={stylesHome.containerHabit}>
             <Text style={stylesHome.txtHabit}>{selectedTask.t ==selectedTask.tCompleted ? "Task completed, come back tomorrow" : translations[language].habit + ": " + habit}</Text>
           </View>
@@ -129,8 +126,8 @@ async function loadAds()
                 />
               )}
             </View>
-            {clockStarted === false && canShowAds  ? (
-              <BannerAd unitId={adUnitId} size={BannerAdSize.LARGE_BANNER} requestOptions={{ requestNonPersonalizedAdsOnly: true }} />
+            {clockStarted === false && canShowAds && resquestOption != null  ? (
+              <BannerAd unitId={adUnitId} size={BannerAdSize.LARGE_BANNER} requestOptions={resquestOption} />
             ) : (
               <View style={[stylesHome.cardsContainer]}>
                 <Text style={stylesHome.cardValue}>{translations[language].info}</Text>

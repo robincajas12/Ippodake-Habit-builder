@@ -28,30 +28,30 @@ function App(){
   const isMobileAdsStartCalledRef = useRef(false);
   
   useEffect(() => {
-    AdsConsent.reset()
-    // Request consent information and load/present a consent form if necessary.
-    AdsConsent.gatherConsent()
-      .then(startGoogleMobileAdsSDK)
-      .catch((error) => console.error('Consent gathering failed:', error));
-  
-    // This sample attempts to load ads using consent obtained in the previous session.
-    // We intentionally use .then() chaining (instead of await) to ensure parallel execution.
-    startGoogleMobileAdsSDK();
-  }, []);
+    if(canShowAds == false)
+    {
+      //AdsConsent.reset()
+      // Request consent information and load/present a consent form if necessary.
+      AdsConsent.gatherConsent()
+        .then(startGoogleMobileAdsSDK)
+        .catch((error) => {
+          console.log(error)
+        });
+      // This sample attempts to load ads using consent obtained in the previous session.
+      // We intentionally use .then() chaining (instead of await) to ensure parallel execution.
+      startGoogleMobileAdsSDK();
+    }
+  }, );
   
   async function startGoogleMobileAdsSDK() {
-    const {canRequestAds} = await AdsConsent.getConsentInfo();
-    const {storeAndAccessInformationOnDevice} = await AdsConsent.getUserChoices();
-    if(storeAndAccessInformationOnDevice == false) return ;
+    const {canRequestAds, isConsentFormAvailable} = await AdsConsent.getConsentInfo();
+    console.log(canRequestAds)
     if (!canRequestAds || isMobileAdsStartCalledRef.current) {
       return;
     }
-  
-    isMobileAdsStartCalledRef.current = true;
-    setCanShowAds(true);
-  
-    // (Optional, iOS) Handle Apple's App Tracking Transparency manually.
-    const gdprApplies = await AdsConsent.getGdprApplies();
+
+    isMobileAdsStartCalledRef.current = true
+    setCanShowAds(true)
     await mobileAds().initialize()
   
     
@@ -69,7 +69,7 @@ function App(){
       {
         setWasChatOpen(false)
       }
-  }, [wasChadOpen])
+  }, [])
   return wasChadOpen ? <ContextComponent canShowAds={canShowAds} setCanShowAds={setCanShowAds}></ContextComponent> : <View style={{display: 'flex', flex: 1}}>
     <Header></Header>
     <FakeChat setIsVisible={setWasChatOpen}></FakeChat>

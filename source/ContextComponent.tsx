@@ -44,8 +44,8 @@ export interface ContextProps {
           return time;
       });
       useEffect(()=>{
-          NotificationController.requestUserPermission()
-         NotificationController.get().createOnBackgroundEvent()
+          if(NativeLevelHandler.getItem(ELocalStorageKeys.USER_NOTIFICATION_STATUS) == "") NotificationController.requestUserPermission()
+          if (selectedTask == null) NotificationController.get().createOnBackgroundEvent()
       })
     
     function setSelectedTaskType(id : number)
@@ -133,7 +133,7 @@ export interface ContextProps {
         {!isVisible &&
         <View style={stylesMainContainer().view}>
         <Header></Header>
-            {MainComponent? <MainComponent></MainComponent> : <Home></Home>}
+            {MainComponent? <MainComponent canShowAds={canShowAds}></MainComponent> : <Home canShowAds={canShowAds}></Home>}
         <Footer setMain={setMain}></Footer>
         </View>}
     </Context.Provider>

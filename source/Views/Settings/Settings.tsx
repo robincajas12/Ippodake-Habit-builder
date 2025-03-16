@@ -13,7 +13,7 @@ export default function Todo()
     </View>
 }*/
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, Pressable } from 'react-native';
+import { Text, View, StyleSheet, Pressable, Linking } from 'react-native';
 import Chat from '../Chat/Chat';
 import stylesMainContentView from '../Components/Styles/stylesMainContentView';
 import NativeLevelHandler from '../../../specs/NativeLevelHandler';
@@ -29,14 +29,16 @@ export default function Todo() {
   ];
 
   // Traducciones
-  const translations: { [key in languageType['key']]: { selectedLanguage: string, alertCloseApp: string } } = {
+  const translations: { [key in languageType['key']]: { selectedLanguage: string, alertCloseApp: string, termsAndConditions: string } } = {
     en: {
       selectedLanguage: "Selected language:",
-      alertCloseApp: "To apply changes for some settings please restart the app"
+      alertCloseApp: "To apply changes for some settings please restart the app",
+      termsAndConditions: "Terms and Conditions"
     },
     es: {
       selectedLanguage: "Idioma seleccionado:",
-      alertCloseApp: "Para aplicar los cambios para algunas configuraciones reinicie la app"
+      alertCloseApp: "Para aplicar los cambios para algunas configuraciones reinicie la app",
+      termsAndConditions: "Términos y Condiciones"
     }
   };
 
@@ -73,6 +75,15 @@ export default function Todo() {
     );
   }
 
+  // Función para abrir los términos y condiciones según el idioma seleccionado
+  function openTermsAndConditions() {
+    const url = language.key === 'es' 
+      ? 'https://docs.google.com/document/d/114eM_28kwrktbekl1SMcQzCobED94naItnq3e4KYSas/edit?usp=sharing'  // URL en español
+      : 'https://docs.google.com/document/d/1hJTeyrA5ueHHC9GMn1au2ecGsoIlbba6shuV1wcoffc/edit?usp=sharing';  // URL en inglés
+
+    Linking.openURL(url).catch((err) => console.error("Error opening URL:", err));
+  }
+
   return (
     <View style={stylesMainContentView().view}>
       <View style={styles.containerSettings}>
@@ -81,13 +92,17 @@ export default function Todo() {
         </Text>
         
         {languages.map(renderLanguageBtn)}
-      </View>
-      <View>
-        {/*<Text style={styles.alert}>{translations[language.key].alertCloseApp}</Text>*/}
+
+        {/* Botón de Términos y Condiciones */}
+        <Pressable onPress={openTermsAndConditions} style={styles.termsButton}>
+          <Text style={styles.buttonTextS}>{translations[language.key].termsAndConditions}</Text>
+        </Pressable>
       </View>
     </View>
   );
 }
+
+
 
 // Estilos
 const styles = StyleSheet.create({
@@ -128,7 +143,6 @@ const styles = StyleSheet.create({
       borderRadius: 8,
       alignItems: 'center',
       justifyContent: 'center',
-      elevation: 2, // for Android shadow
       shadowColor: '#000', // for iOS shadow
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
@@ -141,5 +155,18 @@ const styles = StyleSheet.create({
       color: colors.font,
       fontSize: _vw(5),
       fontFamily: 'Roboto-Regular',
+  },
+  buttonTextS: {
+    color: colors.white_blue,
+    fontSize: _vw(5),
+    textAlign: 'center',
+    fontFamily: 'Roboto-Regular',
+},
+  termsButton: {
+    marginTop: _vw(20),
+    padding: _vw(10),
+    backgroundColor: colors.primaryColor_darker,
+    borderRadius: _vw(5),
+    
   },
 });

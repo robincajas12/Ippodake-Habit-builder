@@ -18,6 +18,7 @@ const stylesHeader1 = StyleSheet.create({
     paddingHorizontal: width < height ? _vw(6): 20, // Evita que el texto se pegue a los bordes
     height: 'auto',
     paddingVertical: width < height ? _vh(2.5) : _vw(5),
+
   },
   textHeader : 
   {
