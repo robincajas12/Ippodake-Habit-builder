@@ -71,7 +71,7 @@ function App(){
       }
   }, [])
   return wasChadOpen ? <ContextComponent canShowAds={canShowAds} setCanShowAds={setCanShowAds}></ContextComponent> : <View style={{display: 'flex', flex: 1}}>
-    <Header></Header>
+    {wasChadOpen && <Header></Header>}
     <FakeChat setIsVisible={setWasChatOpen}></FakeChat>
   </View>
 }

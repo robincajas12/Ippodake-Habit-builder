@@ -169,7 +169,7 @@ const tutorial = [
         <View style={stylesHeader().viewHeader}>
           <StatusBar
             hidden={false}
-            backgroundColor={colors.primaryColor}
+            backgroundColor={colors.primaryColor_darker}
             barStyle={colors.primaryColor === lightColors.primaryColor ? "dark-content" : "light-content"}
           />
           <Text style={stylesHeader().textHeader}>🌟 {NativeLevelHandler.getStreak()}</Text>

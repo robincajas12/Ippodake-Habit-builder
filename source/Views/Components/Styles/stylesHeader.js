@@ -8,9 +8,9 @@ function stylesHeader()
 const stylesHeader1 = StyleSheet.create({
   viewHeader: 
   {
-    backgroundColor: colors.primaryColor,
-    borderBottomStartRadius: width < height ? 15 : 0,
-    borderBottomEndRadius:  width < height ? 15 : 0,
+    backgroundColor: colors.primaryColor_darker,
+    borderBottomStartRadius: width < height ? 0 : 0,
+    borderBottomEndRadius:  width < height ? 0 : 0,
     display: "flex",
     flexDirection: width < height ? 'row' : 'column',
     alignItems: width < height ? "center" : "flex-start",

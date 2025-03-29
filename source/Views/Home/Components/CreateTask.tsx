@@ -30,7 +30,7 @@ type btnData = {
 const btns : btnData[] = [
 
     {
-        startsRequired: 0,
+        startsRequired: 3,
         type: boost.AVG,
         name: "Avg + 10%",
         fun: (idTaskType:number)=>
@@ -45,7 +45,7 @@ const btns : btnData[] = [
         fun: NativeTodayTasksHandler.getHabitFormationModelCurrentTime
     },
     {
-        startsRequired: 0,
+        startsRequired: 5,
         type: boost.SAME,
         name: "Froze time",
         fun: (idTaskType: number) => {
@@ -59,7 +59,7 @@ const btns : btnData[] = [
         }
     },
     {
-        startsRequired : 0,
+        startsRequired : 10,
         type: boost.MIN,
         name: "Min + 10%",
         fun: (idTaskType: number)=>{
@@ -218,7 +218,7 @@ export default function CreateTask({ selectedTask,setSelectTask, styleView}: any
                 <TimeCounter txtColor={selectedBoost == boost.SAME ? stylesCreateTask.iceTxtSelected.color: null} time={time}></TimeCounter>
             </View>
             <View style={stylesCreateTask.containerPressableAndIceBtn}>
-                <View style={{display: NativeLevelHandler.getStreak()>=0 ? 'flex' : 'none'}}>
+                <View style={{display: NativeLevelHandler.getStreak()>=5 ? 'flex' : 'none'}}>
                 {selectedBoost != boost.SAME ?  <Pressable onPress={onFreezeTimeBtnSelected} style={[stylesCreateTask.iceBtn]}>
                     {btnIce}
                 </Pressable> : btnIce}

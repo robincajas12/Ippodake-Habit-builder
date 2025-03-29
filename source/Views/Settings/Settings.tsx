@@ -13,13 +13,15 @@ export default function Todo()
     </View>
 }*/
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, Pressable, Linking } from 'react-native';
+import { Text, View, StyleSheet, Pressable, Linking, ScrollView, useWindowDimensions } from 'react-native';
 import Chat from '../Chat/Chat';
 import stylesMainContentView from '../Components/Styles/stylesMainContentView';
 import NativeLevelHandler from '../../../specs/NativeLevelHandler';
 import { ELocalStorageKeys } from '../../Enums/LocalStorageKeys';
-import colors from '../Components/Styles/colors';
+import colors, { lightColors } from '../Components/Styles/colors';
 import _vw from '../../utils/sizeConversors';
+import ChangeValue from './Components/ChangeValue';
+import { UserKeys } from '../../Enums/UserKeys';
 
 export default function Todo() {
   type languageType = { key: string; txt: string };
@@ -29,19 +31,21 @@ export default function Todo() {
   ];
 
   // Traducciones
-  const translations: { [key in languageType['key']]: { selectedLanguage: string, alertCloseApp: string, termsAndConditions: string } } = {
+  const translations: { [key in languageType['key']]: { selectedLanguage: string, alertCloseApp: string, termsAndConditions: string,txtChangeGoalName: string} } = {
     en: {
       selectedLanguage: "Selected language:",
       alertCloseApp: "To apply changes for some settings please restart the app",
-      termsAndConditions: "Terms and Conditions"
+      termsAndConditions: "Privacy Policy",
+      txtChangeGoalName: "Task name"
     },
     es: {
       selectedLanguage: "Idioma seleccionado:",
       alertCloseApp: "Para aplicar los cambios para algunas configuraciones reinicie la app",
-      termsAndConditions: "Términos y Condiciones"
+      termsAndConditions: "Política de Privacidad",
+      txtChangeGoalName: "Nombre de la tarea"
     }
   };
-
+  const {width, height} = useWindowDimensions()
   const [language, setLanguage] = useState<languageType>(() => {
     const savedLang = NativeLevelHandler.getItem(ELocalStorageKeys.LANGUAGE);
     return savedLang === "en" 
@@ -61,11 +65,12 @@ export default function Todo() {
     }
 
     return (
-      <View key={item.key} style={styles.languageButtonContainer}>
+      <View key={item.key} style={[styles.languageButtonContainer]}>
         <Pressable
           onPress={onPress}
           style={({ pressed }) => [
-            styles.languageButton,
+            styles.languageButton ,
+            (item.key !== NativeLevelHandler.getItem(ELocalStorageKeys.LANGUAGE)) && styles.seletedLanguageButtonContainer,
             pressed && styles.pressedLanguageButton,
           ]}
         >
@@ -85,20 +90,25 @@ export default function Todo() {
   }
 
   return (
-    <View style={stylesMainContentView().view}>
-      <View style={styles.containerSettings}>
-        <Text style={styles.selectedLanguageText}>
-          {translations[language.key].selectedLanguage} {language.txt}
-        </Text>
-        
-        {languages.map(renderLanguageBtn)}
+    <ScrollView>
+      <View style={stylesMainContentView().view}>
+        <View style={styles.containerSettings}>
+        <ChangeValue action={(value : string) => NativeLevelHandler.setItem(UserKeys.GOAL_NAME, value)} initialText={NativeLevelHandler.getItem(UserKeys.GOAL_NAME)} txtTitle={translations[language.key].txtChangeGoalName}></ChangeValue>
+          <Text style={styles.selectedLanguageText}>
+            {translations[language.key].selectedLanguage} {language.txt}
+          </Text>
+          
+          <View style={styles.containerBtnLangs}>
+          {languages.map(renderLanguageBtn)}
+          </View>
 
-        {/* Botón de Términos y Condiciones */}
-        <Pressable onPress={openTermsAndConditions} style={styles.termsButton}>
-          <Text style={styles.buttonTextS}>{translations[language.key].termsAndConditions}</Text>
-        </Pressable>
-      </View>
+          {/* Botón de Términos y Condiciones */}
+          <Pressable onPress={openTermsAndConditions} style={styles.termsButton}>
+            <Text style={styles.buttonTextS}>{translations[language.key].termsAndConditions}</Text>
+          </Pressable>
+        </View>
     </View>
+    </ScrollView>
   );
 }
 
@@ -128,18 +138,27 @@ const styles = StyleSheet.create({
     minWidth: _vw(95)
   },
   selectedLanguageText: {
-      fontSize: _vw(6),
+      fontSize: _vw(4),
+      paddingTop: _vw(5),
       marginBottom: 20,
       fontFamily: 'Roboto-Regular',
       color: colors.font,
   },
+  containerBtnLangs:{
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 5
+  },
   languageButtonContainer: {
-      marginVertical: 8,
+      marginVertical: 0,
+  },
+  seletedLanguageButtonContainer:{
+    backgroundColor: colors.primaryColor
   },
   languageButton: {
-      backgroundColor: colors.primaryColor,
-      paddingVertical: _vw(5),
-      paddingHorizontal: _vw(0),
+      backgroundColor: colors.white_blue,
+      padding: _vw(3),
+      flex:1,
       borderRadius: 8,
       alignItems: 'center',
       justifyContent: 'center',
@@ -147,12 +166,13 @@ const styles = StyleSheet.create({
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 4,
+      
   },
   pressedLanguageButton: {
       backgroundColor: colors.primaryColor_darker,
   },
   buttonText: {
-      color: colors.font,
+      color: lightColors.font,
       fontSize: _vw(5),
       fontFamily: 'Roboto-Regular',
   },
