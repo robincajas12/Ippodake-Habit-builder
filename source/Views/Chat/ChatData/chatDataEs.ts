@@ -1,60 +1,66 @@
 import { ChatData } from "./chatypes";
 export const chatDataEs: ChatData = {
   start: {
-    bot: "¡Hola! Mi nombre es Ippo, y soy una tortuga 🐢",
+    bot: "¡Hola! Me llamo Ippo y soy una tortuga muy determinada 🐢",
     options: [
       { text: "¡Hola, Ippo!", next: "good_response" }
     ]
   },
   good_response: {
-    bot: "¡Voy directo al grano! ¿Conoces la historia de la tortuga y la liebre? 🐢🐇",
+    bot: "Déjame preguntarte algo... ¿Conoces la historia de la liebre y la tortuga? 🏁",
     options: [
-      { text: "¡Sí! Es muy popular", next: "have_you_tried_habit" },
-      { text: "No, no la conozco. 🤔", next: "turtle_and_rabbit_story" }
+      { text: "¡Sí! Es un clásico", next: "have_you_tried_habit" },
+      { text: "No estoy seguro, cuéntame más 🤔", next: "turtle_and_rabbit_story" }
     ]
   },
   turtle_and_rabbit_story: {
-    bot: "La liebre se burló de la tortuga por ser lenta. 🐢 La tortuga la desafió a una carrera. Confiada, la liebre corrió y se echó una siesta. 😴 Mientras tanto, la tortuga siguió avanzando. ⏳ Cuando la liebre despertó, la tortuga ya estaba cerca de la meta. 🏁 La liebre corrió, pero demasiado tarde: ¡la tortuga ganó! 🎉 Moraleja: La constancia es más importante que la velocidad. 🏆",
+    bot: "Había una vez una liebre veloz que se burlaba de una tortuga por ser lenta. 🐢 Pero la tortuga la desafió a una carrera. La liebre, confiada, corrió rápido pero se distrajo y decidió tomar una siesta. 😴 Mientras tanto, la tortuga siguió avanzando, paso a paso. ⏳ Cuando la liebre despertó, la tortuga estaba a punto de cruzar la meta... ¡y ganó! 🎉 ¿La lección? La constancia supera la velocidad. 🏆",
     options: [
-      { text: "¡Esa historia es genial! 🐢💪", next: "have_you_tried_habit" },
-      { text: "¡Ya lo recuerdo, gracias! 😊", next: "have_you_tried_habit" }
+      { text: "¡Esa historia me inspira! 🐢💪", next: "have_you_tried_habit" },
+      { text: "Oh, ya la recuerdo. ¡Gracias! 😊", next: "have_you_tried_habit" }
     ]
   },
   have_you_tried_habit: {
-    bot: "Lo que me gusta de la historia es su enseñanza: la constancia es más importante que la velocidad. ¿Has intentado crear un hábito?",
+    bot: "Me gusta su mensaje... 'El secreto no es la velocidad, sino la constancia'. ¿Alguna vez has intentado crear un hábito, como leer todos los días o aprender algo nuevo?",
     options: [
-      { text: "Sí, por eso estoy aquí. Siempre fracaso. 😞", next: "maybe_i_can_help_with_that" },
-      { text: "No, no lo he intentado aún. 🤔", next: "maybe_i_can_help_with_that" }
+      { text: "Sí, pero siempre me cuesta mantenerlo. 😞", next: "maybe_i_can_help_with_that" },
+      { text: "No, pero me gustaría intentarlo. 🤔", next: "maybe_i_can_help_with_that" },
+      { text: "Sí", next: "i_can_make_it_more_easy" }
+    ]
+  },
+  i_can_make_it_more_easy: {
+    bot: "¡Puedo hacer que esta tarea sea mucho más fácil para ti! El truco no es exigirte demasiado, sino dar pequeños pasos constantes. Con Ippodake, establecerás metas simples y alcanzables cada día, haciendo que el progreso se sienta natural y motivador. 🐢✨ ¿Listo para intentarlo?",
+    options: [
+      { text: "¡Suena genial! ¡Vamos allá! 🚀", next: "ippodake_intro" }
     ]
   },
   maybe_i_can_help_with_that: {
-    bot: "¡Tal vez pueda ayudarte con eso! Sabes, esta historia y crear hábitos tienen mucho en común. Básicamente, para construir un hábito y mantener la constancia, necesitas empezar con pequeños pasos todos los días y aumentar poco a poco. 📈",
+    bot: "¡Ahí es donde entro yo! Construir hábitos es como la historia de la tortuga: no se trata de ir rápido, sino de dar pequeños pasos todos los días. 📈",
     options: [
-      { text: "¡Eso suena como el enfoque correcto! ¿Cómo empiezo? 🚀", next: "ippodake_intro" }
+      { text: "Tiene sentido, ¿cómo empiezo? 🚀", next: "ippodake_intro" }
     ]
   },
   ippodake_intro: {
-    bot: "¡Ippodake está aquí para ayudarte con eso! Está diseñado para ayudarte a mantener la constancia estableciendo una meta mínima cada día. 🌱 Ya sea una tarea pequeña o un gran objetivo, lo tomaremos paso a paso, ¡como la tortuga! 🐢.",
+    bot: "¡Bienvenido a Ippodake! 🐢 Esta app está diseñada para ayudarte a ser constante con lo que amas, ya sea leer, aprender un idioma o cualquier pasatiempo que te haga feliz. La clave está en fijar un objetivo pequeño cada día. 🌱",
     options: [
-      { text: "Continúa, por favor... 😄", next: "ippodake_explanation" }
+      { text: "¡Suena genial! ¡Cuéntame más! 😄", next: "ippodake_explanation" }
     ]
   },
   ippodake_explanation: {
-    bot: "No necesitas apresurarte; al igual que la tortuga, el progreso constante es la clave. Todos los días, estableceremos una pequeña meta, y gradualmente verás cómo tu progreso crece. 🐢 ¡Cuanto más constante seas, más cerca estarás de tu gran objetivo!",
+    bot: "Los grandes objetivos pueden ser abrumadores, pero ¿qué tal si solo te enfocas en un pequeño paso a la vez? Con Ippodake, harás un seguimiento de tus avances diarios y verás cómo crecen con el tiempo. La clave no es la perfección, es la constancia. 🏆",
     options: [
-      { text: "¡Entendido! Vamos a comenzar. 🚀", next: "enable_notifications" }
+      { text: "¡Entendido! ¡Empecemos! 🚀", next: "enable_notifications" }
     ]
   },
   enable_notifications: {
-    bot: "Okey, una cosa más... Para que Ippodake funcione correctamente y puedas seguir tu progreso de manera constante, es necesario habilitar las notificaciones. ¡No olvides activarlas! 🔔 tranquilo, no soy el pájaro verde, espero que no esté escuchando...",
+    bot: "¡Una última cosa! Para mantenerte en el camino, Ippodake te enviará recordatorios amigables. No te preocupes, no te voy a molestar demasiado, solo quiero ayudarte. 🔔",
     options: [
-      { text: "¡Está bien!", next: "start_tracking" },
-      { text: "Más tarde...", next: "start_tracking" }
+      { text: "¡De acuerdo, activémoslas!", next: "start_tracking" },
+      { text: "Las activaré más tarde...", next: "start_tracking" }
     ]
   },
   start_tracking: {
-    bot: "¡Genial! Comencemos a configurar tu primera meta. 🌟",
+    bot: "¡Genial! Vamos a configurar tu primer objetivo y dar juntos el primer paso. 🐢✨",
     options: []
   }
 };
-

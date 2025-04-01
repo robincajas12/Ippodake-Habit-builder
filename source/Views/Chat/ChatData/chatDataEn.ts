@@ -3,59 +3,67 @@ import { ChatData } from "./chatypes";
 
 export const chatDataEn: ChatData = {
   start: {
-    bot: "Hello! My name is Ippo, and I'm a turtle 🐢",
+    bot: "Hello! My name is Ippo, and I'm a determined little turtle 🐢",
     options: [
       { text: "Hello, Ippo!", next: "good_response" }
     ]
   },
   good_response: {
-    bot: "I'll get straight to the point! Do you know the story of the tortoise and the hare? 🐢🐇",
+    bot: "Let me ask you something... Do you know the story of the tortoise and the hare? 🏁",
     options: [
-      { text: "Yes! It's very popular", next: "have_you_tried_habit" },
-      { text: "No, I've never heard of it. 🤔", next: "turtle_and_rabbit_story" }
+      { text: "Yes! It's a classic!", next: "have_you_tried_habit" },
+      { text: "Not really, tell me more! 🤔", next: "turtle_and_rabbit_story" }
     ]
   },
   turtle_and_rabbit_story: {
-    bot: "The hare mocked the tortoise for being slow. 🐢 The tortoise challenged it to a race. Confident, the hare ran and took a nap. 😴 Meanwhile, the tortoise kept moving forward. ⏳ When the hare woke up, the tortoise was already near the finish line. 🏁 The hare ran, but too late: the tortoise won! 🎉 Moral: Slow and steady wins the race. 🏆",
+    bot: "Once upon a time, a swift hare laughed at a slow-moving tortoise. 🐢 But the tortoise challenged the hare to a race. Overconfident, the hare dashed ahead but got distracted and took a nap. Meanwhile, the tortoise kept going—step by step, never stopping. ⏳ By the time the hare woke up, the tortoise was about to cross the finish line... and won! 🎉 The lesson? Slow and steady wins the race. 🏆",
     options: [
-      { text: "That story is great! 🐢💪", next: "have_you_tried_habit" },
-      { text: "I remember now, thanks! 😊", next: "have_you_tried_habit" }
+      { text: "That story is inspiring! 🐢💪", next: "have_you_tried_habit" },
+      { text: "Oh yeah, I remember now! 😊", next: "have_you_tried_habit" }
     ]
   },
   have_you_tried_habit: {
-    bot: "Yes it is! I like that the moral of the story is persistence more than efficiency! Have you tried building a habit?",
+    bot: "I like the message, 'The secret isn’t speed—it’s consistency'. Have you ever tried building a habit, like reading every day or learning a new skill?",
     options: [
-      { text: "Yes, that's why I'm here. I always fail. 😞", next: "maybe_i_can_help_with_that" },
-      { text: "No, I haven't tried yet. 🤔", next: "maybe_i_can_help_with_that" }
+      { text: "Yes, but I always struggle to keep going. 😞", next: "maybe_i_can_help_with_that" },
+      { text: "Not really, but I'd love to start! 🤔", next: "maybe_i_can_help_with_that" },
+      { text: "Yes", next: "i_can_make_it_more_easy" }
+
     ]
   },
-  maybe_i_can_help_with_that: {
-    bot: "Maybe I can help with that! You know, this story and building habits have a lot in common. Basically, to build a habit and maintain consistency, you need to start with small steps every day and gradually increase. 📈",
+  i_can_make_it_more_easy: {
+    bot: "I can make this task much easier for you! The trick isn't to push yourself too hard but to take small, consistent steps. With Ippodake, you'll set simple, achievable goals every day, making progress feel effortless. 🐢✨ Ready to give it a try?",
     options: [
-      { text: "That sounds doable! How do I start? 🚀", next: "ippodake_intro" }
+      { text: "Sounds great! Let’s do it! 🚀", next: "ippodake_intro" }
+    ]
+  },  
+  maybe_i_can_help_with_that: {
+    bot: "That’s where I come in! Just like the tortoise, building habits is about taking small steps every day. No rush, no pressure—just steady progress! 📈",
+    options: [
+      { text: "That actually makes sense! How do I start? 🚀", next: "ippodake_intro" }
     ]
   },
   ippodake_intro: {
-    bot: "Ippodake is here to help with that! It's designed to help you maintain consistency by setting a minimum goal every day. 🌱 Whether it's a small task or a big goal, we'll take it step by step, just like the tortoise! 🐢.",
+    bot: "Welcome to Ippodake! 🐢 This app is designed to help you stick to the things you love—whether it's reading, practicing a language, or any hobby that makes you happy. The trick? A simple, achievable goal every day! 🌱",
     options: [
-      { text: "Continue, please... 😄", next: "ippodake_explanation" }
+      { text: "Sounds great! Tell me more! 😄", next: "ippodake_explanation" }
     ]
   },
   ippodake_explanation: {
-    bot: "You don't need to rush; just like the tortoise, steady progress is key. Every day, we'll set a small goal, and you'll gradually see your progress grow. 🐢 The more consistent you are, the closer you'll get to your big goal!",
+    bot: "Big goals can feel overwhelming, but what if you just focused on one step at a time? With Ippodake, you'll track small wins daily and watch them grow. The key isn't perfection—it's showing up. 🏆",
     options: [
-      { text: "Got it! Let's get started! 🚀", next: "enable_notifications" }
+      { text: "Got it! Let’s get started! 🚀", next: "enable_notifications" }
     ]
   },
   enable_notifications: {
-    bot: "Okey, just one more thing... For Ippodake to work properly and for you to track your progress consistently, notifications need to be enabled. Don't forget to turn them on! 🔔 Don't worry, I'm not the green bird, I hope he's not listening...",
+    bot: "One last thing! To stay on track, Ippodake will send you friendly reminders. Don’t worry, I won’t spam you—I’m just here to help! 🔔",
     options: [
-      { text: "Okay!", next: "start_tracking" },
-      { text: "Later...", next: "start_tracking" }
+      { text: "Alright, let’s do this!", next: "start_tracking" },
+      { text: "I’ll turn them on later...", next: "start_tracking" }
     ]
   },
   start_tracking: {
-    bot: "Great! Let's start setting up your first goal. 🌟",
+    bot: "Awesome! Let’s set up your first goal and take the first step together. 🐢✨",
     options: []
   }
 };

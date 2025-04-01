@@ -19,8 +19,8 @@ import colors from "../Components/Styles/colors";
 import { getTaskForToday } from "../../utils/getTaskForToday";
 import { UserKeys } from "../../Enums/UserKeys";
 import { AdsConsent, BannerAd, BannerAdSize, RequestOptions, TestIds } from "react-native-google-mobile-ads";
-//const adUnitId = 'ca-app-pub-9679713412722657/5646158476';
-const adUnitId = TestIds.BANNER
+const adUnitId = 'ca-app-pub-9679713412722657/5646158476';
+//const adUnitId = TestIds.BANNER
 export default function Home( {canShowAds} : {canShowAds: boolean} ) {
   const [resquestOption, setResquestOption] = useState<RequestOptions | null>(null);
   const language = NativeLevelHandler.getItem(ELocalStorageKeys.LANGUAGE) as keyof typeof translations;
