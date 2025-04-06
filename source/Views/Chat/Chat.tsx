@@ -8,7 +8,7 @@ import { ChatData, Option } from "./ChatData/chatypes";
 import { chatDataArray } from "./ChatData/chatDataArray";
 import _vw, { _vh } from "../../utils/sizeConversors";
 import { UserKeys } from "../../Enums/UserKeys";
-import ChangeValue from "../Settings/Components/ChangeValue";
+import ChangeValue from "../Components/General/Components/InputComponents/ChangeValue";
 
 const chatData = chatDataArray;
 type goalsType = { en: string[]; es: string[] }
@@ -219,7 +219,7 @@ const ChatApp = ({ setIsVisible }: { setIsVisible: (t: boolean) => void }) => {
 
       {showTextInput && (
         <View style={styles.inputContainer}>
-          <ChangeValue action={onChandleSubmitGoalPress} txtTitle={selectedLanguage != "es" ? "Write a task you love but struggle to do daily" : "Escribe una tarea que amas pero te cuesta hacer cada día"} initialText={userGoal}></ChangeValue>
+          <ChangeValue action={onChandleSubmitGoalPress} txtTitle={selectedLanguage != "es" ? "Write a task you love but struggle to do daily" : "Escribe la actividad que amas hacer"} initialText={userGoal}></ChangeValue>
           <ScrollView style={{paddingTop: _vw(5)}}>
           <Text style={styles.titleInputContainer}>
           {selectedLanguage == "en" ? "Suggestions" : "Sugerencias"}

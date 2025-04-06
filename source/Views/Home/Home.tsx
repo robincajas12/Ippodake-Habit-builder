@@ -19,7 +19,8 @@ import colors from "../Components/Styles/colors";
 import { getTaskForToday } from "../../utils/getTaskForToday";
 import { UserKeys } from "../../Enums/UserKeys";
 import { AdsConsent, BannerAd, BannerAdSize, RequestOptions, TestIds } from "react-native-google-mobile-ads";
-const adUnitId = 'ca-app-pub-9679713412722657/5646158476';
+import CreateNewTask from "../Create/CreateNewTask";
+const adUnitId = __DEV__ ? TestIds.BANNER: 'ca-app-pub-5187514759339848/6240667800';
 //const adUnitId = TestIds.BANNER
 export default function Home( {canShowAds} : {canShowAds: boolean} ) {
   const [resquestOption, setResquestOption] = useState<RequestOptions | null>(null);
@@ -101,6 +102,7 @@ export default function Home( {canShowAds} : {canShowAds: boolean} ) {
       <View style={stylesMainContentView().view}>
         <ScrollView>
           {__DEV__  && <Text style={{color: 'red'}}>DevMODE</Text>}
+          <CreateNewTask></CreateNewTask>
           <View style={stylesHome.containerHabit}>
             <Text style={stylesHome.txtHabit}>{selectedTask.t ==selectedTask.tCompleted ? "Task completed, come back tomorrow" : translations[language].habit + ": " + habit}</Text>
           </View>

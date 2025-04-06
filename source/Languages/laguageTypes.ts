@@ -1,0 +1,1 @@
+export type languageType = { key: string; txt: string };

@@ -1,13 +1,11 @@
-import { useContext, useEffect, useState } from "react";
-import { View, TextInput, StyleSheet, useWindowDimensions, Button, Pressable, Text} from "react-native"; 
-import { Context } from "../../../ContextComponent";
-import NativeLevelHandler from "../../../../specs/NativeLevelHandler";
-import { UserKeys } from "../../../Enums/UserKeys";
-import _vw from "../../../utils/sizeConversors";
-import { languages } from "../../../Models/Language";
-import { ELocalStorageKeys } from "../../../Enums/LocalStorageKeys";
-import colors, { lightColors } from "../../Components/Styles/colors";
-export default function ChangeValue({action, txtTitle, initialText})
+import { useState, useEffect } from "react";
+import { useWindowDimensions, StyleSheet, View, Text, TextInput, Pressable } from "react-native";
+import NativeLevelHandler from "../../../../../../specs/NativeLevelHandler";
+import { ELocalStorageKeys } from "../../../../../Enums/LocalStorageKeys";
+import _vw from "../../../../../utils/sizeConversors";
+import colors, { lightColors } from "../../../Styles/colors";
+
+export default function MyInput({action, txtTitle, initialText, propertyToChange} : {action:(txt:string, propertyToChange: string)=> void, txtTitle: string, initialText: string,propertyToChange: string})
 {
     const lang = NativeLevelHandler.getItem(ELocalStorageKeys.LANGUAGE)  
     const [color, setColor] = useState(colors.white_blue);
@@ -56,38 +54,27 @@ export default function ChangeValue({action, txtTitle, initialText})
             padding: _vw(1),
             borderRadius: _vw(3),
             zIndex: 1
+        },
+        containerInput:{
+            padding: _vw(4),
         }
     })
     const [value, setValue] =  useState(initialText)
     useEffect(()=>{
         setValue(initialText)
     }, [initialText])
-    function onChange(txt)
+    function onChange(txt : string)
     {
         console.log(txt)
         setValue(txt)
+        action(txt, propertyToChange)
     }
     
-    function onCallOptionFunction()
-    {
-        console.log(value)
-        try{
-            action(value)
-            setColor(colors.nonDanger)
-            setTimeout(()=>{setColor(colors.white_blue)},1000)
-        }catch(e){
-            setColor(colors.danger)
-            setTimeout(()=>{setColor(colors.white_blue)},1000)
-        }
-       
-         
-         
-    }
-     return  <View style={styles.container}>
+
+     return  <View style={styles.containerInput}>
+        <View style={styles.container}>
         <Text style={styles.title}>{txtTitle}</Text>
-        <TextInput onSubmitEditing={onCallOptionFunction} onChangeText={onChange} style={styles.textInput} value={value}></TextInput>
-        <Pressable onPress={onCallOptionFunction} style={styles.btn}>
-            <Text style={styles.btnText}>✏️</Text>
-        </Pressable>
+        <TextInput onChangeText={onChange} style={styles.textInput} value={value}></TextInput>
     </View>
+     </View>
 }

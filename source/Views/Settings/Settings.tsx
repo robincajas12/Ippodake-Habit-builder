@@ -20,7 +20,7 @@ import NativeLevelHandler from '../../../specs/NativeLevelHandler';
 import { ELocalStorageKeys } from '../../Enums/LocalStorageKeys';
 import colors, { lightColors } from '../Components/Styles/colors';
 import _vw from '../../utils/sizeConversors';
-import ChangeValue from './Components/ChangeValue';
+import ChangeValue from '../Components/General/Components/InputComponents/ChangeValue';
 import { UserKeys } from '../../Enums/UserKeys';
 
 export default function Todo() {

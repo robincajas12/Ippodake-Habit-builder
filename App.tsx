@@ -26,7 +26,7 @@ import DeviceInfo from 'react-native-device-info';
 function App(){
   const [canShowAds, setCanShowAds] = useState(false);
   const isMobileAdsStartCalledRef = useRef(false);
-  
+  const [idSelectedTask, selectedTask] = useState<number | null>();
   useEffect(() => {
     if(canShowAds == false)
     {
