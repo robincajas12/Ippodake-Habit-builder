@@ -45,10 +45,8 @@ export default function ({ time, setClockStarted, clockStarted, setTime, selecte
 
     function clock() {
         try{
-            console.log(NativeLevelHandler.getItem(ELocalStorageKeys.CURRENT_DATE), NativeTodayTasksHandler.getToday())
             if(NativeLevelHandler.getItem(ELocalStorageKeys.CURRENT_DATE) == NativeTodayTasksHandler.getToday())
             {
-                console.log("Hola")
                 if (time && NativeLevelHandler.getItem(ELocalStorageKeys.CLOCK_STATUS) !== "true") {
                     clearInterval(Number(NativeLevelHandler.getItem(ELocalStorageKeys.ID_TIMER)));
                     setClockStarted(false);
@@ -110,6 +108,7 @@ export default function ({ time, setClockStarted, clockStarted, setTime, selecte
             setClockStarted(false)
             NativeLevelHandler.removeItem(ELocalStorageKeys.ID_TIMER)
             NativeLevelHandler.removeItem(ELocalStorageKeys.CLOCK_STATUS)
+            console.log(e)
         }
 
 
@@ -124,27 +123,32 @@ export default function ({ time, setClockStarted, clockStarted, setTime, selecte
             changeClockStatus(true);
             setClockStarted(true);
             if (!NativeLevelHandler.getItem(ELocalStorageKeys.ID_TIMER)) {
+                if(selectedTask)NotificationController.get().lauchChronometerWithTask(selectedTask, ETaskType.TIME)
                 const newInterval = setInterval(clock, 1000);
                 NativeLevelHandler.setItem(ELocalStorageKeys.ID_TIMER, newInterval.toString());
+                
             }
             if(selectedTask)
-            {
-                if(selectedTask.t != selectedTask.tCompleted)
                 {
-                    NativeLevelHandler.setItem(ELocalStorageKeys.ID_CHRONOMETER,NativeTodayTasksHandler.createChronometer(selectedTask.t-selectedTask.tCompleted).toString())
-                    NativeLevelHandler.setItem(ELocalStorageKeys.ID_ACTIVE_NOTIFICATION,(await NotificationController.get().lauchChronometerWithTask(selectedTask, ETaskType.TIME)).toString())
-                }
-                else{
-                    clearInterval(Number(NativeLevelHandler.getItem(ELocalStorageKeys.ID_TIMER)))
-                    const idTrigerNotification = await NotificationController.get().createTriggerNotification(ETaskType.TIME, selectedTask.t-selectedTask.tCompleted)
-                    if(idTrigerNotification)
+                    console.log("seletected = ", selectedTask)
+                    if(selectedTask.t !== selectedTask.tCompleted)
                     {
-                        NativeLevelHandler.setItem(ELocalStorageKeys.ID_ACTIVE_TRIGER_NOTIFICATION, idTrigerNotification)
+                        console.log("Hola netramos a lanzar el triger")
+                        NativeLevelHandler.setItem(ELocalStorageKeys.ID_CHRONOMETER,await NativeTodayTasksHandler.createChronometer(selectedTask.t-selectedTask.tCompleted).toString())
+                        NativeLevelHandler.setItem(ELocalStorageKeys.ID_ACTIVE_NOTIFICATION,(await NotificationController.get().lauchChronometerWithTask(selectedTask, ETaskType.TIME)).toString())     
+                        console.log("ID de la notification:" +await NativeLevelHandler.getItem(ELocalStorageKeys.ID_ACTIVE_NOTIFICATION))        
+                        const idTrigerNotification = await NotificationController.get().createTriggerNotification(ETaskType.TIME, selectedTask.t-selectedTask.tCompleted)
+                        if(idTrigerNotification)
+                        {
+                            NativeLevelHandler.setItem(ELocalStorageKeys.ID_ACTIVE_TRIGER_NOTIFICATION, idTrigerNotification)
+                        } 
                     }
-                    
-                    setClockStarted(false)
-                }
-            }     
+                    else{
+                        clearInterval(Number(NativeLevelHandler.getItem(ELocalStorageKeys.ID_TIMER)))     
+                        NotificationController.get().cancelActiveNotifications()               
+                        setClockStarted(false)
+                    }
+                }  
         } else {
             changeClockStatus(false);
             setClockStarted(false);

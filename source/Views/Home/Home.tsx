@@ -102,7 +102,7 @@ export default function Home( {canShowAds} : {canShowAds: boolean} ) {
       <View style={stylesMainContentView().view}>
         <ScrollView>
           {__DEV__  && <Text style={{color: 'red'}}>DevMODE</Text>}
-          <CreateNewTask></CreateNewTask>
+          {/*<CreateNewTask></CreateNewTask>*/}
           <View style={stylesHome.containerHabit}>
             <Text style={stylesHome.txtHabit}>{selectedTask.t ==selectedTask.tCompleted ? "Task completed, come back tomorrow" : translations[language].habit + ": " + habit}</Text>
           </View>

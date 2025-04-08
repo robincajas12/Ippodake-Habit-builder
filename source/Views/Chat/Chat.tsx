@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Modal, TextInput, useWindowDimensions } from "react-native";
-import colors, { lightColors } from "../Components/Styles/colors";
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Modal, TextInput, useWindowDimensions, Pressable, Alert } from "react-native";
+import colors, { darkColors, lightColors } from "../Components/Styles/colors";
 import NativeLevelHandler from "../../../specs/NativeLevelHandler";
 import { ELocalStorageKeys } from "../../Enums/LocalStorageKeys";
 import { ChatData, Option } from "./ChatData/chatypes";
@@ -95,10 +95,10 @@ const ChatApp = ({ setIsVisible }: { setIsVisible: (t: boolean) => void }) => {
     container: { flex: 8, padding: 20, backgroundColor: colors.primaryColor_darker, height:_vw(100) },
     messageBubble: { padding: 10, borderRadius: 10, marginVertical: 5, maxWidth: "80%" },
     botBubble: { backgroundColor: colors.primaryColor, alignSelf: "flex-start" },
-    userBubble: { backgroundColor: colors.nonDanger, alignSelf: "flex-end", borderTopRightRadius: 0 },
+    userBubble: { backgroundColor: colors.white_blue, alignSelf: "flex-end", borderTopRightRadius: 0 },
     messageText: { color: colors.font, fontSize: 16 },
     optionsContainer: { flexDirection: "row", flexWrap: "wrap", marginTop: 10 },
-    optionButton: { backgroundColor: colors.nonDanger, padding: 10, borderRadius: 5, margin: 5 },
+    optionButton: { backgroundColor: colors.white_blue, padding: 10, borderRadius: 5, margin: 5 },
     optionText: { color: lightColors.font, fontSize: 16 },
     contentContainer: { flexGrow: 1, paddingBottom: 50 },
     modalContainer: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.5)" },
@@ -123,6 +123,14 @@ const ChatApp = ({ setIsVisible }: { setIsVisible: (t: boolean) => void }) => {
     },
     suggestionHint:{
       fontSize: _vw(4),
+      color: lightColors.font
+    },
+    containerSkip:{
+      left: width < height ? _vw(75) : _vh(85),
+      backgroundColor: colors.white_blue,
+      borderRadius: _vw(5),
+    },
+    textSkip:{
       color: lightColors.font
     }
   });
@@ -213,7 +221,12 @@ const ChatApp = ({ setIsVisible }: { setIsVisible: (t: boolean) => void }) => {
             <TouchableOpacity key={index} style={styles.optionButton} onPress={() => handleOptionPress(option)}>
               <Text style={styles.optionText}>{option.text}</Text>
             </TouchableOpacity>
+            
           ))}
+          <Pressable style={[styles.optionButton, {backgroundColor: colors.nonDanger}]} onPress={()=> {
+            setShowTextInput(true)}
+
+            }><Text style={styles.textSkip}>{selectedLanguage != "es" ? 'Skip chat 🐇' :"Saltar chat 🐇"}</Text></Pressable>
         </View>
       )}
 

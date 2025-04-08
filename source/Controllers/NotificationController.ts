@@ -97,6 +97,7 @@ export default class NotificationController
     }
     public async lauchChronometerWithTask(task  : Task, eTaskType: ETaskType ) : Promise<String>{
         this.cancelActiveNotifications()
+        console.log("launching notification....", task)
         if(eTaskType !== ETaskType.TIME) throw new Error('It can not launch a chronometer notification because task type is not ' + ETaskType.TIME)
         if(!(await NotificationController.get().channelExist(ETaskType.TIME))) await NotificationController.get().createChannelForTask(eTaskType)
         let timeInMiliseconds = 0
@@ -124,6 +125,7 @@ export default class NotificationController
                 }
             }
         });
+        console.log("id of the notification ", id)
         return id
     }
     async createTriggerNotification(etaskType : ETaskType,timeInMiliseconds : number)
@@ -143,7 +145,7 @@ export default class NotificationController
             const id = await notifee.createTriggerNotification(
                 {
                   title: 'Good job! click here to record your progress',
-                  body: 'You have completed : ' + trunc((t.tCompleted / (60*1000)),1) + "minutesin your goal",
+                  body: 'You have completed : ' + trunc((t.tCompleted / (60*1000)),1) + "minutes",
                   android: {
                     channelId: etaskType,
                     pressAction: {
