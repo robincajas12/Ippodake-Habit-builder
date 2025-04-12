@@ -22,6 +22,7 @@ import colors, { lightColors } from '../Components/Styles/colors';
 import _vw from '../../utils/sizeConversors';
 import ChangeValue from '../Components/General/Components/InputComponents/ChangeValue';
 import { UserKeys } from '../../Enums/UserKeys';
+import SelectTaskType from '../Menu/Components/SeletecTaskType';
 
 export default function Todo() {
   type languageType = { key: string; txt: string };
@@ -106,6 +107,10 @@ export default function Todo() {
           <Pressable onPress={openTermsAndConditions} style={styles.termsButton}>
             <Text style={styles.buttonTextS}>{translations[language.key].termsAndConditions}</Text>
           </Pressable>
+
+          <SelectTaskType idTaskType={0} setIdTaskType={function (idTaskType: number): void {
+            throw new Error('Function not implemented.');
+          } } ></SelectTaskType>
         </View>
     </View>
     </ScrollView>

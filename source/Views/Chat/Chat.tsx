@@ -4,13 +4,18 @@ import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Modal, TextInput,
 import colors, { darkColors, lightColors } from "../Components/Styles/colors";
 import NativeLevelHandler from "../../../specs/NativeLevelHandler";
 import { ELocalStorageKeys } from "../../Enums/LocalStorageKeys";
-import { ChatData, Option } from "./ChatData/chatypes";
-import { chatDataArray } from "./ChatData/chatDataArray";
+import { ChatData, Option } from "../../Languages/Data/Chat/ChatData/chatypes";
+import { chatDataArray } from "../../Languages/Data/Chat/ChatData/chatDataArray";
 import _vw, { _vh } from "../../utils/sizeConversors";
 import { UserKeys } from "../../Enums/UserKeys";
 import ChangeValue from "../Components/General/Components/InputComponents/ChangeValue";
+import langManager, { getTranslation } from "../../Languages/LangManager";
+import languages from "../../Languages/languages";
+import { languageType } from "../../Languages/laguageTypes";
+import LangManager from "../../Languages/LangManager";
+import traslations from "../../Languages/LangManager";
 
-const chatData = chatDataArray;
+//const chatData = chatDataArray;
 type goalsType = { en: string[]; es: string[] }
 const premadeGoals: goalsType = {
   en: [
@@ -101,10 +106,10 @@ const ChatApp = ({ setIsVisible }: { setIsVisible: (t: boolean) => void }) => {
     optionButton: { backgroundColor: colors.white_blue, padding: 10, borderRadius: 5, margin: 5 },
     optionText: { color: lightColors.font, fontSize: 16 },
     contentContainer: { flexGrow: 1, paddingBottom: 50 },
-    modalContainer: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.5)" },
-    modalContent: { backgroundColor: "white", padding: 20, borderRadius: 10, alignItems: "center" },
-    modalText: { fontSize: 18, marginBottom: 20 },
-    modalOption: { fontSize: 16, marginBottom: 10, color: lightColors.font },
+    modalContainer: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: colors.primaryColor_darker },
+    modalContent: { backgroundColor: colors.primaryColor, padding: 20, borderRadius: 10, alignItems: "center" },
+    modalText: { fontSize: 18, marginBottom: 20, color: colors.font },
+    modalOption: { fontSize: _vw(4), marginBottom: _vw(3), color: colors.font },
     messageTextUser: { color: lightColors.font },
     inputContainer: {
       position: 'absolute',
@@ -138,11 +143,13 @@ const ChatApp = ({ setIsVisible }: { setIsVisible: (t: boolean) => void }) => {
   const [messages, setMessages] = useState([{ sender: "bot", text: "" }]);
   const [currentStep, setCurrentStep] = useState("start");
   const [isTyping, setIsTyping] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState<keyof typeof premadeGoals>("en");
+  const [selectedLanguage, setSelectedLanguage] = useState<string>("en");
   const [showModal, setShowModal] = useState(true);
   const [showTextInput, setShowTextInput] = useState(false);
   const [userGoal, setUserGoal] = useState("");
-
+  const chatData = getTranslation(traslations.chatData, selectedLanguage)
+  const txt_chat_component =  getTranslation(traslations.Chat, selectedLanguage)
+  const goals =  getTranslation(traslations.goals, selectedLanguage)
   const scrollViewRef = useRef<ScrollView>(null);
   function shuffleArray(array : string[]) {
     return array
@@ -156,7 +163,7 @@ const ChatApp = ({ setIsVisible }: { setIsVisible: (t: boolean) => void }) => {
     setIsTyping(true);
     setTimeout(() => {
       setIsTyping(false);
-      setMessages((prevMessages) => [...prevMessages, { sender: "bot", text: chatData[selectedLanguage][option.next].bot }]);
+      setMessages((prevMessages) => [...prevMessages, { sender: "bot", text:  chatData[option.next].bot }]);
       setCurrentStep(option.next);
     }, 1000);
   };
@@ -166,7 +173,7 @@ const ChatApp = ({ setIsVisible }: { setIsVisible: (t: boolean) => void }) => {
       scrollViewRef.current.scrollToEnd({ animated: true });
     }
 
-    if (!chatData[selectedLanguage][currentStep]?.options?.length) {
+    if (!chatData[currentStep]?.options?.length) {
       setTimeout(()=>setShowTextInput(true), 1000)
     } else {
       setShowTextInput(false);
@@ -177,7 +184,7 @@ const ChatApp = ({ setIsVisible }: { setIsVisible: (t: boolean) => void }) => {
     NativeLevelHandler.setItem(ELocalStorageKeys.LANGUAGE, language);
     setSelectedLanguage(language as keyof typeof premadeGoals);
     setShowModal(false);
-    setMessages([{ sender: "bot", text: chatData[language].start.bot }]);
+    setMessages([{ sender: "bot", text: chatData.start.bot }]);
   };
   function onChandleSubmitGoalPress(goal : string)
   {
@@ -185,18 +192,19 @@ const ChatApp = ({ setIsVisible }: { setIsVisible: (t: boolean) => void }) => {
     setIsVisible(true)
     NativeLevelHandler.setItem(ELocalStorageKeys.CHAT_WAS_OPEN, true.toString())
   }
+  function renderAvailableLanguage(lang : languageType)
+  {
+    return(<TouchableOpacity key={lang.key} onPress={() => handleLanguageSelect(lang.key)}>
+    <Text style={styles.modalOption}>{lang.txt}</Text>
+  </TouchableOpacity>)
+  }
   return (
     <View style={styles.container}>
       <Modal visible={showModal} transparent={true} animationType="fade">
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalText}>Select your language</Text>
-            <TouchableOpacity onPress={() => handleLanguageSelect("en")}>
-              <Text style={styles.modalOption}>English</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleLanguageSelect("es")}>
-              <Text style={styles.modalOption}>Español</Text>
-            </TouchableOpacity>
+            {languages.map(renderAvailableLanguage)}
           </View>
         </View>
       </Modal>
@@ -215,9 +223,9 @@ const ChatApp = ({ setIsVisible }: { setIsVisible: (t: boolean) => void }) => {
         )}
       </ScrollView>
 
-      {chatData[selectedLanguage][currentStep]?.options?.length > 0 && (
+      {chatData[currentStep]?.options?.length > 0 && (
         <View style={styles.optionsContainer}>
-          {chatData[selectedLanguage][currentStep].options.map((option : Option, index : number) => (
+          {chatData[currentStep].options.map((option : Option, index : number) => (
             <TouchableOpacity key={index} style={styles.optionButton} onPress={() => handleOptionPress(option)}>
               <Text style={styles.optionText}>{option.text}</Text>
             </TouchableOpacity>
@@ -226,23 +234,19 @@ const ChatApp = ({ setIsVisible }: { setIsVisible: (t: boolean) => void }) => {
           <Pressable style={[styles.optionButton, {backgroundColor: colors.nonDanger}]} onPress={()=> {
             setShowTextInput(true)}
 
-            }><Text style={styles.textSkip}>{selectedLanguage != "es" ? 'Skip chat 🐇' :"Saltar chat 🐇"}</Text></Pressable>
+            }><Text style={styles.textSkip}>{txt_chat_component.skip_txt}</Text></Pressable>
         </View>
       )}
 
       {showTextInput && (
         <View style={styles.inputContainer}>
-          <ChangeValue action={onChandleSubmitGoalPress} txtTitle={selectedLanguage != "es" ? "Write a task you love but struggle to do daily" : "Escribe la actividad que amas hacer"} initialText={userGoal}></ChangeValue>
+          <ChangeValue action={onChandleSubmitGoalPress} txtTitle={txt_chat_component.set_goal_component.input_title} initialText={userGoal}></ChangeValue>
           <ScrollView style={{paddingTop: _vw(5)}}>
           <Text style={styles.titleInputContainer}>
-          {selectedLanguage == "en" ? "Suggestions" : "Sugerencias"}
+          {txt_chat_component.suggestions.title}
           </Text>
-          <Text style={styles.suggestionHint}>
-        {selectedLanguage == "en" 
-          ? "Tap a suggestion to select it!" 
-          : "¡Toca una sugerencia para seleccionarla!"}
-      </Text>
-          { shuffleArray(premadeGoals[selectedLanguage]).map((goal, index) => (
+          <Text style={styles.suggestionHint}>{txt_chat_component.suggestions.suggestion_hint}</Text>
+          { shuffleArray(goals).map((goal, index) => (
             <TouchableOpacity key={index} style={styles.premadeGoalContainer} onPress={() => setUserGoal(goal)}>
               <Text style={styles.optionText}>{goal}</Text>
             </TouchableOpacity>

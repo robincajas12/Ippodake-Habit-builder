@@ -20,31 +20,15 @@ import { getTaskForToday } from "../../utils/getTaskForToday";
 import { UserKeys } from "../../Enums/UserKeys";
 import { AdsConsent, BannerAd, BannerAdSize, RequestOptions, TestIds } from "react-native-google-mobile-ads";
 import CreateNewTask from "../Create/CreateNewTask";
+import traslations, { getTranslation } from "../../Languages/LangManager";
 const adUnitId = __DEV__ ? TestIds.BANNER: 'ca-app-pub-5187514759339848/6240667800';
 //const adUnitId = TestIds.BANNER
 export default function Home( {canShowAds} : {canShowAds: boolean} ) {
   const [resquestOption, setResquestOption] = useState<RequestOptions | null>(null);
-  const language = NativeLevelHandler.getItem(ELocalStorageKeys.LANGUAGE) as keyof typeof translations;
+  const language : string = NativeLevelHandler.getItem(ELocalStorageKeys.LANGUAGE);
 
   // Traducciones
-  const translations: { [key in 'en' | 'es']: { habit: string, percentage: string, avg: string, info: string, reminder1: string, reminder2: string } } = {
-    en: {
-      habit: "Habit",
-      percentage: "Percentage",
-      avg: "AVG",
-      info: "Info",
-      reminder1: "Don't close the app",
-      reminder2: "But if you do... Don't forget to come back to record your progress"
-    },
-    es: {
-      habit: "Hábito",
-      percentage: "Porcentaje",
-      avg: "Promedio",
-      info: "Información",
-      reminder1: "No cierres la aplicación",
-      reminder2: "Pero si lo haces... No olvides volver para registrar tu progreso"
-    }
-  };
+  const txt_home = getTranslation(traslations.Home, language)
 
   const [habit, setHabit] = useState(NativeLevelHandler.getItem(UserKeys.GOAL_NAME));
   const context = useContext(Context);
@@ -104,15 +88,15 @@ export default function Home( {canShowAds} : {canShowAds: boolean} ) {
           {__DEV__  && <Text style={{color: 'red'}}>DevMODE</Text>}
           {/*<CreateNewTask></CreateNewTask>*/}
           <View style={stylesHome.containerHabit}>
-            <Text style={stylesHome.txtHabit}>{selectedTask.t ==selectedTask.tCompleted ? "Task completed, come back tomorrow" : translations[language].habit + ": " + habit}</Text>
+            <Text style={stylesHome.txtHabit}>{selectedTask.t ==selectedTask.tCompleted ? "Task completed, come back tomorrow" : txt_home.habit + ": " + habit}</Text>
           </View>
           <View style={stylesHome.mainContainer}>
             <View style={stylesHome.cardsContainer}>
-              <Text style={stylesHome.cardTitle}>{translations[language].percentage}</Text>
+              <Text style={stylesHome.cardTitle}>{txt_home.percentage}</Text>
               <Text style={stylesHome.cardValue}>{trunc((selectedTask.tCompleted * 100) / selectedTask.t)} %</Text>
             </View>
             <View style={stylesHome.cardsContainer}>
-              <Text style={stylesHome.cardTitle}>{translations[language].avg}</Text>
+              <Text style={stylesHome.cardTitle}>{txt_home.avg}</Text>
               <Text style={stylesHome.cardValue}>{trunc(NativeTodayTasksHandler.getAVGTaskTCompleted(21) / (60 * 1000), 1)}</Text>
             </View>
             <View style={[stylesHome.cardsContainer, stylesHome.container]}>
@@ -132,9 +116,9 @@ export default function Home( {canShowAds} : {canShowAds: boolean} ) {
               <BannerAd unitId={adUnitId} size={BannerAdSize.LARGE_BANNER} requestOptions={resquestOption} />
             ) : (
               <View style={[stylesHome.cardsContainer]}>
-                <Text style={stylesHome.cardValue}>{translations[language].info}</Text>
-                <Text style={stylesHome.cardTitle}>{translations[language].reminder1}</Text>  
-                <Text style={stylesHome.cardTitle}>{translations[language].reminder2}</Text>  
+                <Text style={stylesHome.cardValue}>{txt_home.info}</Text>
+                <Text style={stylesHome.cardTitle}>{txt_home.reminder1}</Text>  
+                <Text style={stylesHome.cardTitle}>{txt_home.reminder2}</Text>  
               </View>
             )}
           </View>
