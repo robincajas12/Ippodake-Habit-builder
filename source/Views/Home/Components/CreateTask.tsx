@@ -14,6 +14,7 @@ import Slider from "@react-native-community/slider";
 import colors from "../../Components/Styles/colors";
 import Help from "../../Components/General/Components/Help";
 import { UserKeys } from "../../../Enums/UserKeys";
+import traslations, { getTranslation } from "../../../Languages/LangManager";
 
 enum boost {
     IPPODAKE = "🐢",
@@ -105,22 +106,11 @@ export default function CreateTask({ selectedTask,setSelectTask, styleView}: any
 
         }
       }, [timeForTask])
-      function txt()
+
+        function txt()
         {
-            const language = NativeLevelHandler.getItem(ELocalStorageKeys.LANGUAGE) as keyof typeof dataTxt;
-            if(language) return dataTxt[language]
-            else return dataTxt.en
+            return getTranslation(traslations.CreateTask, NativeLevelHandler.getItem(ELocalStorageKeys.LANGUAGE))
         }
-        const dataTxt = {
-            en: {
-                pressableText: "🛠️ Create task for today",
-                txtSubTitle: "Choose your boost for today"
-            },
-            es: {
-                pressableText: "🛠️ Crear tarea para hoy",
-                txtSubTitle: "Elige tu mejora para hoy"
-            }
-        };
       function renderItem(item : btnData)
       {
         if(idSelectedTask != "")

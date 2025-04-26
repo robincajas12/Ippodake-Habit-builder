@@ -189,6 +189,7 @@ const ChatApp = ({ setIsVisible }: { setIsVisible: (t: boolean) => void }) => {
   function onChandleSubmitGoalPress(goal : string)
   {
     NativeLevelHandler.setItem(UserKeys.GOAL_NAME, goal)
+    
     setIsVisible(true)
     NativeLevelHandler.setItem(ELocalStorageKeys.CHAT_WAS_OPEN, true.toString())
   }

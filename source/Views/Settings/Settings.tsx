@@ -12,7 +12,7 @@ export default function Todo()
         <Text style = {{color: 'white'}}>{today.toString()} tasks</Text>
     </View>
 }*/
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Text, View, StyleSheet, Pressable, Linking, ScrollView, useWindowDimensions } from 'react-native';
 import Chat from '../Chat/Chat';
 import stylesMainContentView from '../Components/Styles/stylesMainContentView';
@@ -23,7 +23,9 @@ import _vw from '../../utils/sizeConversors';
 import ChangeValue from '../Components/General/Components/InputComponents/ChangeValue';
 import { UserKeys } from '../../Enums/UserKeys';
 import SelectTaskType from '../Menu/Components/SeletecTaskType';
-
+import NativeTodayTasksHandler from '../../../specs/NativeTodayTasksHandler';
+import ContextComponent, { Context } from '../../ContextComponent';
+import TaskType from '../../Models/TaskType';
 export default function Todo() {
   type languageType = { key: string; txt: string };
   const languages: languageType[] = [
@@ -94,7 +96,12 @@ export default function Todo() {
     <ScrollView>
       <View style={stylesMainContentView().view}>
         <View style={styles.containerSettings}>
-        <ChangeValue action={(value : string) => NativeLevelHandler.setItem(UserKeys.GOAL_NAME, value)} initialText={NativeLevelHandler.getItem(UserKeys.GOAL_NAME)} txtTitle={translations[language.key].txtChangeGoalName}></ChangeValue>
+        {NativeLevelHandler.getItem(ELocalStorageKeys.ID_SELECTED_TASKTYPE) &&
+        <ChangeValue action={(value : string) => {
+          const taskTypeId = Number(NativeLevelHandler.getItem(ELocalStorageKeys.ID_SELECTED_TASKTYPE))
+          NativeTodayTasksHandler.updateTaskTypeName(taskTypeId, value)
+          }} initialText={NativeLevelHandler.getItem(UserKeys.GOAL_NAME)} txtTitle={translations[language.key].txtChangeGoalName}></ChangeValue>
+        }
           <Text style={styles.selectedLanguageText}>
             {translations[language.key].selectedLanguage} {language.txt}
           </Text>
@@ -108,8 +115,8 @@ export default function Todo() {
             <Text style={styles.buttonTextS}>{translations[language.key].termsAndConditions}</Text>
           </Pressable>
 
-          <SelectTaskType idTaskType={0} setIdTaskType={function (idTaskType: number): void {
-            throw new Error('Function not implemented.');
+          <SelectTaskType idTaskType={1} setIdTaskType={function (idTaskType: number): void {
+            console.log(idTaskType)
           } } ></SelectTaskType>
         </View>
     </View>

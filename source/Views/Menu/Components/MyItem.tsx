@@ -32,7 +32,7 @@ export default function MyItem({taskType, action, selected} : myItemProps)
     } 
     return <View>
         <Pressable onPress={event} style={styles.container}>
-            <Text style={{}}>{taskType.title} hola</Text>
+            <Text style={{}}>{taskType.title}</Text>
         </Pressable>
     </View>
 }

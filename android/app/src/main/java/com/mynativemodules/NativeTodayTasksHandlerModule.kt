@@ -20,6 +20,8 @@ import kotlin.math.ceil
 
 class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : NativeTodayTasksHandlerSpec(reactContext){
     private val datesDao : DatesDao = DatabaseHelper.DataBaseProvider.getDatabase(reactContext).datesDao()
+    private val taskDao = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).tasksDao()
+
     override fun getToday(): String {
         val userDao =  DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).userDao()
         val user = userDao.getAll().first()
@@ -119,6 +121,27 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
         chronometer.isTimerActive = isActive
         chronometerDao.update(chronometer)
         return true
+    }
+
+    override fun updateTaskTypeName(idtaskType: Double, name: String?): Boolean {
+        val taskDao = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).tasksDao()
+        val matches = taskDao.getTaskType(idtaskType.toInt())
+        if(matches.isNotEmpty())
+        {
+            val taskType = matches.first()
+            taskType.title = name ?: "aaaaaaaa"
+            taskDao.updateTaskType(taskType)
+            return  true
+        }
+        return false
+    }
+
+    override fun updateTaskTypeMaxTime(idtaskType: Double, time: Double): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun updateTaskTypeMinTime(idtaskType: Double, time: Double): Boolean {
+        TODO("Not yet implemented")
     }
 
     override fun getChronometer(id: Double): String {
@@ -247,6 +270,9 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
         return jsonArray.toString()
     }
 
+    override fun getTaskTypeById(idtaskType: Double): String {
+        TODO("Not yet implemented")
+    }
 
 
     override fun getAllTaskTypes(): String {
@@ -268,6 +294,7 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
     }
 
     override fun createTaskType(
+        name: String?,
         type: String?,
         mainTaskType: Double,
         maxT: Double,
@@ -280,7 +307,7 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
                 mainTaskType = null,
                 maxT = maxT.toInt(),
                 minT = minT.toInt(),
-                title = "Stop using phone",
+                title = name ?: "",
                 creationDate = TimeUtil.today.getStartOfToday(),
                 exp = 0,
                 uid = 0

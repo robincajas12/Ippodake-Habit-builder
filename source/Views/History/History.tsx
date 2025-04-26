@@ -10,32 +10,21 @@ import { BannerAd, BannerAdSize, TestIds } from "react-native-google-mobile-ads"
 import { trunc } from "../../utils/mathForDummies";
 import { ELocalStorageKeys } from "../../Enums/LocalStorageKeys";
 import NativeLevelHandler from "../../../specs/NativeLevelHandler";
+import { getTranslation } from "../../Languages/LangManager";
+import txt_history from "./txt_history";
 
 type HistoryProps = {
   items: { t: number; date: string; tCompleted: number }[];
   promedio: number;
 };
 
-type languageType = {
-  key: 'en' | 'es';
-};
+
 
 const History = () => {
-  const language = NativeLevelHandler.getItem(ELocalStorageKeys.LANGUAGE) as keyof typeof translations;
+  const language = NativeLevelHandler.getItem(ELocalStorageKeys.LANGUAGE);
 
   // Translations
-  const translations: { [key in languageType['key']]: { history: string; avg: string; timeSpend: string } } = {
-    en: {
-      history: "History",
-      avg: "Average (21 days)",
-      timeSpend: "Time Spent"
-    },
-    es: {
-      history: "Historial",
-      avg: "Promedio (21 días)",
-      timeSpend: "Tiempo dedicado"
-    }
-  };
+  const my_txt_history = getTranslation(txt_history, language)
 
   const items = JSON.parse(NativeTodayTasksHandler.getAllMainTasks()).map((element: { t: number; date: string; tCompleted: number }) => {
     const element2 = element;
@@ -47,8 +36,8 @@ const History = () => {
   return (
     <View style={stylesMainContentView().view}>
       <View style={styles.container}>
-        <Text style={styles.title}>{translations[language].history}</Text>
-        <Text style={styles.promedio}>{translations[language].avg}: {trunc(NativeTodayTasksHandler.getAVGTaskTCompleted(30) / (60 * 1000), 3)} min</Text>
+        <Text style={styles.title}>{my_txt_history .history}</Text>
+        <Text style={styles.promedio}>{my_txt_history.avg}: {trunc(NativeTodayTasksHandler.getAVGTaskTCompleted(30) / (60 * 1000), 3)} min</Text>
 
         <FlatList
           style={styles.flatList}
@@ -66,7 +55,7 @@ const History = () => {
               <View style={styles.itemContainer}>
                 <Text style={styles.textDate}>{new Date(item.date).toLocaleDateString()}</Text>
                 <View style={styles.row}>
-                  <Text style={styles.text}>{translations[language].timeSpend}</Text>
+                  <Text style={styles.text}>{my_txt_history.timeSpend}</Text>
                   <Text style={porcentaje >= 95 ? styles.textNoDanger : porcentaje <= 50 && porcentaje < 80 ? styles.textDanger : styles.textMidDanger}>
                     {trunc(item.tCompleted, 1)} min
                   </Text>
