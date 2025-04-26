@@ -26,7 +26,7 @@ const History = () => {
   // Translations
   const my_txt_history = getTranslation(txt_history, language)
 
-  const items = JSON.parse(NativeTodayTasksHandler.getAllMainTasks()).map((element: { t: number; date: string; tCompleted: number }) => {
+  const items = JSON.parse(NativeTodayTasksHandler.getTaskForToday(Number(NativeLevelHandler.getItem(ELocalStorageKeys.ID_SELECTED_TASKTYPE)))).map((element: { t: number; date: string; tCompleted: number }) => {
     const element2 = element;
     element2.tCompleted = (element.tCompleted / (1000 * 60));
     element2.t = element.t / (1000 * 60);
@@ -37,7 +37,7 @@ const History = () => {
     <View style={stylesMainContentView().view}>
       <View style={styles.container}>
         <Text style={styles.title}>{my_txt_history .history}</Text>
-        <Text style={styles.promedio}>{my_txt_history.avg}: {trunc(NativeTodayTasksHandler.getAVGTaskTCompleted(30) / (60 * 1000), 3)} min</Text>
+        <Text style={styles.promedio}>{my_txt_history.avg}: {trunc(NativeTodayTasksHandler.getAVGTaskTCompleted(Number(NativeLevelHandler.getItem(ELocalStorageKeys.ID_SELECTED_TASKTYPE)),30) / (60 * 1000), 3)} min</Text>
 
         <FlatList
           style={styles.flatList}

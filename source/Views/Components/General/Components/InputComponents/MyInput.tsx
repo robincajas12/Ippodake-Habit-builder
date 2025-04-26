@@ -24,8 +24,6 @@ export default function MyInput({action, txtTitle, initialText, propertyToChange
             backgroundColor: colors.primaryColor,
             borderWidth:_vw(0.3),
             borderRadius: _vw(3),
-            borderTopRightRadius: 0,
-            borderBottomRightRadius: 0,
             
         },
         btn: {
@@ -36,8 +34,6 @@ export default function MyInput({action, txtTitle, initialText, propertyToChange
             borderRadius: _vw(3),
             display: 'flex',
             justifyContent:'center',
-            borderTopLeftRadius: 0,
-            borderBottomLeftRadius: 0
         },
         btnText:{
             fontSize: _vw(5),

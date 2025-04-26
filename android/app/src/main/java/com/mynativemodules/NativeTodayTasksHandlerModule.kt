@@ -62,23 +62,27 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
         return habitTracker.habitModel.getCurrentTime()
     }
 
-    override fun getAVGTaskTCompleted(pastNDays: Double): Double {
+    override fun getAVGTaskTCompleted(idTaskType: Double,pastNDays: Double): Double {
         val taskDao = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).
                 tasksDao()
         val calendar = Calendar.getInstance().apply { time = datesDao.getDay().first().date }
         calendar.add(Calendar.DAY_OF_MONTH, -pastNDays.toInt())
-        val taskType =  taskDao.getTaskType().first()
+        val res =  taskDao.getTaskType(idTaskType.toInt())
+        if(res.isEmpty()) return 0.0;
+        val taskType = res.first();
         val avg = taskDao.getAVGTaskSinceCertainDate(taskType.id, calendar.time)
         if(avg <= taskType.minT) return taskType.minT.toDouble()
         return avg
     }
 
-    override fun getRealAVG(pastNDays: Double): Double {
+    override fun getRealAVG(idTaskType: Double,pastNDays: Double): Double {
         val taskDao = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).
         tasksDao()
         val calendar = Calendar.getInstance().apply { time = datesDao.getDay().first().date }
         calendar.add(Calendar.DAY_OF_MONTH, -pastNDays.toInt())
-        val taskType = taskDao.getTaskType().first()
+        val res =  taskDao.getTaskType(idTaskType.toInt())
+        if(res.isEmpty()) return 0.0;
+        val taskType = res.first();
         val sum = taskDao.getSumTaskSinceCertainDate(taskType.id, calendar.time)
         val avg = sum/(pastNDays.toInt())
         if(avg <= taskType.minT) return taskType.minT.toDouble()
@@ -220,7 +224,7 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
 
     override fun getTaskForToday(id: Double): String {
         val jsonArray = JSONArray()
-        val tasks = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).tasksDao().getTasksByDate()
+        val tasks = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).tasksDao().getTasksByTaskTypeId(id.toInt())
 
         for (task in tasks)
         {
@@ -270,8 +274,43 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
         return jsonArray.toString()
     }
 
+    override fun getTaksByIdSinceCertainDate(idtaskType: Double, pastNDays: Double): String {
+        val jsonArray = JSONArray()
+        val taskDao = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).
+        tasksDao()
+        val calendar = Calendar.getInstance().apply { time = datesDao.getDay().first().date }
+        calendar.add(Calendar.DAY_OF_MONTH, -pastNDays.toInt())
+        val tasks =taskDao.getTaskSinceCertainDate(idtaskType.toInt(), calendar.time)
+        for (task in tasks)
+        {
+            val jsonObject = JSONObject();
+            jsonObject.put("id", task.id)
+            jsonObject.put("idTaskType", task.idTaskType)
+            jsonObject.put("t", task.t)
+            jsonObject.put("tCompleted",task.tCompleted)
+            jsonObject.put("completed", task.completed)
+            jsonObject.put("date", task.date.time)
+            jsonArray.put(jsonObject)
+        }
+        return jsonArray.toString()
+    }
+
     override fun getTaskTypeById(idtaskType: Double): String {
-        TODO("Not yet implemented")
+        val jsonArray = JSONArray()
+        val tasksTypes = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext)
+            .tasksDao().getTaskType(idtaskType.toInt())
+        for (taskType in tasksTypes)
+        {
+            val jsonObject = JSONObject();
+            jsonObject.put("id", taskType.id)
+            jsonObject.put("title", taskType.title)
+            jsonObject.put("exp", taskType.exp)
+            jsonObject.put("creationDate", taskType.creationDate)
+            jsonObject.put("minT", taskType.minT)
+            jsonObject.put("maxT", taskType.maxT)
+            jsonArray.put(jsonObject)
+        }
+        return jsonArray.toString()
     }
 
 

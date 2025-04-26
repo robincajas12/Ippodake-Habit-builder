@@ -140,7 +140,7 @@ export default class NotificationController
                     allowWhileIdle: true,
                 }
             }
-            const t = getTaskForToday()
+            const t = getTaskForToday(Number(NativeLevelHandler.getItem(ELocalStorageKeys.ID_SELECTED_TASKTYPE)))
             if(!t) return
             const id = await notifee.createTriggerNotification(
                 {

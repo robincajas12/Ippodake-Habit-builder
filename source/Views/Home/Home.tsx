@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, Text, Button, AppState, ScrollView } from "react-native";
+import { View, Text, Button, AppState, ScrollView, Pressable } from "react-native";
 import TimeCounter from "./Components/TimeCounter";
 import Clock from "./Components/Clock";
 import stylesHome from "./styles/stylesHome";
@@ -21,21 +21,27 @@ import { UserKeys } from "../../Enums/UserKeys";
 import { AdsConsent, BannerAd, BannerAdSize, RequestOptions, TestIds } from "react-native-google-mobile-ads";
 import CreateNewTask from "../Create/CreateNewTask";
 import traslations, { getTranslation } from "../../Languages/LangManager";
+import TaskType from "../../Models/TaskType";
 const adUnitId = __DEV__ ? TestIds.BANNER: 'ca-app-pub-5187514759339848/6240667800';
 //const adUnitId = TestIds.BANNER
-export default function Home( {canShowAds} : {canShowAds: boolean} ) {
+export default function Home( {canShowAds, idTaskType, setIdTaskType} : {idTaskType: number | null,canShowAds: boolean, setIdTaskType: (id :number| null) => void} ) {
   const [resquestOption, setResquestOption] = useState<RequestOptions | null>(null);
   const language : string = NativeLevelHandler.getItem(ELocalStorageKeys.LANGUAGE);
 
   // Traducciones
   const txt_home = getTranslation(traslations.Home, language)
 
-  const [habit, setHabit] = useState(NativeLevelHandler.getItem(UserKeys.GOAL_NAME));
+  const [habit, setHabit] = useState(()=>{
+    if(idTaskType == null) return ""
+    const res = NativeTodayTasksHandler.getTaskTypeById(idTaskType)
+    const taskType = JSON.parse(res)[0]
+    return TaskType.fromJSON(JSON.stringify(taskType)).title
+  });
   const context = useContext(Context);
   if (!context) {
     return null; // Manejo del caso null
   }
-  const { selectedTask, setIsVsible, setSelectedTask, clockStarted, setClockStarted, time, setTime } : ContextProps = context;
+  const { selectedTask, setIsVsible, setSelectedTask, clockStarted, setClockStarted, time, setTime} : ContextProps = context;
   useEffect(()=>{
     const loadAds = async () => {
       const {
@@ -64,15 +70,25 @@ export default function Home( {canShowAds} : {canShowAds: boolean} ) {
       });
     }
     if (!selectedTask) {
-      const idTaskType = NativeLevelHandler.getItem(ELocalStorageKeys.ID_SELECTED_TASKTYPE);
-      if (idTaskType !== "") {
-        const task = getTaskForToday();
-        if (task) {
-          if (task.id.toString() === NativeLevelHandler.getItem(ELocalStorageKeys.ID_SELECTED_TASK)) {
-            setSelectedTask(task);
-          } else {
-            setIsVsible(true);
+      
+      if (idTaskType !== null) {
+        try{
+          let task = getTaskForToday(idTaskType);
+          if(task == undefined) NativeTodayTasksHandler.createTaskForToday(idTaskType)
+          console.log("task-----------------------------------------------------------     11111", task)
+          task = getTaskForToday(idTaskType);
+          if (task) {
+            if (task.id.toString() === NativeLevelHandler.getItem(ELocalStorageKeys.ID_SELECTED_TASK)) {
+              setSelectedTask(task);
+            } else {
+              setIsVsible(true);
+            }
           }
+        }catch(e){
+          console.log("Error getting task for today", e);
+          setIdTaskType(null)
+          NativeLevelHandler.removeItem(ELocalStorageKeys.ID_SELECTED_TASKTYPE);
+          NativeLevelHandler.removeItem(ELocalStorageKeys.ID_SELECTED_TASK);
         }
       }
       setClockStarted(false);
@@ -87,6 +103,31 @@ export default function Home( {canShowAds} : {canShowAds: boolean} ) {
         <ScrollView>
           {__DEV__  && <Text style={{color: 'red'}}>DevMODE</Text>}
           {/*<CreateNewTask></CreateNewTask>*/}
+          <Pressable onPress={()=>
+              {
+                NativeLevelHandler.removeItem(ELocalStorageKeys.ID_SELECTED_TASKTYPE);
+                NativeLevelHandler.removeItem(ELocalStorageKeys.ID_SELECTED_TASK);
+                setIdTaskType(null);
+                setSelectedTask(null);
+                setClockStarted(false)
+                NativeLevelHandler.setItem(ELocalStorageKeys.CURRENT_DATE, NativeTodayTasksHandler.getToday())
+                if(NativeLevelHandler.getItem(ELocalStorageKeys.ID_TIMER))
+                {
+                  clearInterval(Number(NativeLevelHandler.getItem(ELocalStorageKeys.ID_TIMER)))
+                }
+                setClockStarted(false)
+                                NativeLevelHandler.removeItem(ELocalStorageKeys.ID_TIMER)
+                                NativeLevelHandler.removeItem(ELocalStorageKeys.CLOCK_STATUS)
+                                NotificationController.get().cancelTriggerNotification()
+                                const idActiveNot = NativeLevelHandler.getItem(ELocalStorageKeys.ID_ACTIVE_NOTIFICATION)
+                                if(idActiveNot)
+                                {
+                                    notifee.cancelNotification(idActiveNot)
+                                    NativeLevelHandler.removeItem(ELocalStorageKeys.ID_ACTIVE_NOTIFICATION)
+                                }
+              }}>
+            <Text>XDDDD</Text>
+          </Pressable>
           <View style={stylesHome.containerHabit}>
             <Text style={stylesHome.txtHabit}>{selectedTask.t ==selectedTask.tCompleted ? "Task completed, come back tomorrow" : txt_home.habit + ": " + habit}</Text>
           </View>
@@ -97,7 +138,7 @@ export default function Home( {canShowAds} : {canShowAds: boolean} ) {
             </View>
             <View style={stylesHome.cardsContainer}>
               <Text style={stylesHome.cardTitle}>{txt_home.avg}</Text>
-              <Text style={stylesHome.cardValue}>{trunc(NativeTodayTasksHandler.getAVGTaskTCompleted(21) / (60 * 1000), 1)}</Text>
+              <Text style={stylesHome.cardValue}>{trunc(NativeTodayTasksHandler.getAVGTaskTCompleted(selectedTask.idTaskType,21) / (60 * 1000), 1)}</Text>
             </View>
             <View style={[stylesHome.cardsContainer, stylesHome.container]}>
               <TimeCounter txtColor={null} time={time} />

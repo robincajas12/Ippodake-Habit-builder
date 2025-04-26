@@ -31,12 +31,12 @@ type btnData = {
 const btns : btnData[] = [
 
     {
-        startsRequired: 3,
+        startsRequired: 0,
         type: boost.AVG,
         name: "Avg + 10%",
         fun: (idTaskType:number)=>
         {
-            return Math.ceil((NativeTodayTasksHandler.getAVGTaskTCompleted(idTaskType))+ (NativeTodayTasksHandler.getHabitFormationModelCurrentTime(idTaskType)*0.1))
+            return Math.ceil((NativeTodayTasksHandler.getAVGTaskTCompleted(idTaskType, 21))+ (NativeTodayTasksHandler.getHabitFormationModelCurrentTime(idTaskType)*0.1))
         }
     },
     {
@@ -46,7 +46,7 @@ const btns : btnData[] = [
         fun: NativeTodayTasksHandler.getHabitFormationModelCurrentTime
     },
     {
-        startsRequired: 5,
+        startsRequired: 0,
         type: boost.SAME,
         name: "Froze time",
         fun: (idTaskType: number) => {
@@ -60,7 +60,7 @@ const btns : btnData[] = [
         }
     },
     {
-        startsRequired : 10,
+        startsRequired : 0,
         type: boost.MIN,
         name: "Min + 10%",
         fun: (idTaskType: number)=>{
@@ -159,7 +159,7 @@ export default function CreateTask({ selectedTask,setSelectTask, styleView}: any
             if(NativeTodayTasksHandler.createTaskForTodayWithTime(Number(idSelectedTask), timeForTask))
             {
                 setSelectTask(()=>{
-                        if(NativeTodayTasksHandler.getTaskForToday(1) != "[]")
+                        if(NativeTodayTasksHandler.getTaskForToday(Number(NativeLevelHandler.getItem(ELocalStorageKeys.ID_SELECTED_TASKTYPE))) != "[]")
                         {
                             const today = JSON.parse(NativeTodayTasksHandler
                                 .getTaskForToday(JSON.parse(NativeTodayTasksHandler.getTaskForToday(Number(idSelectedTask)))[0]["id"]))[0]
@@ -208,7 +208,7 @@ export default function CreateTask({ selectedTask,setSelectTask, styleView}: any
                 <TimeCounter txtColor={selectedBoost == boost.SAME ? stylesCreateTask.iceTxtSelected.color: null} time={time}></TimeCounter>
             </View>
             <View style={stylesCreateTask.containerPressableAndIceBtn}>
-                <View style={{display: NativeLevelHandler.getStreak()>=5 ? 'flex' : 'none'}}>
+                <View style={{}}>
                 {selectedBoost != boost.SAME ?  <Pressable onPress={onFreezeTimeBtnSelected} style={[stylesCreateTask.iceBtn]}>
                     {btnIce}
                 </Pressable> : btnIce}

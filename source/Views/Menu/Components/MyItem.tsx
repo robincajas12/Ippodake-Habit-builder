@@ -19,7 +19,7 @@ export default function MyItem({taskType, action, selected} : myItemProps)
             borderColor: colors.primaryColor_darker,
         },
         selected: {
-            backgroundColor: colors.primaryColor_darker,
+            backgroundColor: colors.danger,
         },
         text: {
             color: colors.font,
@@ -30,9 +30,9 @@ export default function MyItem({taskType, action, selected} : myItemProps)
     {
         action(taskType)
     } 
-    return <View>
-        <Pressable onPress={event} style={styles.container}>
-            <Text style={{}}>{taskType.title}</Text>
+    return <View style={[styles.container, selected && styles.selected]}>
+        <Pressable onPress={event}>
+            <Text style={styles.text}>{taskType.title}</Text>
         </Pressable>
     </View>
 }

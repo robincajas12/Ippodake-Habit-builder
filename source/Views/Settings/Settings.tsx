@@ -115,9 +115,7 @@ export default function Todo() {
             <Text style={styles.buttonTextS}>{translations[language.key].termsAndConditions}</Text>
           </Pressable>
 
-          <SelectTaskType idTaskType={1} setIdTaskType={function (idTaskType: number): void {
-            console.log(idTaskType)
-          } } ></SelectTaskType>
+
         </View>
     </View>
     </ScrollView>

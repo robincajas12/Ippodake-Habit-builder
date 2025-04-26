@@ -4,8 +4,8 @@ export interface Spec extends TurboModule
 {
     getToday() : string
     getHabitFormationModelCurrentTime(idtaskType : number) : number
-    getAVGTaskTCompleted(pastNDays: number) : number
-    getRealAVG(pastNDays:number) : number
+    getAVGTaskTCompleted(idtaskType: number,pastNDays: number) : number
+    getRealAVG(idtaskType: number,pastNDays:number) : number
     getChronometerTimeRemaining(id: number) : number
     deleteChronometer(id: number) : boolean
     createChronometer(time : number) : number
@@ -20,14 +20,14 @@ export interface Spec extends TurboModule
     getTaskForToday(id : number) : string
     getAllMainTasks() : string
     getAllSubTasks(idtask : number) : string
-    getTaskTypeById(idtaskType : number) : string
-
+    getTaksByIdSinceCertainDate(idtaskType : number, pastNDays: number) : string
     getAllTaskTypes() : string,
     createTaskType(
     name: string,
     type : string,
     mainTaskType : number,
     maxT : number,
-    minT : number) : number
+    minT : number) : number,
+    getTaskTypeById(idtaskType:number):string
 }
 export default TurboModuleRegistry.getEnforcing<Spec>('NativeTodayTasksHandler');
