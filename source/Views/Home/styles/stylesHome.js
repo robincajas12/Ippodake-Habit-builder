@@ -34,10 +34,10 @@ const stylesHome = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: colors.primaryColor,
-        paddingHorizontal: _vw(13),
+        paddingHorizontal: _vw(5),
     },
     cardTitle:{
-        fontSize: _vw(4),
+        fontSize: _vw(5),
         color: colors.font,
         textAlign: 'center',
         paddingTop: _vw(2),
@@ -50,7 +50,17 @@ const stylesHome = StyleSheet.create({
         padding: _vw(2),
     },
     containerHabit:{
-        paddingVertical: _vw(5),
+        paddingVertical: _vw(0),
+    },
+    cardsContainerManualEntry:{
+        backgroundColor: colors.primaryColor,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: _vw(6),
+        borderWidth: _vw(1),
+        padding: _vw(5),
+        minWidth: _vw(40)
     }
 })
 export default stylesHome

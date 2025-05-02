@@ -1,6 +1,7 @@
 package com.database
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
@@ -38,6 +39,8 @@ interface TasksDao {
     fun getCountTaskSinceCertainDate(idTaskType: Int,date : Date) : Double
     @Insert
     fun createTaskType(taskType: TaskType) : Long
+    @Query("delete from TaskType where id  = :id")
+    fun deleteTaskTypeById(id: Int) : Int
     @Insert
     fun createTask(task : Tasks) : Long
     @Update

@@ -3,11 +3,12 @@ import { Dimensions } from "react-native";
 import colors from "./colors";
 
 function  stylesMainContainer() {
+    const { width, height } = useWindowDimensions();
     const stylesMainContainer = StyleSheet.create({
         view: {
             display:'flex',
             flex: 1,
-            flexDirection: 'column',
+            flexDirection: width > height ? 'row':'column',
             backgroundColor: colors.primaryColor_darker
         }
     })

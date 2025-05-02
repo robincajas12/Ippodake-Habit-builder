@@ -12,6 +12,8 @@ import { ELocalStorageKeys } from "../../Enums/LocalStorageKeys";
 import NativeLevelHandler from "../../../specs/NativeLevelHandler";
 import { getTranslation } from "../../Languages/LangManager";
 import txt_history from "./txt_history";
+import BarChart from "../Menu/Components/Bar";
+import Task from "../../Models/Task";
 
 type HistoryProps = {
   items: { t: number; date: string; tCompleted: number }[];
@@ -26,19 +28,23 @@ const History = () => {
   // Translations
   const my_txt_history = getTranslation(txt_history, language)
 
-  const items = JSON.parse(NativeTodayTasksHandler.getTaskForToday(Number(NativeLevelHandler.getItem(ELocalStorageKeys.ID_SELECTED_TASKTYPE)))).map((element: { t: number; date: string; tCompleted: number }) => {
-    const element2 = element;
-    element2.tCompleted = (element.tCompleted / (1000 * 60));
-    element2.t = element.t / (1000 * 60);
-    return element2;
-  });
-
+  const [items, setItems] = useState(()=>{
+    return JSON.parse(NativeTodayTasksHandler.getTaksByIdSinceCertainDate(Number(NativeLevelHandler.getItem(ELocalStorageKeys.ID_SELECTED_TASKTYPE)),21)).map((element: { t: number; date: string; tCompleted: number }) => {
+      const element2 = element;
+      element2.tCompleted = (element.tCompleted / (1000 * 60));
+      element2.t = element.t / (1000 * 60);
+      return element2;
+    });
+  })
   return (
     <View style={stylesMainContentView().view}>
       <View style={styles.container}>
         <Text style={styles.title}>{my_txt_history .history}</Text>
         <Text style={styles.promedio}>{my_txt_history.avg}: {trunc(NativeTodayTasksHandler.getAVGTaskTCompleted(Number(NativeLevelHandler.getItem(ELocalStorageKeys.ID_SELECTED_TASKTYPE)),30) / (60 * 1000), 3)} min</Text>
-
+        <BarChart data={items.slice(0,12).reverse().map((t: any)=>{
+          const task = Task.fromJSON(JSON.stringify(t))
+          return {label: new Date(task.date).getDate(), value: task.tCompleted}
+        })}></BarChart>
         <FlatList
           style={styles.flatList}
           data={items}

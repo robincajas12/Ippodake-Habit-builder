@@ -123,7 +123,6 @@ export default function ({ time, setClockStarted, clockStarted, setTime, selecte
             changeClockStatus(true);
             setClockStarted(true);
             if (!NativeLevelHandler.getItem(ELocalStorageKeys.ID_TIMER)) {
-                if(selectedTask)NotificationController.get().lauchChronometerWithTask(selectedTask, ETaskType.TIME)
                 const newInterval = setInterval(clock, 1000);
                 NativeLevelHandler.setItem(ELocalStorageKeys.ID_TIMER, newInterval.toString());
                 

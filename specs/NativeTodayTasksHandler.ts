@@ -28,6 +28,7 @@ export interface Spec extends TurboModule
     mainTaskType : number,
     maxT : number,
     minT : number) : number,
-    getTaskTypeById(idtaskType:number):string
+    getTaskTypeById(idtaskType:number):string,
+    deleteTaskType(idtaskType: number) : boolean
 }
 export default TurboModuleRegistry.getEnforcing<Spec>('NativeTodayTasksHandler');

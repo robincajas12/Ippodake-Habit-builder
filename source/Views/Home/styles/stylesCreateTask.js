@@ -65,7 +65,8 @@ const stylesCreateTask = StyleSheet.create({
         transform: [{scale: _vw(0.30)}]
     },
     boostBtnEmoji:{
-        fontSize: _vw(15)
+        fontSize: _vw(15),
+        textAlign: 'center'
     },
     boostBtnEmojiSelected:{
         //fontSize: _vw(20)

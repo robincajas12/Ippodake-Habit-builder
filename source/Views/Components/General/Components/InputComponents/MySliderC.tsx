@@ -6,7 +6,7 @@ import _vw from "../../../../../utils/sizeConversors";
 import { trunc } from "../../../../../utils/mathForDummies";
 
 
-export default function MySlider({
+export default function MySliderC({
     action,
     txtTitle,
     initialValue,
@@ -21,9 +21,11 @@ export default function MySlider({
     max: number,
     propertyToChange: string
 }) {
-    const [value, setValue] = useState<number>(initialValue);
+    const value = useRef(initialValue)
 
-
+    useEffect(() => {
+        value.current = initialValue;
+    }, [initialValue]);
 
     const styles = StyleSheet.create({
         containerInput: {
@@ -76,21 +78,23 @@ export default function MySlider({
     return (
         <View style={styles.containerInput}>
             <View style={styles.container}>
-                <Text style={styles.title}>{txtTitle} : {trunc(initialValue)}</Text>
+                <Text style={styles.title}>{txtTitle} : {trunc(value.current,1)}</Text>
                 <View style={styles.sliderContainer}>
-                <Slider
-                    style={styles.slider}
-                    value={value}
-                    minimumValue={min}
-                    maximumValue={max}
-                    minimumTrackTintColor={colors.white_blue}
-                    maximumTrackTintColor={colors.font}
-                    thumbTintColor={colors.white_blue}
-                    step={1}
-                    /// solo actualiza el número localmente
-                    onSlidingComplete={(val) => onChange(val)} // solo dispara la acción cuando sueltas
-/>
+                    <Slider
+                        style={styles.slider}
+                        value={value.current}
+                        minimumValue={min}
+                        maximumValue={max}
+                        minimumTrackTintColor={colors.white_blue}
+                        maximumTrackTintColor={colors.font}
+                        thumbTintColor={colors.white_blue}
+                        step={0.1}
+                        onValueChange={(v)=> {
+                            value.current =v;
+                            action(v, propertyToChange)
+                        }}
 
+                    />
                 </View>
             </View>
         </View>

@@ -12,26 +12,6 @@ import { ETaskType } from "../../Models/TaskType";
 
 export default function CreateNewTask({canShowAds, setRenderHabitCreator}: {canShowAds: boolean, setRenderHabitCreator: (t:boolean)=>void})
 {
-    const [resquestOption, setResquestOption] = useState<RequestOptions | null>(null);
-     useEffect(()=>{
-        const isTaskTypeTableEmpty = NativeTodayTasksHandler.getAllTaskTypes() === "[]";
-        if(isTaskTypeTableEmpty){
-            setRenderHabitCreator(true);
-        }
-        const loadAds = async () => {
-          const {
-            selectPersonalisedAds,
-          } = await AdsConsent.getUserChoices();
-          console.log("selectPersonalisedAds", selectPersonalisedAds);
-          const requestOptions: RequestOptions = {
-            requestNonPersonalizedAdsOnly: !selectPersonalisedAds,
-          };
-          
-          setResquestOption(requestOptions); // Set the request options after loading
-        };
-        console.log("can show ads? " ,canShowAds)
-        if(canShowAds == true) loadAds();
-    }, [canShowAds, setResquestOption])
     const style = StyleSheet.create({
         container: {
             flex: 1,
@@ -123,7 +103,7 @@ export default function CreateNewTask({canShowAds, setRenderHabitCreator}: {canS
             return
         }
         if(values.current.t_min > values.current.t_max) return
-        const id = NativeTodayTasksHandler.createTaskType(values.current.task_name, ETaskType.TIME, -1,values.current.t_min, values.current.t_max);
+        const id = NativeTodayTasksHandler.createTaskType(values.current.task_name, ETaskType.TIME, -1, values.current.t_max,values.current.t_min);
         console.log("id", id);
         setRenderHabitCreator(false);
     
@@ -182,6 +162,5 @@ export default function CreateNewTask({canShowAds, setRenderHabitCreator}: {canS
                 </Pressable>
             </View>
         </ScrollView>
-        { canShowAds && resquestOption!= null && <BannerAd unitId={__DEV__ ? TestIds.BANNER :"ca-app-pub-5187514759339848/9400096840"} size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER} requestOptions={resquestOption}></BannerAd>}
     </View>
 }

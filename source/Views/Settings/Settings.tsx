@@ -13,7 +13,7 @@ export default function Todo()
     </View>
 }*/
 import React, { useContext, useState } from 'react';
-import { Text, View, StyleSheet, Pressable, Linking, ScrollView, useWindowDimensions } from 'react-native';
+import { Text, View, StyleSheet, Pressable, Linking, ScrollView, useWindowDimensions, Alert } from 'react-native';
 import Chat from '../Chat/Chat';
 import stylesMainContentView from '../Components/Styles/stylesMainContentView';
 import NativeLevelHandler from '../../../specs/NativeLevelHandler';
@@ -26,7 +26,18 @@ import SelectTaskType from '../Menu/Components/SeletecTaskType';
 import NativeTodayTasksHandler from '../../../specs/NativeTodayTasksHandler';
 import ContextComponent, { Context } from '../../ContextComponent';
 import TaskType from '../../Models/TaskType';
+import { getTranslation } from '../../Languages/LangManager';
 export default function Todo() {
+  const context = useContext(Context);
+  if (!context) {
+    return null; // Manejo del caso null
+  }
+  const { setSelectedTask, setClockStarted, setTime , selectedTask ,setIdSelectedTaskType} = context;
+    const [habit, setHabit] = useState(()=>{
+      const res = JSON.stringify(JSON.parse(NativeTodayTasksHandler.getTaskTypeById(Number(NativeLevelHandler.getItem(ELocalStorageKeys.ID_SELECTED_TASKTYPE))))[0]);
+      console.log("res", res)
+      return TaskType.fromJSON(res).title;
+    });
   type languageType = { key: string; txt: string };
   const languages: languageType[] = [
     { key: "en", txt: "English" },
@@ -34,19 +45,28 @@ export default function Todo() {
   ];
 
   // Traducciones
-  const translations: { [key in languageType['key']]: { selectedLanguage: string, alertCloseApp: string, termsAndConditions: string,txtChangeGoalName: string} } = {
+  const translations: { [key in languageType['key']]: {alertButtonContinue: string,alertButtonCancel: string,alertTitleConfirm:string, selectedLanguage: string, alertCloseApp: string, termsAndConditions: string,txtChangeGoalName: string, deleteGoal: string} } = {
     en: {
       selectedLanguage: "Selected language:",
       alertCloseApp: "To apply changes for some settings please restart the app",
       termsAndConditions: "Privacy Policy",
-      txtChangeGoalName: "Task name"
+      txtChangeGoalName: "Task name",
+      deleteGoal: "Delete habit",
+      alertTitleConfirm: "Are you sure you want to continue?",
+      alertButtonCancel: "Cancel",
+      alertButtonContinue: "Continue"
     },
     es: {
       selectedLanguage: "Idioma seleccionado:",
       alertCloseApp: "Para aplicar los cambios para algunas configuraciones reinicie la app",
       termsAndConditions: "Política de Privacidad",
-      txtChangeGoalName: "Nombre de la tarea"
+      txtChangeGoalName: "Nombre de la tarea",
+      deleteGoal: "Eliminar hábito",
+      alertTitleConfirm: "¿Estás seguro de que deseas continuar?",
+      alertButtonCancel: "Cancelar",
+      alertButtonContinue: "Continuar"
     }
+    
   };
   const {width, height} = useWindowDimensions()
   const [language, setLanguage] = useState<languageType>(() => {
@@ -100,7 +120,7 @@ export default function Todo() {
         <ChangeValue action={(value : string) => {
           const taskTypeId = Number(NativeLevelHandler.getItem(ELocalStorageKeys.ID_SELECTED_TASKTYPE))
           NativeTodayTasksHandler.updateTaskTypeName(taskTypeId, value)
-          }} initialText={NativeLevelHandler.getItem(UserKeys.GOAL_NAME)} txtTitle={translations[language.key].txtChangeGoalName}></ChangeValue>
+          }} initialText={habit} txtTitle={translations[language.key].txtChangeGoalName}></ChangeValue>
         }
           <Text style={styles.selectedLanguageText}>
             {translations[language.key].selectedLanguage} {language.txt}
@@ -114,8 +134,33 @@ export default function Todo() {
           <Pressable onPress={openTermsAndConditions} style={styles.termsButton}>
             <Text style={styles.buttonTextS}>{translations[language.key].termsAndConditions}</Text>
           </Pressable>
+          <Pressable onPress={()=>{
+             Alert.alert(
+              translations[language.key].deleteGoal,
+              translations[language.key].alertTitleConfirm,
+              [
+                {
+                  text: translations[language.key].alertButtonCancel,
+                  onPress: () => console.log('Cancelado'),
+                  style: 'cancel',
+                },
+                {
+                  text: translations[language.key].alertButtonContinue,
+                  onPress: () => {
+                    const taskTypeId = Number(NativeLevelHandler.getItem(ELocalStorageKeys.ID_SELECTED_TASKTYPE))
+                    NativeTodayTasksHandler.deleteTaskType(taskTypeId)
+                    NativeLevelHandler.removeItem(ELocalStorageKeys.ID_SELECTED_TASKTYPE);
+                    NativeLevelHandler.removeItem(ELocalStorageKeys.ID_SELECTED_TASK);
+                    setIdSelectedTaskType(null);
+                    
+                    
+                  }
+                },
+              ],
+              { cancelable: false }
+            );
 
-
+          }} style={[styles.restartMessage,{width: _vw(85)}]}><Text style={[styles.buttonText, {fontFamily:'Roboto-Regular', textAlign: 'center', fontSize: _vw(4)}]}>{translations[language.key].deleteGoal}</Text></Pressable>
         </View>
     </View>
     </ScrollView>

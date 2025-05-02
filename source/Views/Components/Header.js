@@ -91,7 +91,7 @@ const tutorial = [
 ];
 
 
-    export default function Header() {
+    export default function Header({setIdSelectedTaskType}) {
       const [tutorialVisible, setTutorialVisible] = useState(false);
       const { width, height } = useWindowDimensions();
       const closeTutorial = () => {
@@ -100,6 +100,54 @@ const tutorial = [
     
       // Get the current language setting
       const language = NativeLevelHandler.getItem(ELocalStorageKeys.LANGUAGE);
+      const stylesHeader = StyleSheet.create({
+        viewHeader: 
+        {
+          backgroundColor: colors.primaryColor_darker,
+          borderBottomStartRadius: width < height ? 0 : 0,
+          borderBottomEndRadius:  width < height ? 0 : 0,
+          display: "flex",
+          flexDirection: width < height ? 'row' : 'column',
+          alignItems: width < height ? "center" : "flex-start",
+          justifyContent: "space-between", // Centra los elementos horizontalmente
+          paddingHorizontal: width < height ? _vw(6): 20, // Evita que el texto se pegue a los bordes
+          height: 'auto',
+          paddingVertical: width < height ? _vh(2.5) : _vw(5),
+      
+        },
+        textHeader : 
+        {
+          paddingVertical: width < height ? 0 : _vw(5),
+          color: colors.font,
+          fontSize: width < height ? _vw(8) : _vw(6),
+          fontFamily: 'Roboto-Bold',
+          textAlign: 'center',
+          flexShrink: 1, // Evita que el texto se expanda demasiado
+        },
+        helpPressable:{
+          borderWidth: _vw(0.5),
+          borderColor: colors.font,
+          borderRadius: _vw(50),
+          width: _vw(10),
+          height: _vw(10),
+          justifyContent: "center",
+          alignItems: "center",
+        },
+        helpText:{
+          fontSize: _vw(7),
+          color: colors.font,
+          fontFamily: 'Roboto-Bold',
+          textAlign: 'center',
+        },
+        btnChangeHabit:{
+        },
+        btnChangeHabitText:{
+          fontSize: _vw(10),
+          color: colors.font,
+          fontFamily: 'Roboto-Bold',
+          textAlign: 'center',
+        },
+      });
     
       const styles = StyleSheet.create({
         tutorialOverlay: {
@@ -166,17 +214,23 @@ const tutorial = [
       });
     
       return (
-        <View style={stylesHeader().viewHeader}>
+        <View style={stylesHeader.viewHeader}>
           <StatusBar
-            hidden={false}
+            hidden={true}
             backgroundColor={colors.primaryColor_darker}
             barStyle={colors.primaryColor === lightColors.primaryColor ? "dark-content" : "light-content"}
           />
-          <Text style={stylesHeader().textHeader}>🌟 {NativeLevelHandler.getStreak()}</Text>
-    
+          <Pressable onPress={()=>{
+                            NativeLevelHandler.removeItem(ELocalStorageKeys.ID_SELECTED_TASKTYPE);
+                            NativeLevelHandler.removeItem(ELocalStorageKeys.ID_SELECTED_TASK);
+                            setIdSelectedTaskType(null);
+          }} style={stylesHeader.btnChangeHabit}>
+              <Text style={stylesHeader.btnChangeHabitText}>⬅️</Text>
+          </Pressable>
+          <Text style={stylesHeader.textHeader}>🌟 {NativeLevelHandler.getStreak()}</Text>
           {/* Help button */}
-          <Pressable style={stylesHeader().helpPressable} onPress={() => setTutorialVisible(true)}>
-            <Text style={stylesHeader().helpText}>?</Text>
+          <Pressable style={stylesHeader.helpPressable} onPress={() => setTutorialVisible(true)}>
+            <Text style={stylesHeader.helpText}>?</Text>
           </Pressable>
     
           {/* Full-screen tutorial */}

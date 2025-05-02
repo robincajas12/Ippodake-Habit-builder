@@ -54,7 +54,7 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
         for(i in 1..number)
         {
             val newTime : Date = calendar.time
-            val taskForThatDate = tasksDao.getTasksByDate(newTime)
+            val taskForThatDate = tasksDao.getTasksByTaskTypeIdAndDate(idtaskType.toInt(),newTime)
             if(taskForThatDate.isEmpty()) habitTracker.recordDay(i, 0.0)
             else habitTracker.recordDay(i, taskForThatDate.first().tCompleted.toDouble())
             calendar.add(Calendar.DAY_OF_MONTH, 1)
@@ -224,7 +224,7 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
 
     override fun getTaskForToday(id: Double): String {
         val jsonArray = JSONArray()
-        val tasks = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).tasksDao().getTasksByTaskTypeId(id.toInt())
+        val tasks = DatabaseHelper.DataBaseProvider.getDatabase(this.reactApplicationContext).tasksDao().getTasksByTaskTypeIdAndDate(id.toInt())
 
         for (task in tasks)
         {
@@ -311,6 +311,17 @@ class NativeTodayTasksHandlerModule (reactContext : ReactApplicationContext) : N
             jsonArray.put(jsonObject)
         }
         return jsonArray.toString()
+    }
+
+    override fun deleteTaskType(idtaskType: Double): Boolean {
+        try {
+            taskDao.deleteTaskTypeById(idtaskType.toInt())
+            return true;
+        }catch (e : Exception)
+        {
+            return false;
+        }
+        return false;
     }
 
 

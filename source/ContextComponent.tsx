@@ -1,6 +1,6 @@
 import notifee, { EventType } from "@notifee/react-native";
 import { createContext, useState, useEffect } from "react";
-import { AppState, View } from "react-native";
+import { AppState, StyleSheet, useWindowDimensions, View } from "react-native";
 import NativeLevelHandler from "../specs/NativeLevelHandler";
 import NativeTodayTasksHandler from "../specs/NativeTodayTasksHandler";
 import NotificationController from "./Controllers/NotificationController";
@@ -15,6 +15,7 @@ import Header from "./Views/Components/Header";
 import { getTaskForToday } from "./utils/getTaskForToday";
 import { BannerAd, BannerAdSize, TestIds } from "react-native-google-mobile-ads";
 import SelectTaskType from "./Views/Menu/Components/SeletecTaskType";
+import colors from "./Views/Components/Styles/colors";
 export interface ContextProps {
     selectedTask: Task | null;
     setSelectedTask: React.Dispatch<React.SetStateAction<Task | null>>;
@@ -25,19 +26,30 @@ export interface ContextProps {
     timer: NodeJS.Timeout | null;
     setIsVsible: React.Dispatch<React.SetStateAction<boolean>>;
     canShowAds: boolean;
+    idSelectedTaskType: number;
+    setIdSelectedTaskType : React.Dispatch<React.SetStateAction<number | null>>;
+    
   }
   
   export const Context = createContext<ContextProps | null>(null);
-  function ContextComponent({canShowAds, setCanShowAds, idSelectedTaskType}:{idSelectedTaskType: number | null, canShowAds:boolean, setCanShowAds: (t:boolean)=>void})
+  function ContextComponent({canShowAds, setCanShowAds, idSelectedTaskType, setIdSelectedTaskType}:{setIdSelectedTaskType : React.Dispatch<React.SetStateAction<number | null>>, idSelectedTaskType: number | null, canShowAds:boolean, setCanShowAds: (t:boolean)=>void})
   {
-    let timer : NodeJS.Timeout | null = null
+    let timer : NodeJS.Timeout | null = null;
+    const { width, height } = useWindowDimensions();
+        const stylesMainContainer = StyleSheet.create({
+            view: {
+                display:'flex',
+                flex: 1,
+                flexDirection: width > height ? 'row-reverse':'column',
+                backgroundColor: colors.primaryColor_darker
+            }
+        })
     const [main, setMain] = useState<ListViewKey>('Home');
     const [clockStarted, setClockStarted] = useState(()=>{
       return NativeLevelHandler.getItem(ELocalStorageKeys.CLOCK_STATUS) === "true"
     });
     const [isVisible, setIsVsible] = useState(false);
     const [selectedTask, setSelectedTask] = useState<Task| null>(null)
-    const [idTaskType, setIdTaskType] = useState<number|null>(null)
 
       const [time, setTime] = useState<Date>(()=>  {
           const time = new Date();
@@ -57,7 +69,7 @@ export interface ContextProps {
     {
           const taskTypes = NativeTodayTasksHandler.getAllTaskTypes()
           console.log(taskTypes)
-          if(taskTypes != "[]")
+          if(SelectTaskType != null)
           {
             NativeLevelHandler.setItem(
               ELocalStorageKeys.ID_SELECTED_TASKTYPE,
@@ -71,10 +83,10 @@ export interface ContextProps {
       if(NativeLevelHandler.getItem(ELocalStorageKeys.ID_SELECTED_TASKTYPE))
       {
         const id = Number(NativeLevelHandler.getItem(ELocalStorageKeys.ID_SELECTED_TASKTYPE))
-        setIdTaskType(id)
+        setSelectedTaskType(id)
       }
       
-    }, [idTaskType]); // 👈 Se ejecuta solo una vez después del primer render
+    }, [idSelectedTaskType]); // 👈 Se ejecuta solo una vez después del primer render
     
     const MainComponent = listView[main];
     useEffect(() => {
@@ -82,15 +94,15 @@ export interface ContextProps {
       {
   
           setSelectedTask(()=>{
-            if(idTaskType == null) return null
-            const taskForToday = getTaskForToday(idTaskType)
-            console.log(taskForToday, "tarea para hoy")
+            if(idSelectedTaskType == null) return null;
+            const taskForToday = getTaskForToday(idSelectedTaskType)
+            
+            console.log(taskForToday, "tarea para hoy awwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww")
             if(taskForToday)
               {
                 NativeLevelHandler.setItem(ELocalStorageKeys.ID_SELECTED_TASK, taskForToday.id.toString())
                 return taskForToday
             }
-          setIdTaskType(null)
           return null
           })
           
@@ -132,7 +144,7 @@ export interface ContextProps {
         suscription.remove(); // Limpieza del evento al desmontar el componente
     };
 }, []);
-    return idTaskType != null? <Context.Provider value={{ 
+    return idSelectedTaskType != null ? <Context.Provider value={{ 
       timer,
       setIsVsible,
       selectedTask, 
@@ -141,14 +153,15 @@ export interface ContextProps {
       setClockStarted,
       time,
       setTime,
-      canShowAds
+      canShowAds,
+      idSelectedTaskType,
+      setIdSelectedTaskType
       }}>
-        {!isVisible &&
-        <View style={stylesMainContainer().view}>
-        <Header></Header>
-            {MainComponent? <MainComponent idTaskType={idTaskType}  setIdTaskType={setIdTaskType} canShowAds={canShowAds}></MainComponent> : <Home setIdTaskType={setIdTaskType} idTaskType={idTaskType} canShowAds={canShowAds}></Home>}
+        <View style={stylesMainContainer.view}>
+        <Header setIdSelectedTaskType={setIdSelectedTaskType}></Header>
+            {MainComponent? <MainComponent idTaskType={idSelectedTaskType}  setIdTaskType={setIdSelectedTaskType} canShowAds={canShowAds}></MainComponent> : <Home setIdTaskType={setIdSelectedTaskType} idTaskType={idSelectedTaskType} canShowAds={canShowAds}></Home>}
         <Footer setMain={setMain}></Footer>
-        </View>}
-    </Context.Provider> : <SelectTaskType canShowAds={canShowAds} idTaskType={idTaskType} setIdTaskType={setIdTaskType}></SelectTaskType>
+        </View>
+    </Context.Provider> : <SelectTaskType canShowAds={canShowAds} idTaskType={idSelectedTaskType} setIdTaskType={setIdSelectedTaskType}></SelectTaskType>
   }
   export default ContextComponent;

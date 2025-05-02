@@ -14,6 +14,7 @@ import languages from "../../Languages/languages";
 import { languageType } from "../../Languages/laguageTypes";
 import LangManager from "../../Languages/LangManager";
 import traslations from "../../Languages/LangManager";
+import NativeTodayTasksHandler from "../../../specs/NativeTodayTasksHandler";
 
 //const chatData = chatDataArray;
 type goalsType = { en: string[]; es: string[] }
@@ -189,6 +190,7 @@ const ChatApp = ({ setIsVisible }: { setIsVisible: (t: boolean) => void }) => {
   function onChandleSubmitGoalPress(goal : string)
   {
     NativeLevelHandler.setItem(UserKeys.GOAL_NAME, goal)
+    NativeTodayTasksHandler.updateTaskTypeName(1, goal);
     
     setIsVisible(true)
     NativeLevelHandler.setItem(ELocalStorageKeys.CHAT_WAS_OPEN, true.toString())

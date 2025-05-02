@@ -26,7 +26,7 @@ import DeviceInfo from 'react-native-device-info';
 function App(){
   const [canShowAds, setCanShowAds] = useState(false);
   const isMobileAdsStartCalledRef = useRef(false);
-  const [idSelectedTaskType, setIdSelectedTaskType] = useState<number | null>();
+  const [idSelectedTaskType, setIdSelectedTaskType] = useState<number | null>(null);
   useEffect(() => {
     if(canShowAds == false)
     {
@@ -71,7 +71,7 @@ function App(){
       }
   }, [])
   return wasChadOpen ? <ContextComponent idSelectedTaskType={idSelectedTaskType} setIdSelectedTaskType={setIdSelectedTaskType} canShowAds={canShowAds} setCanShowAds={setCanShowAds}></ContextComponent> : <View style={{display: 'flex', flex: 1}}>
-    {wasChadOpen && <Header></Header>}
+    {wasChadOpen && <Header setIdSelectedTaskType={setIdSelectedTaskType}></Header>}
     <FakeChat setIsVisible={setWasChatOpen}></FakeChat>
   </View>
 }

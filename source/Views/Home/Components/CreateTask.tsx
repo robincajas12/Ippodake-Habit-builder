@@ -2,7 +2,7 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import _vw from "../../../utils/sizeConversors";
 import stylesCreateTask from "../styles/stylesCreateTask";
 import TimeCounter from "./TimeCounter";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import NativeTodayTasksHandler from "../../../../specs/NativeTodayTasksHandler";
 import Task from "../../../Models/Task";
 import NativeLevelHandler from "../../../../specs/NativeLevelHandler";
@@ -15,6 +15,7 @@ import colors from "../../Components/Styles/colors";
 import Help from "../../Components/General/Components/Help";
 import { UserKeys } from "../../../Enums/UserKeys";
 import traslations, { getTranslation } from "../../../Languages/LangManager";
+import { Context } from "../../../ContextComponent";
 
 enum boost {
     IPPODAKE = "🐢",
@@ -50,7 +51,8 @@ const btns : btnData[] = [
         type: boost.SAME,
         name: "Froze time",
         fun: (idTaskType: number) => {
-            const frozenTime = NativeLevelHandler.getItem(ELocalStorageKeys.FROZEN_TIME)
+            const frozenTime = NativeLevelHandler.getItem(ELocalStorageKeys.FROZEN_TIME + idTaskType.toString())
+            console.log("frozenTime", frozenTime)
             if(frozenTime)
             {
                 const n = Number(frozenTime)
@@ -64,16 +66,31 @@ const btns : btnData[] = [
         type: boost.MIN,
         name: "Min + 10%",
         fun: (idTaskType: number)=>{
-            return Math.ceil(((3) * 60*1000) +  (NativeTodayTasksHandler.getHabitFormationModelCurrentTime(idTaskType)*0.1))
+                const res = JSON.stringify(JSON.parse(NativeTodayTasksHandler.getTaskTypeById(idTaskType))[0]);
+                console.log("res", res)
+                const task = TaskType.fromJSON(res);
+            return Math.ceil(((task.minT)) +  (NativeTodayTasksHandler.getHabitFormationModelCurrentTime(idTaskType)*0.1))
         }
     }
 ]
 export default function CreateTask({ selectedTask,setSelectTask, styleView}: any)
 {
-    const idSelectedTask = NativeLevelHandler.getItem(ELocalStorageKeys.ID_SELECTED_TASKTYPE)
+    
+    const context = useContext(Context);
+    if (!context) {
+        return null; // Manejo del caso null
+      }
+    const {idSelectedTaskType} = context;
+    const idSelectedTask = idSelectedTaskType;
     const [selectedBoost, setSelectedBoost] = useState(boost.IPPODAKE);
     const [taskType, setTaskType] = useState<TaskType | null>(null)
     const [timeForTask, setTimeForTask] = useState(0)
+
+      const [habit, setHabit] = useState(()=>{
+        const res = JSON.stringify(JSON.parse(NativeTodayTasksHandler.getTaskTypeById(idSelectedTaskType))[0]);
+        console.log("res", res)
+        return TaskType.fromJSON(res).title;
+      });
       const [time, setTime] = useState(()=>  {
           const time = new Date();
           time.setDate(0)
@@ -113,8 +130,6 @@ export default function CreateTask({ selectedTask,setSelectTask, styleView}: any
         }
       function renderItem(item : btnData)
       {
-        if(idSelectedTask != "")
-        {
         function onPressBtn()
         {       setSelectedBoost(item.type)
                 if(idSelectedTask)
@@ -150,19 +165,20 @@ export default function CreateTask({ selectedTask,setSelectTask, styleView}: any
             return <View  key={item.type}style={stylesCreateTask.containerBtnNotAvailable}>
                 {btnText}
             </View>
-        }
+        
         
       }
       function onPress(){
 
-            if(NativeLevelHandler.getItem(ELocalStorageKeys.ID_SELECTED_TASKTYPE) == "") return 
-            if(NativeTodayTasksHandler.createTaskForTodayWithTime(Number(idSelectedTask), timeForTask))
+            if(NativeTodayTasksHandler.createTaskForTodayWithTime(Number(idSelectedTaskType), timeForTask))
             {
                 setSelectTask(()=>{
-                        if(NativeTodayTasksHandler.getTaskForToday(Number(NativeLevelHandler.getItem(ELocalStorageKeys.ID_SELECTED_TASKTYPE))) != "[]")
+                    console.log("tarea para hoy: 000000-------------------" +NativeTodayTasksHandler.getTaskForToday(idSelectedTaskType))
+                        const taskForToday =NativeTodayTasksHandler.getTaskForToday(idSelectedTaskType)
+                        if(taskForToday)
                         {
                             const today = JSON.parse(NativeTodayTasksHandler
-                                .getTaskForToday(JSON.parse(NativeTodayTasksHandler.getTaskForToday(Number(idSelectedTask)))[0]["id"]))[0]
+                                .getTaskForToday(idSelectedTaskType))[0]
                             const task = Task.fromJSON(JSON.stringify(today)) 
                             return task
                         }
@@ -191,13 +207,14 @@ export default function CreateTask({ selectedTask,setSelectTask, styleView}: any
         setSelectedBoost(boost.SAME)
         if(timeForTask)
         {
-            NativeLevelHandler.setItem(ELocalStorageKeys.FROZEN_TIME, timeForTask.toString())
+
+            NativeLevelHandler.setItem(ELocalStorageKeys.FROZEN_TIME + idSelectedTaskType.toString(), timeForTask.toString())
         }
       }
     return (<ScrollView>
         <View style={[styleView]}>
         <View style={[stylesCreateTask.container]}>
-            <Text style={stylesCreateTask.textH1}>{NativeLevelHandler.getItem(UserKeys.GOAL_NAME)}</Text>
+            <Text style={stylesCreateTask.textH1}>{habit}</Text>
             <Text style={[stylesCreateTask.pressableText ,{fontSize: _vw(6), fontFamily: 'Roboto-Italic'}]}>{txt().txtSubTitle}</Text>
             <ScrollView horizontal={true} scrollEnabled={true} style={[stylesCreateTask.boostBtnScrollView]} showsHorizontalScrollIndicator={false} >
             <View style={stylesCreateTask.containerBtn}>

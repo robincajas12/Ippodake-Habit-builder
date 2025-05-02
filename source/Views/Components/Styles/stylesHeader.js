@@ -43,7 +43,23 @@ const stylesHeader1 = StyleSheet.create({
     color: colors.font,
     fontFamily: 'Roboto-Bold',
     textAlign: 'center',
-  }
+  },
+  btnChangeHabit:{
+    backgroundColor: colors.primaryColor,
+    borderWidth: _vw(0.5),
+    borderColor: colors.font,
+    borderRadius: _vw(50),
+    width: _vw(10),
+    height: _vw(10),
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  btnChangeHabitText:{
+    fontSize: _vw(7),
+    color: colors.font,
+    fontFamily: 'Roboto-Bold',
+    textAlign: 'center',
+  },
 });
 return stylesHeader1;
 }

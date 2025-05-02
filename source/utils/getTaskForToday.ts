@@ -5,11 +5,14 @@ import Task from "../Models/Task";
 
 export function getTaskForToday(idNumber: number) : Task | null | undefined
 {
-    if(NativeTodayTasksHandler.getAllTaskTypes() != "[]" && NativeTodayTasksHandler.getTaskForToday(idNumber) != "[]")
+    if(NativeTodayTasksHandler.getTaskForToday(idNumber) != "[]")
     {
         const today = JSON.parse(NativeTodayTasksHandler
-        .getTaskForToday(idNumber)[0])
+        .getTaskForToday(idNumber))[0]
+        console.log("Estatarea sedevuelve", JSON.parse(NativeTodayTasksHandler
+            .getTaskForToday(idNumber)))
         const task = Task.fromJSON(JSON.stringify(today))
+        
         NativeLevelHandler.setItem(ELocalStorageKeys.ID_SELECTED_TASK, task.id.toString())
         return task
     }

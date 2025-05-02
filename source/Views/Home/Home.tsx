@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useContext } from "react";
-import { View, Text, Button, AppState, ScrollView, Pressable } from "react-native";
+import React, { useState, useEffect, useContext, useRef } from "react";
+import { View, Text, Button, AppState, ScrollView, Pressable, Alert } from "react-native";
 import TimeCounter from "./Components/TimeCounter";
 import Clock from "./Components/Clock";
 import stylesHome from "./styles/stylesHome";
@@ -22,20 +22,21 @@ import { AdsConsent, BannerAd, BannerAdSize, RequestOptions, TestIds } from "rea
 import CreateNewTask from "../Create/CreateNewTask";
 import traslations, { getTranslation } from "../../Languages/LangManager";
 import TaskType from "../../Models/TaskType";
+import MyCards from "../Components/General/Components/InputComponents/MyCards";
+import MySlider from "../Components/General/Components/InputComponents/MySlider";
+import MySliderC from "../Components/General/Components/InputComponents/MySliderC";
 const adUnitId = __DEV__ ? TestIds.BANNER: 'ca-app-pub-5187514759339848/6240667800';
 //const adUnitId = TestIds.BANNER
-export default function Home( {canShowAds, idTaskType, setIdTaskType} : {idTaskType: number | null,canShowAds: boolean, setIdTaskType: (id :number| null) => void} ) {
+export default function Home( {canShowAds, idTaskType, setIdTaskType} : {idTaskType: number,canShowAds: boolean, setIdTaskType: (id :number| null) => void} ) {
   const [resquestOption, setResquestOption] = useState<RequestOptions | null>(null);
   const language : string = NativeLevelHandler.getItem(ELocalStorageKeys.LANGUAGE);
 
   // Traducciones
   const txt_home = getTranslation(traslations.Home, language)
-
   const [habit, setHabit] = useState(()=>{
-    if(idTaskType == null) return ""
-    const res = NativeTodayTasksHandler.getTaskTypeById(idTaskType)
-    const taskType = JSON.parse(res)[0]
-    return TaskType.fromJSON(JSON.stringify(taskType)).title
+    const res = JSON.stringify(JSON.parse(NativeTodayTasksHandler.getTaskTypeById(idTaskType))[0]);
+    console.log("res", res)
+    return TaskType.fromJSON(res).title;
   });
   const context = useContext(Context);
   if (!context) {
@@ -72,29 +73,118 @@ export default function Home( {canShowAds, idTaskType, setIdTaskType} : {idTaskT
     if (!selectedTask) {
       
       if (idTaskType !== null) {
-        try{
-          let task = getTaskForToday(idTaskType);
-          if(task == undefined) NativeTodayTasksHandler.createTaskForToday(idTaskType)
+          console.log("idTaskType", idTaskType)
+          const task = getTaskForToday(idTaskType);
+
+          if(!task){
+            setSelectedTask(null);
+            setIsVsible(true);
+          }
           console.log("task-----------------------------------------------------------     11111", task)
-          task = getTaskForToday(idTaskType);
           if (task) {
-            if (task.id.toString() === NativeLevelHandler.getItem(ELocalStorageKeys.ID_SELECTED_TASK)) {
               setSelectedTask(task);
             } else {
               setIsVsible(true);
             }
           }
-        }catch(e){
-          console.log("Error getting task for today", e);
-          setIdTaskType(null)
-          NativeLevelHandler.removeItem(ELocalStorageKeys.ID_SELECTED_TASKTYPE);
-          NativeLevelHandler.removeItem(ELocalStorageKeys.ID_SELECTED_TASK);
-        }
-      }
+        
+      
       setClockStarted(false);
     }
   }, [setTime, setSelectedTask, selectedTask, setResquestOption]);
-
+  useEffect(()=>{
+    if(selectedTask)
+    {
+      if(selectedTask.idTaskType != idTaskType)
+      {
+        NativeLevelHandler.removeItem(ELocalStorageKeys.ID_SELECTED_TASK);
+        setSelectedTask(null);
+      }
+    }
+  })
+  enum btn {
+    MANUAL_ENTRY = "📝",
+    CLOCK = "⌛",
+    CHECKBOX = "✅"
+  }
+  const [selectedCard, setSelectedCard] = useState(btn.CLOCK)
+  const buttons = [
+    { id: btn.CLOCK, emoji: btn.CLOCK, name: "Clock" },
+    { id: btn.MANUAL_ENTRY, emoji: btn.MANUAL_ENTRY, name: "Input" },
+    { id: btn.CHECKBOX, emoji: btn.CHECKBOX, name: "Tick" }
+  ];
+  
+  
+  function btnAction(id : string)
+  {
+    if(id === btn.CLOCK)
+    {
+      if(clockStarted) setClockStarted(false)
+      setSelectedCard(btn.CLOCK)
+      return
+    }
+    if(id === btn.MANUAL_ENTRY)
+    {
+        if(clockStarted) setClockStarted(false)
+        setSelectedCard(btn.MANUAL_ENTRY)
+        return
+    }
+    if(id === btn.CHECKBOX)
+      {
+        Alert.alert(
+          "Confirm Action",
+          "✨ Are you sure you want to mark this task as completed?\n\nOnce checked, it will be recorded for today.",
+          [
+            {
+              text: "Cancel",
+              style: "cancel",
+              onPress: () => {
+                // Cancel pressed, do nothing
+              }
+            },
+            {
+              text: "Yes, complete it!",
+              onPress: () => {
+                if (clockStarted) setClockStarted(false);
+                setSelectedCard(btn.CHECKBOX);
+        
+                if (selectedTask) {
+               
+                  NativeTodayTasksHandler.recordDay(selectedTask.id, selectedTask.t);
+                  const task = getTaskForToday(selectedTask?.idTaskType);
+                  if (task) setSelectedTask(task);
+                }
+              }
+            }
+          ],
+          { cancelable: true }
+        );
+        
+      }
+  }
+  const valueSlider = useRef(0);
+  function changeTaskTypeWithSlider(t : number, prop : string){
+    valueSlider.current = t;
+    console.log()
+    if(selectedTask)
+      { 
+        NativeTodayTasksHandler.recordDay(selectedTask.id, t*60*1000);
+        const task =getTaskForToday(selectedTask.idTaskType)
+        console.log("aaaa" + task)
+        if(task) 
+        {
+          setSelectedTask(task);
+          setTime((prev) => {
+            const date = new Date(prev.getTime());
+            date.setDate(0);
+            date.setHours(0);
+            date.setMinutes(0);
+            date.setSeconds(0);
+            date.setMilliseconds(t*60*100);
+            return date;})
+        }
+      }
+  }
   return (
     selectedTask == null ? (
       <CreateTask styleView={stylesMainContentView().view} selectedTask={selectedTask} setSelectTask={setSelectedTask} />
@@ -103,46 +193,28 @@ export default function Home( {canShowAds, idTaskType, setIdTaskType} : {idTaskT
         <ScrollView>
           {__DEV__  && <Text style={{color: 'red'}}>DevMODE</Text>}
           {/*<CreateNewTask></CreateNewTask>*/}
-          <Pressable onPress={()=>
-              {
-                NativeLevelHandler.removeItem(ELocalStorageKeys.ID_SELECTED_TASKTYPE);
-                NativeLevelHandler.removeItem(ELocalStorageKeys.ID_SELECTED_TASK);
-                setIdTaskType(null);
-                setSelectedTask(null);
-                setClockStarted(false)
-                NativeLevelHandler.setItem(ELocalStorageKeys.CURRENT_DATE, NativeTodayTasksHandler.getToday())
-                if(NativeLevelHandler.getItem(ELocalStorageKeys.ID_TIMER))
-                {
-                  clearInterval(Number(NativeLevelHandler.getItem(ELocalStorageKeys.ID_TIMER)))
-                }
-                setClockStarted(false)
-                                NativeLevelHandler.removeItem(ELocalStorageKeys.ID_TIMER)
-                                NativeLevelHandler.removeItem(ELocalStorageKeys.CLOCK_STATUS)
-                                NotificationController.get().cancelTriggerNotification()
-                                const idActiveNot = NativeLevelHandler.getItem(ELocalStorageKeys.ID_ACTIVE_NOTIFICATION)
-                                if(idActiveNot)
-                                {
-                                    notifee.cancelNotification(idActiveNot)
-                                    NativeLevelHandler.removeItem(ELocalStorageKeys.ID_ACTIVE_NOTIFICATION)
-                                }
-              }}>
-            <Text>XDDDD</Text>
-          </Pressable>
           <View style={stylesHome.containerHabit}>
             <Text style={stylesHome.txtHabit}>{selectedTask.t ==selectedTask.tCompleted ? "Task completed, come back tomorrow" : txt_home.habit + ": " + habit}</Text>
           </View>
           <View style={stylesHome.mainContainer}>
-            <View style={stylesHome.cardsContainer}>
+            {/*<View style={stylesHome.cardsContainer}>
               <Text style={stylesHome.cardTitle}>{txt_home.percentage}</Text>
               <Text style={stylesHome.cardValue}>{trunc((selectedTask.tCompleted * 100) / selectedTask.t)} %</Text>
+            </View>*/}
+            <View style={{}}>
+              {/*<Text style={stylesHome.cardTitle}>{txt_home.setCompleted}</Text>
+              <Pressable>
+                  <Text style={stylesHome.cardValue}>{"🐒"}</Text>
+              </Pressable>*/}
+              {!clockStarted && <MyCards buttons={buttons} onSelect={btnAction} ></MyCards>}
             </View>
-            <View style={stylesHome.cardsContainer}>
-              <Text style={stylesHome.cardTitle}>{txt_home.avg}</Text>
-              <Text style={stylesHome.cardValue}>{trunc(NativeTodayTasksHandler.getAVGTaskTCompleted(selectedTask.idTaskType,21) / (60 * 1000), 1)}</Text>
-            </View>
-            <View style={[stylesHome.cardsContainer, stylesHome.container]}>
+         
+            <View style={[stylesHome.cardsContainer, stylesHome.container, selectedCard !== btn.CLOCK && {flexDirection: 'column', paddingVertical: _vw(5), borderRadius: _vw(10), padding: 0, margin: 0}]}>
               <TimeCounter txtColor={null} time={time} />
-              {setClockStarted && (
+              {selectedCard === btn.MANUAL_ENTRY && <View style={{width: _vw(60)}}>
+              <MySlider action={changeTaskTypeWithSlider} propertyToChange="t" min={0} max={trunc(selectedTask.t /(60*1000),5)} txtTitle="value" initialValue={(selectedTask.tCompleted/(60*1000))}></MySlider>
+              </View>}
+              {setClockStarted && selectedCard === btn.CLOCK && (
                 <Clock 
                   clockStarted={clockStarted} 
                   setClockStarted={setClockStarted} 
